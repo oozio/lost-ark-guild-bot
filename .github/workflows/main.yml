@@ -2,7 +2,7 @@ name: deploy Python to lambda
 on: 
   push:
     branches:
-      - master
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest

@@ -1,0 +1,54 @@
+[
+    {
+        "name": "git",
+        "description": "Fetch hippobotas git"
+     },
+    {
+        "name": "addmal",
+        "description": "Sets your MAL profile",
+        "options": [
+            {
+                "name": "mal_name",
+                "description": "Your MAL username",
+                "type": 3,
+                "required": 1
+            }
+        ]
+    },
+    {
+        "name": "mal",
+        "description": "Displays a MAL profile",
+        "options": [
+            {
+                "name": "mal_name",
+                "description": "MAL profile to show; shows your own if set and left blank",
+                "type": 3,
+                "required": 0
+            }
+        ]
+    },
+    {
+        "name": "addsteam",
+        "description": "Sets your Steam profile",
+        "options": [
+            {
+                "name": "steam_name",
+                "description": "Your MAL username",
+                "type": 3,
+                "required": 1
+            }
+        ]
+    },
+    {
+        "name": "steam",
+        "description": "Displays a Steam profile",
+        "options": [
+            {
+                "name": "steam_name",
+                "description": "Steam profile to show; shows your own if set and left blank",
+                "type": 3,
+                "required": 0
+            }
+        ]
+    }
+]

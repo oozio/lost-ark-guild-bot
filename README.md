@@ -1,0 +1,1 @@
+# lost-ark-guild-bot

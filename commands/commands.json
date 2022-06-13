@@ -12,6 +12,7 @@
             {
                 "name": "item", 
                 "description": "Item to check",
+                "type": 3,
                 "choices": [
                     {
                         "name": "Greater Honor Leapstone",

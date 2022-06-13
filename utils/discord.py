@@ -137,7 +137,6 @@ def change_role(server_id, user_id, old_role_name, new_role_name):
 def get_user_nickname_by_id(server_id, user_id):
     url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}"
     user = requests.get(url,  headers=HEADERS).json()
-    print(user)
     return user["nick"]
 
 

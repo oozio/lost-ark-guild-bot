@@ -12,7 +12,7 @@
                 "name": "role",
                 "description": "A role to add",
                 "type": 8,
-                "required": 0                
+                "required": 1               
             },
             {
                 "name": "optional_role_1",

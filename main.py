@@ -19,4 +19,4 @@ def lambda_handler(event, context):
     command = event["body-json"]["data"]["name"]
     
     # return :thinking:
-    return discord.format_response('ACK_WITH_SOURCE', ephemeral=SHOULD_HIDE_COMMAND_OUTPUT.get(command, True))
+    return discord.initial_response('ACK_WITH_SOURCE', ephemeral=SHOULD_HIDE_COMMAND_OUTPUT.get(command, True))

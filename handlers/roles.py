@@ -8,7 +8,6 @@ def _pretty_roles(role_ids):
     return " ".join([_pretty_role(role_id) for role_id in role_ids])
 
 def handle(command, cmd_input, user_id, server_id):
-    # Returns a tuple of (output: str, hide_output: bool)
     if command == "add_roles":
         roles_seen = []
         for _, role in cmd_input.items():

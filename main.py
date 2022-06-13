@@ -2,7 +2,7 @@ import json
 import boto3
 import requests
 
-from constants.commands import SHOULD_HIDE_COMMAND_OUTPUT
+from commands.visibility import SHOULD_HIDE_COMMAND_OUTPUT
 from utils import discord, aws_lambda
 
 

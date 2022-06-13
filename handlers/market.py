@@ -1,5 +1,3 @@
-
-
 from utils import discord
 from utils.lost_ark import market_prices, items
 
@@ -10,7 +8,6 @@ ITEM_NAMES_TO_IDS = {
 }
 
 def handle(command, cmd_input):
-    # Returns a tuple of (output: str, hide_output: bool)
     if command == "price":
         # dunno how to put in unlimited # of autocompletable options
         item_id = ITEM_NAMES_TO_IDS[cmd_input["item"].lower()]

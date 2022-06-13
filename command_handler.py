@@ -26,7 +26,7 @@ def handle_command(body):
     elif command in ROLE_COMMANDS:
         return roles.handle(command, options, user_id, server_id)
     elif command in MARKET_COMMANDS:
-        return market.handle(command, options, user_id, server_id)
+        return market.handle(command, options)
     raise ValueError(f"Unrecognized command {command}, sad")
         
 

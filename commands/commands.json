@@ -3,56 +3,29 @@
         "name": "git",
         "description": "Fetch the git repo where this bot lives",
         "type": 1
-     },
-     {
-        "name": "roles",
-        "description": "Let people know what content you want to do by editing your roles",
-        "type": 1,
-        "options": [
-            {
-                "name": "add",
-                "description": "Add yourself to a role",
-                "type": 1,
-                "options": [
-                    {
-                        "name": "roles",
-                        "description": "names of the content",
-                        "type": 8,
-                        "required": true,
-                        "choices": [
-                            "valtan",
-                            "argos",
-                            "gvg"
-                        ]
-                    }
-                ]
-            },
-            {
-                "name": "remove",
-                "description": "Remove yourself from a role",
-                "type": 1,
-                "options": [
-                    {
-                        "name": "roles",
-                        "description": "names of the content",
-                        "type": 8,
-                        "required": true,
-                        "choices": [
-                            "valtan",
-                            "argos",
-                            "gvg"
-                        ]
-                    }
-                ]
-            }
-        ]
-     },
-         {
-        "name": "test user command",
-        "type": 2
     },
     {
-        "name": "test message command",
-        "type": 3
+        "name": "add_role",
+        "description": "Let people know what content you want to do by adding roles",
+        "options": [
+            {
+                "name": "roles",
+                "description": "A list of the roles to add",
+                "type": 8,
+                "required": 1                
+            }
+        ]
+    },
+    {
+        "name": "remove_role",
+        "description": "Remove yourself from content roles",
+        "options": [
+            {
+                "name": "roles",
+                "description": "A list of the roles to remove",
+                "type": 8,
+                "required": 1
+            }
+        ]
     }
 ]

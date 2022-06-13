@@ -2,21 +2,21 @@ import boto3
 
 from boto3.dynamodb.conditions import Key
 
-PKEY_NAME = 'pk'
-GENERAL_TABLE = 'lost-ark-guild-bot'
+PKEY_NAME = "pk"
+GENERAL_TABLE = "lost-ark-guild-bot"
 
-dynamodb_client = boto3.resource('dynamodb')
+dynamodb_client = boto3.resource("dynamodb")
 
 def get_rows(table_name, pkey_value=None):
     table = dynamodb_client.Table(table_name)
     if pkey_value:
         response = table.get_item(Key={PKEY_NAME: str(pkey_value)})
-        if response and 'Item' in response:
-            return [response['Item']]
+        if response and "Item" in response:
+            return [response["Item"]]
         else:
             return []
     else:
-        return table.scan()['Items']
+        return table.scan()["Items"]
 
 
 def set_rows(table_name, pkey_value, new_column):

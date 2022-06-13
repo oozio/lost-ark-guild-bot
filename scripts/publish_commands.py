@@ -23,7 +23,7 @@ HEADERS = {"Authorization": f"Bot {BOT_TOKEN}"}
 
 # where is the file with the commands stored in s3?
 BUCKET = os.environ.get("AWS_BUCKET")
-KEY = 'commands.json'
+KEY = "commands.json"
 
 # form the APi endpoints: https://discord.com/developers/docs/interactions/slash-commands#registering-a-command
 global_url = f"https://discord.com/api/v8/applications/{APPLICATION_ID}/commands"
@@ -45,10 +45,11 @@ def publish_command(url, commands):
         # pinging the endpoint too frequently causes it to fail; wait and retry
         sleep(20)
         print(f"Post to {url} failed; retrying once")
+        print(r)
         r = requests.post(url, headers=HEADERS, json=commands)
         
     # debug print
-    print(f"Response from {url}: {r.text}")
+    print(f"Response from {url}: {r.status_code}- {r.text}")
 
     
 def get_all_commands(url):
@@ -65,9 +66,9 @@ def delete_command(url):
 def run():
     # use guild_urls to test, since global changes take effect after a delay
     # optional: delete all existing commands to reset to clean state
-    # for guild_url in guild_urls:
-    #    for command in get_all_commands(guild_url):
-    #        delete_command(f"{guild_url}/{command['id']}")
+    for guild_url in guild_urls:
+       for command in get_all_commands(guild_url):
+           delete_command(f"{guild_url}/{command['id']}")
             
     # publish new commands
     commands = get_json(BUCKET, KEY)

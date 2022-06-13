@@ -16,7 +16,7 @@ def handle(command, cmd_input, user_id, server_id):
                 discord.add_role(user_id, role, server_id)
                 roles_seen.append(role)
 
-        output = f"Roles {_pretty_roles(roles_seen)} have been added.\nAll current roles: {_pretty_roles(discord.get_user_role_ids(server_id, user_id))}"
+        return f"Roles {_pretty_roles(roles_seen)} have been added.\nAll current roles: {_pretty_roles(discord.get_user_role_ids(server_id, user_id))}"
 
     elif command == "remove_roles":
         roles_seen = []
@@ -25,10 +25,7 @@ def handle(command, cmd_input, user_id, server_id):
                 discord.remove_role(user_id, role, server_id)
                 roles_seen.append(role)
                 
-        output = f"Roles {_pretty_roles(cmd_input.values())} have been removed.\n All current roles: {_pretty_roles(discord.get_user_role_ids(server_id, user_id))}"
+        return f"Roles {_pretty_roles(cmd_input.values())} have been removed.\n All current roles: {_pretty_roles(discord.get_user_role_ids(server_id, user_id))}"
 
     else:
-        output = f"UNKNOWN COMMAND: {command}"
-
-
-    return output
+        return f"UNKNOWN COMMAND: {command}"

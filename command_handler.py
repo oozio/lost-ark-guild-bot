@@ -19,7 +19,7 @@ def handle_command(body):
             options[option_key] = option_value
 
     if command == "git":
-        return f"Code lives at https://github.com/oozio/lost-ark-guild-bot; feel free to add pull requests!!"
+        return f"Code lives at https://github.com/oozio/lost-ark-guild-bot; feel free to contribute!!"
     elif "role" in command:
         return roles.handle(command, options, user_id, server_id)
     raise ValueError(f"Unrecognized command {command}, sad")

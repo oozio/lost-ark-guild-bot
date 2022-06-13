@@ -5,6 +5,31 @@
         "type": 1
     },
     {
+        "name": "price",
+        "description": "(trying this for fun, v incomplete) Check the current price of an item in NAW",
+        "type": 1,
+        "options": [
+            {
+                "name": "item", 
+                "description": "Item to check",
+                "choices": [
+                    {
+                        "name": "Greater Honor Leapstone",
+                        "value": "Greater Honor Leapstone"
+                    },
+                    {
+                        "name": "Honor Leapstone",
+                        "value": "Honor Leapstone"
+                    },
+                    {
+                        "name": "Honor Shard Pouch L",
+                        "value": "Honor Shard Pouch L"
+                    }
+                ]
+            }
+        ]
+    },
+    {
         "name": "add_roles",
         "description": "Let people know what content you want to do by adding roles",
         "options": [

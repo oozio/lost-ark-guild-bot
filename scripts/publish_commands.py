@@ -54,9 +54,8 @@ def publish_command(url, commands):
     
 def get_all_commands(url):
     existing_commands = requests.get(url, headers=HEADERS).json()
-    if not existing_commands:
-        return []
-    
+    return existing_commands if existing_commands else []
+
     
 def delete_command(url):
     r = requests.delete(url, headers=HEADERS)

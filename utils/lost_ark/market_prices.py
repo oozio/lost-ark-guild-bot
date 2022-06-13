@@ -4,7 +4,7 @@ from typing import Dict, Sequence, Union
 
 _DataType = Union[str, int, float]
 
-def GetPriceData(item_ids: Sequence[str],
+def get_price_data(item_ids: Sequence[str],
                  region: str = 'North America West') -> Dict[str, _DataType]:
   '''Returns the raw market data from lostarkmarket.online.
 

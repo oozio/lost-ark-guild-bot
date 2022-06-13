@@ -41,7 +41,7 @@ def get_json(bucket, key):
 
 def publish_command(url, commands):
     r = requests.post(url, headers=HEADERS, json=commands)
-    if r.status_code != 200:
+    if not r.ok:
         # pinging the endpoint too frequently causes it to fail; wait and retry
         sleep(20)
         print(f"Post to {url} failed; retrying once")

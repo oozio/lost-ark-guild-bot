@@ -7,6 +7,14 @@ TYPED_NONES = {
     list: []
 }
 
+
+SHOULD_HIDE_COMMAND_OUTPUT = {
+    "add_role": True,
+    "remove_role": True,
+    "git": False
+}
+
+
 class TrimmableClass(ABC):
     FIELDS = []
     EMBED_TEMPLATE = {

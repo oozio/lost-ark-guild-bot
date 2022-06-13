@@ -110,10 +110,14 @@ def add_role(user_id, role_id, server_id):
     url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}/roles/{role_id}"
     requests.put(url, headers=HEADERS)
 
-def get_user_roles(server_id, user_id):
+def get_user_role_ids(server_id, user_id):
     url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}"
     user = requests.get(url,  headers=HEADERS).json()
-    print(f'user: {user}')
+    return user['roles']
+
+def get_user_role_names(server_id, user_id):
+    url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}"
+    user = requests.get(url,  headers=HEADERS).json()
     return get_roles_by_ids(server_id, user['roles'])
 
 def get_all_users(server_id):
@@ -127,11 +131,17 @@ def change_role(server_id, user_id, old_role_name, new_role_name):
     remove_role(user_id, role_ids_by_name[old_role_name], server_id)
     add_role(user_id, role_ids_by_name[new_role_name], server_id)
 
+def get_user_nickname_by_id(server_id, user_id):
+    url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}"
+    user = requests.get(url,  headers=HEADERS).json()
+    print(user)
+    return user["nick"]
+
 
 # Message related
-def post_message_in_channel(channel_id, content):
+def post_message_in_channel(channel_id, content, ephemeral=True):
     url = f'{BASE_URL}/channels/{channel_id}/messages'
-    body = {'content': content}
+    body = {'content': content, "flags": 64}
     requests.post(url, json=body, headers=HEADERS)
 
 def get_messages(channel_id, limit, specified_message):
@@ -146,11 +156,10 @@ def get_messages(channel_id, limit, specified_message):
     return messages
 
 def format_response(body, ephemeral):
-    
     if isinstance(body, str):
         response = {
             "content": body,
-            "flags": 64 if ephemeral else None
+            "flags": 64 if ephemeral else 128
         }
     else:        
         content = body.get('content')
@@ -190,22 +199,10 @@ def delete_response(application_id, interaction_token):
     url = f"{BASE_URL}/webhooks/{application_id}/{interaction_token}/messages/@original"
     requests.delete(url, headers=HEADERS)
     
-def send_response(channel_id, content, embed=None):
-    response = {
-        "content": content,
-        "allowed_mentions": {
-            # "users": [user_id]        
-            }
-        }
-        
-    if embed:
-        response['embed'] = {
-            "title": f"{embed.get('title')}",
-            "description": f"{embed.get('description')}"
-         }
-         
+def send_response(channel_id, content, embed=None, ephemeral=False):
+    body = format_response({"content": content, "embed": embed}, ephemeral=ephemeral)
     url = f"{BASE_URL}/channels/{channel_id}/messages"
-    response = requests.post(url, json=response, headers=HEADERS)
+    response = requests.post(url, json=body, headers=HEADERS)
     
     return response
 

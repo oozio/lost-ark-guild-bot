@@ -5,19 +5,49 @@
         "type": 1
     },
     {
-        "name": "add_role",
+        "name": "add_roles",
         "description": "Let people know what content you want to do by adding roles",
         "options": [
             {
                 "name": "roles",
                 "description": "A list of the roles to add",
                 "type": 8,
-                "required": 1                
+                "required": 0                
+            },
+            {
+                "name": "roles",
+                "description": "A list of the roles to add",
+                "type": 8,
+                "required": 0                
+            },
+            {
+                "name": "roles",
+                "description": "A list of the roles to add",
+                "type": 8,
+                "required": 0                
+            },
+            {
+                "name": "roles",
+                "description": "A list of the roles to add",
+                "type": 8,
+                "required": 0                
+            },
+            {
+                "name": "roles",
+                "description": "A list of the roles to add",
+                "type": 8,
+                "required": 0                
+            },
+            {
+                "name": "roles",
+                "description": "A list of the roles to add",
+                "type": 8,
+                "required": 0                
             }
         ]
     },
     {
-        "name": "remove_role",
+        "name": "remove_roles",
         "description": "Remove yourself from content roles",
         "options": [
             {
@@ -25,6 +55,36 @@
                 "description": "A list of the roles to remove",
                 "type": 8,
                 "required": 1
+            },
+            {
+                "name": "roles",
+                "description": "A list of the roles to add",
+                "type": 8,
+                "required": 0                
+            },
+            {
+                "name": "roles",
+                "description": "A list of the roles to add",
+                "type": 8,
+                "required": 0                
+            },
+            {
+                "name": "roles",
+                "description": "A list of the roles to add",
+                "type": 8,
+                "required": 0                
+            },
+            {
+                "name": "roles",
+                "description": "A list of the roles to add",
+                "type": 8,
+                "required": 0                
+            },
+            {
+                "name": "roles",
+                "description": "A list of the roles to add",
+                "type": 8,
+                "required": 0                
             }
         ]
     }

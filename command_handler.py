@@ -1,5 +1,8 @@
-from handlers import roles
+from handlers import roles, market
 from utils import discord
+
+ROLE_COMMANDS = ["add_roles", "remove_roles"]
+MARKET_COMMANDS = ["price"]
 
 def handle_command(body):
     # dummy return
@@ -20,8 +23,10 @@ def handle_command(body):
 
     if command == "git":
         return f"Code lives at https://github.com/oozio/lost-ark-guild-bot; feel free to contribute!!"
-    elif "role" in command:
+    elif command in ROLE_COMMANDS:
         return roles.handle(command, options, user_id, server_id)
+    elif command in MARKET_COMMANDS:
+        return market.handle(command, options, user_id, server_id)
     raise ValueError(f"Unrecognized command {command}, sad")
         
 

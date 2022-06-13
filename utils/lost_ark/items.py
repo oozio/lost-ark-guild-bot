@@ -43,7 +43,7 @@ class Item(TrimmableClass):
             "fields": [
                 {
                     "name": "Current Price",
-                    "value": f"{self.lowPrice} gold\n{self.cheapestRemaining} remaining",
+                    "value": f"{self.lowPrice} gold\n   -{self.cheapestRemaining} remaining",
                     "inline": True
                 },
                 {

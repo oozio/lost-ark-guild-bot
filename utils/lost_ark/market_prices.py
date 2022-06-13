@@ -1,11 +1,11 @@
-import json
-import requests
 from typing import Dict, Sequence, Union
+
+from utils import http
 
 _DataType = Union[str, int, float]
 
 def get_price_data(item_ids: Sequence[str],
-                 region: str = 'North America West') -> Dict[str, _DataType]:
+                   region: str = 'North America West') -> Dict[str, _DataType]:
   '''Returns the raw market data from lostarkmarket.online.
 
   See https://documenter.getpostman.com/view/20821530/UyxbppKr for more APi
@@ -51,11 +51,7 @@ def get_price_data(item_ids: Sequence[str],
   Raises:
     requests.HTTPError: An error occurred retrieving data from the API.
   '''
-  params = ','.join(item_ids)
   request_url = 'https://www.lostarkmarket.online/api/export-market-live' \
-               f'/{region}?items={params}'
-  response = requests.get(request_url)
-  if response.status_code != 200:
-    response.raise_for_status()
-  raw_json = json.loads(response.text)
+               f'/{region}'
+  raw_json = http.make_request('GET', request_url, params={'items': ','.join(item_ids)})
   return {item['id']: item for item in raw_json}

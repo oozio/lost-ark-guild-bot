@@ -17,7 +17,7 @@ class Item(TrimmableClass):
             "readable_name": "_image_url"
             }, 
         "lowPrice": {
-            "type": float,
+            "type": int,
             "readable_name": "Current Lowest Price"
             },
         "cheapestRemaining": {
@@ -35,22 +35,20 @@ class Item(TrimmableClass):
 
         
     def format_for_embed(self):    
-
         embed = {
             "author": {
                 "name": self.name,
-                "url": self.url,
-                "icon_url": self.image_url
+                "icon_url": self.image
             },
             "fields": [
                 {
                     "name": "Current Price",
-                    "value": f"{self.cheapestRemaining} remaining at {self.lowPrice} gold",
+                    "value": f"{self.lowPrice} gold\n{self.cheapestRemaining} remaining",
                     "inline": True
                 },
                 {
                     "name": "Historic Price",
-                    "value": f"{self.shortHistoric.items()}",
+                    "value": "\n".join([f"{date}: {price}" for date, price in sorted(self.shortHistoric.items())]),
                     "inline": True
                 }
             ],

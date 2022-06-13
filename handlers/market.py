@@ -13,11 +13,10 @@ def handle(command, cmd_input):
     # Returns a tuple of (output: str, hide_output: bool)
     if command == "price":
         # dunno how to put in unlimited # of autocompletable options
-        items = [cmd_input["item"]]
-        item_ids = [ITEM_NAMES_TO_IDS[item_name.lower()] for item_name in items]
+        item_id = ITEM_NAMES_TO_IDS[cmd_input["item"].lower()]
         
-        price_data = market_prices.get_price_data(item_ids)
-        data = price_data.values()
+        price_data = market_prices.get_price_data([item_id])
+        data = price_data[item_id]
         item = items.Item(data)
         result = {
             'content': "",

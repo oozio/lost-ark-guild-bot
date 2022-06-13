@@ -9,38 +9,38 @@
         "description": "Let people know what content you want to do by adding roles",
         "options": [
             {
-                "name": "roles",
-                "description": "A list of the roles to add",
+                "name": "role",
+                "description": "A role to add",
                 "type": 8,
                 "required": 0                
             },
             {
-                "name": "roles",
-                "description": "A list of the roles to add",
+                "name": "optional_role_1",
+                "description": "A role to add",
                 "type": 8,
                 "required": 0                
             },
             {
-                "name": "roles",
-                "description": "A list of the roles to add",
+                "name": "optional_role_2",
+                "description": "A role to add",
                 "type": 8,
                 "required": 0                
             },
             {
-                "name": "roles",
-                "description": "A list of the roles to add",
+                "name": "optional_role_3",
+                "description": "A role to add",
                 "type": 8,
                 "required": 0                
             },
             {
-                "name": "roles",
-                "description": "A list of the roles to add",
+                "name": "optional_role_4",
+                "description": "A role to add",
                 "type": 8,
                 "required": 0                
             },
             {
-                "name": "roles",
-                "description": "A list of the roles to add",
+                "name": "optional_role_5",
+                "description": "A role to add",
                 "type": 8,
                 "required": 0                
             }
@@ -52,37 +52,37 @@
         "options": [
             {
                 "name": "roles",
-                "description": "A list of the roles to remove",
+                "description": "A role to remove",
                 "type": 8,
                 "required": 1
             },
             {
-                "name": "roles",
-                "description": "A list of the roles to add",
+                "name": "optional_role_1",
+                "description": "A role to remove",
                 "type": 8,
                 "required": 0                
             },
             {
-                "name": "roles",
-                "description": "A list of the roles to add",
+                "name": "optional_role_2",
+                "description": "A role to remove",
                 "type": 8,
                 "required": 0                
             },
             {
-                "name": "roles",
-                "description": "A list of the roles to add",
+                "name": "optional_role_3",
+                "description": "A role to remove",
                 "type": 8,
                 "required": 0                
             },
             {
-                "name": "roles",
-                "description": "A list of the roles to add",
+                "name": "optional_role_4",
+                "description": "A role to remove",
                 "type": 8,
                 "required": 0                
             },
             {
-                "name": "roles",
-                "description": "A list of the roles to add",
+                "name": "optional_role_5",
+                "description": "A role to remove",
                 "type": 8,
                 "required": 0                
             }

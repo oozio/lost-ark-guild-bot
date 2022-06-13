@@ -5,6 +5,8 @@ import requests
 from nacl.signing import VerifyKey
 from nacl.exceptions import BadSignatureError
 
+PING_PONG = {"type": 1}
+
 MAX_RESPONSE_LENGTH = 2000
 
 RESPONSE_TYPES =  {
@@ -58,7 +60,8 @@ def check_input(event):
     _verify_signature(event)
     body = event.get('body-json')
     if _ping_pong(body):
-        return format_response("PONG", None)
+        return PING_PONG
+
 
 def get_input(data, target):
     for option in data.get('options', []):
@@ -172,6 +175,7 @@ def format_response(body, ephemeral):
             }
 
     return response
+
     
 def send_followup(application_id, interaction_token, content, ephemeral=False):
     while len(content) > MAX_RESPONSE_LENGTH:
@@ -221,7 +225,18 @@ def edit_message(channel_id, message_id, content, embed={}):
 
 
 # Misc
-
+def initial_response(response_type, content=None, ephemeral=False):
+    response = {
+        "type": RESPONSE_TYPES[response_type] if response_type in RESPONSE_TYPES else RESPONSE_TYPES['MESSAGE_WITH_SOURCE'],
+        }
+    if response_type != 'PONG':# and "ACK" not in response_type:
+        response["data"] = {
+            "content": content,
+            "embeds": [],
+            "allowed_mentions": [],
+            "flags": 64 if ephemeral else None
+            }
+    return response
 
 def _form_permission():
     result = 0

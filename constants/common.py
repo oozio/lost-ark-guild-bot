@@ -8,12 +8,6 @@ TYPED_NONES = {
 }
 
 
-SHOULD_HIDE_COMMAND_OUTPUT = {
-    "add_role": True,
-    "remove_role": True,
-    "git": False
-}
-
 
 class TrimmableClass(ABC):
     FIELDS = []

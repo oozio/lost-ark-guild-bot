@@ -1,52 +1,22 @@
-from constants.common import SHOULD_HIDE_COMMAND_OUTPUT
-from handlers import roles
-from utils import discord
+import json
+import boto3
+import requests
 
-def handle_command(body):
-    # dummy return
-    channel_id = body["channel_id"]
-    server_id = body["guild_id"]
-    user_id = body["member"]["user"]["id"]
-    role_ids = body["member"]["roles"]
-    
-    data = body["data"]
-    command = data["name"].lower()
-    
-    options = {}
-    if "options" in data:
-        for option in data.get("options"):
-            option_key = option["name"]
-            option_value = option["value"]
-            options[option_key] = option_value
+from constants.commands import SHOULD_HIDE_COMMAND_OUTPUT
+from utils import discord, aws_lambda
 
-    if command == "git":
-        return f"Code lives at https://github.com/oozio/lost-ark-guild-bot; feel free to add pull requests!!", SHOULD_HIDE_COMMAND_OUTPUT.get(command, False)
-    elif "role" in command:
-        return roles.handle(command, options, user_id, server_id)
-    raise ValueError(f"Unrecognized command {command}, sad")
-        
 
 def lambda_handler(event, context):
-    # get interaction metadata
-    body = event["body-json"]
-    server_id = body["guild_id"]
-    channel_id = body["channel_id"]
-    application_id = body["application_id"]
-    interaction_token = body["token"]
+    # handle discord's integrity check
+    pong = discord.check_input(event)
+    if pong: 
+        return pong
     
-    user_id = body["member"]["user"]["id"]
-    command = body["data"]["name"]
-    
-    output = None
+    # pass event to processor
+    aws_lambda.invoke_processor(event)
 
-    try:
-        output = handle_command(body)
-    except Exception as e:
-        discord.delete_response(application_id, interaction_token)
-        discord.send_followup(application_id, interaction_token, f"Error: {e}", ephemeral=True)
-        raise e
-  
-    if not output:
-        discord.delete_response(application_id, interaction_token)
-    else:
-        discord.update_response(application_id, interaction_token, output)
+    # get interaction metadata
+    command = event["body-json"]["data"]["name"]
+    
+    # return :thinking:
+    return discord.format_response('ACK_WITH_SOURCE', ephemeral=SHOULD_HIDE_COMMAND_OUTPUT.get(command, True))

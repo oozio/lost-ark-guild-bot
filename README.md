@@ -3,6 +3,8 @@
 
 adding a new command:
 
-add command to commands/command.json
-how to format input/description/etc: https://discord.com/developers/docs/interactions/slash-commands#applicationcommandoption
-add handling in lambda_function.py
+- request to be a repo collaborator
+- add command to commands/commands.json
+    how to format input/description/etc: https://discord.com/developers/docs/interactions/slash-commands#applicationcommandoption
+- add preferred output visibility to constants/commands.py
+- add handling in command_handler.py

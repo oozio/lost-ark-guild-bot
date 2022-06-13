@@ -36,8 +36,6 @@ def retry(retries=3, backoff=2, backoff_factor=2):
 # @retry()
 def make_request(method, url, data=None, json=None, params=None, headers=None, timeout=5):
     r = requests.request(method, url, data=data, json=json, params=params, headers=headers)
-    if r.status_code != 200:
-        raise requests.exceptions.HTTPError(r.text)
-
+    r.raise_for_status()
     return r.json()
         

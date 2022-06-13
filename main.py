@@ -2,8 +2,6 @@ import json
 
 from utils import discord
 
-import handlers.mal
-
 def handle_command(body):
     # dummy return
     channel_id = body["channel_id"]
@@ -22,12 +20,9 @@ def handle_command(body):
             options[option_key] = option_value
 
     if command == 'git':
-        return f"Code lives at https://github.com/oozio/hippobotas_discord; feel free to add pull requests"
+        return f"Code lives at https://github.com/oozio/lost-ark-guild-bot; feel free to add pull requests!!"
 
 
-    if 'mal' in command:
-        return handlers.mal.handle(command, options, user_id)
-    
     
     raise ValueError(f"Unrecognized command {command}, sad")
         

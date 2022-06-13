@@ -1,54 +1,58 @@
 [
     {
         "name": "git",
-        "description": "Fetch hippobotas git"
+        "description": "Fetch the git repo where this bot lives",
+        "type": 1
      },
-    {
-        "name": "addmal",
-        "description": "Sets your MAL profile",
+     {
+        "name": "roles",
+        "description": "Let people know what content you want to do by editing your roles",
+        "type": 1,
         "options": [
             {
-                "name": "mal_name",
-                "description": "Your MAL username",
-                "type": 3,
-                "required": 1
+                "name": "add",
+                "description": "Add yourself to a role",
+                "type": 1,
+                "options": [
+                    {
+                        "name": "roles",
+                        "description": "names of the content",
+                        "type": 8,
+                        "required": true,
+                        "choices": [
+                            "valtan",
+                            "argos",
+                            "gvg"
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "remove",
+                "description": "Remove yourself from a role",
+                "type": 1,
+                "options": [
+                    {
+                        "name": "roles",
+                        "description": "names of the content",
+                        "type": 8,
+                        "required": true,
+                        "choices": [
+                            "valtan",
+                            "argos",
+                            "gvg"
+                        ]
+                    }
+                ]
             }
         ]
+     },
+         {
+        "name": "test user command",
+        "type": 2
     },
     {
-        "name": "mal",
-        "description": "Displays a MAL profile",
-        "options": [
-            {
-                "name": "mal_name",
-                "description": "MAL profile to show; shows your own if set and left blank",
-                "type": 3,
-                "required": 0
-            }
-        ]
-    },
-    {
-        "name": "addsteam",
-        "description": "Sets your Steam profile",
-        "options": [
-            {
-                "name": "steam_name",
-                "description": "Your MAL username",
-                "type": 3,
-                "required": 1
-            }
-        ]
-    },
-    {
-        "name": "steam",
-        "description": "Displays a Steam profile",
-        "options": [
-            {
-                "name": "steam_name",
-                "description": "Steam profile to show; shows your own if set and left blank",
-                "type": 3,
-                "required": 0
-            }
-        ]
+        "name": "test message command",
+        "type": 3
     }
 ]

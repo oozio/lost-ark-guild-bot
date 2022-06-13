@@ -15,12 +15,12 @@ RESPONSE_TYPES =  {
                     "ACK_WITH_SOURCE": 5
                   }
 
-BASE_URL = "https://discord.com/api/v8"
+BASE_URL = "https://discord.com/api/v9"
 
 ssm = boto3.client('ssm', region_name='us-east-2')
 
-PUBLIC_KEY = ssm.get_parameter(Name="/discord/public_key", WithDecryption=True)['Parameter']['Value']
-BOT_TOKEN = ssm.get_parameter(Name="/discord/bot_token", WithDecryption=True)['Parameter']['Value']
+PUBLIC_KEY = ssm.get_parameter(Name="/discord/public_key/lost-ark-guild-bot", WithDecryption=True)['Parameter']['Value']
+BOT_TOKEN = ssm.get_parameter(Name="/discord/bot_token/lost-ark-guild-bot", WithDecryption=True)['Parameter']['Value']
 HEADERS = {
     "Authorization": f"Bot {BOT_TOKEN}",
     "Content-Type": "application/json"
@@ -35,27 +35,7 @@ _PERMISSIONS = {
     "SEND_MESSAGES": 0x0000000800
 }
 
-def _form_permission():
-    result = 0
-    for permission in _PERMISSIONS.values():
-        result = result | permission
-    return result
-
-def post_message_in_channel(channel_id, content):
-    url = f'{BASE_URL}/channels/{channel_id}/messages'
-    body = {'content': content}
-    requests.post(url, json=body, headers=HEADERS)
-
-def get_messages(channel_id, limit, specified_message):
-    # gets the last <limit> messages from the specified channel, and appends any message specified by id
-    # doesn't check if <specified_message> is duplicated
-    url = f"https://discord.com/api/v8/channels/{channel_id}/messages?limit={limit}"
-    ind_url = f"https://discord.com/api/v8/channels/{channel_id}/messages/{specified_message}"
-    messages = requests.get(url, headers=HEADERS).json()
-    if specified_message:
-        messages.append(requests.get(ind_url, headers=HEADERS).json())
-
-    return messages
+# Verification related
 
 def _verify_signature(event):
     raw_body = event.get("rawBody")
@@ -84,6 +64,86 @@ def get_input(data, target):
     for option in data.get('options', []):
         if option['name'] == target:
             return option['value']
+
+
+
+# Role-related
+
+_ROLES_CACHE = {}
+def _get_all_roles(server_id, force_refresh=False):
+    if server_id in _ROLES_CACHE and not force_refresh:
+        return _ROLES_CACHE[server_id]
+    url = f"{BASE_URL}/guilds/{server_id}/roles"
+    roles = requests.get(url, headers=HEADERS).json()
+    _ROLES_CACHE[server_id] = roles
+    return roles
+
+def get_roles_by_ids(server_id, role_ids):
+    roles = _get_all_roles(server_id)
+    return [role for role in roles if role['id'] in role_ids]
+
+def get_roles_by_names(server_id, role_names):
+    roles = _get_all_roles(server_id)
+    return [role for role in roles if role['name'] in role_names]
+
+def _get_role_ids_by_name(server_id, role_names):
+    results = {key: None for key in role_names}
+    for role in _get_all_roles(server_id):
+        if role['name'] in role_names:
+            results[ role['name'] ] = role['id']
+        if None not in results.values():
+            return results
+
+def _get_role_names_by_id(server_id, role_ids):
+    results = {key: None for key in role_ids}
+    for role in _get_all_roles(server_id):
+        if role['id'] in role_ids:
+            results[ role['id'] ] = role['name']
+        if None not in results.values():
+            return results
+
+def remove_role(user_id, role_id, server_id):
+    url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}/roles/{role_id}"
+    requests.delete(url, headers=HEADERS)
+
+def add_role(user_id, role_id, server_id):
+    url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}/roles/{role_id}"
+    requests.put(url, headers=HEADERS)
+
+def get_user_roles(server_id, user_id):
+    url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}"
+    user = requests.get(url,  headers=HEADERS).json()
+    print(f'user: {user}')
+    return get_roles_by_ids(server_id, user['roles'])
+
+def get_all_users(server_id):
+    # return all user_ids in a server
+    url = f"{BASE_URL}/guilds/{server_id}/members?limit=1000"
+    response = requests.get(url,  headers=HEADERS)
+    return response.json()
+
+def change_role(server_id, user_id, old_role_name, new_role_name):
+    role_ids_by_name = _get_role_ids_by_name(server_id, [new_role_name, old_role_name])
+    remove_role(user_id, role_ids_by_name[old_role_name], server_id)
+    add_role(user_id, role_ids_by_name[new_role_name], server_id)
+
+
+# Message related
+def post_message_in_channel(channel_id, content):
+    url = f'{BASE_URL}/channels/{channel_id}/messages'
+    body = {'content': content}
+    requests.post(url, json=body, headers=HEADERS)
+
+def get_messages(channel_id, limit, specified_message):
+    # gets the last <limit> messages from the specified channel, and appends any message specified by id
+    # doesn't check if <specified_message> is duplicated
+    url = f"https://discord.com/api/v8/channels/{channel_id}/messages?limit={limit}"
+    ind_url = f"https://discord.com/api/v8/channels/{channel_id}/messages/{specified_message}"
+    messages = requests.get(url, headers=HEADERS).json()
+    if specified_message:
+        messages.append(requests.get(ind_url, headers=HEADERS).json())
+
+    return messages
 
 def format_response(body, ephemeral):
     
@@ -124,7 +184,7 @@ def update_response(application_id, interaction_token, content, ephemeral=False)
     requests.patch(url, json=body, headers=HEADERS)
 
     if remaining:
-        send_followup(application, interaction_token, remaining)
+        send_followup(application_id, interaction_token, remaining)
 
 def delete_response(application_id, interaction_token):
     url = f"{BASE_URL}/webhooks/{application_id}/{interaction_token}/messages/@original"
@@ -162,3 +222,12 @@ def edit_message(channel_id, message_id, content, embed={}):
     response = requests.patch(url, json=response, headers=HEADERS)
 
 
+
+# Misc
+
+
+def _form_permission():
+    result = 0
+    for permission in _PERMISSIONS.values():
+        result = result | permission
+    return result

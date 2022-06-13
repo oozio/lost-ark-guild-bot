@@ -3,7 +3,7 @@ import boto3
 from boto3.dynamodb.conditions import Key
 
 PKEY_NAME = 'pk'
-GENERAL_TABLE = 'hippobotas_discord'
+GENERAL_TABLE = 'lost-ark-guild-bot'
 
 dynamodb_client = boto3.resource('dynamodb')
 

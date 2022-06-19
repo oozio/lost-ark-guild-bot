@@ -5,6 +5,10 @@
         "type": 1
     },
     {
+        "name": "test",
+        "type": 3
+    },
+    {
         "name": "price",
         "description": "(trying this for fun, v incomplete) Check the current price of an item in NAW",
         "type": 1,

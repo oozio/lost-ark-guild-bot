@@ -74,7 +74,7 @@ def _apply_combination(
     combination: _Combination,
     cache: Optional[_PriceDict] = None
 ) -> Tuple[int, _HoningState]:
-  new_base_rate = min(2 * honing_state.rate_permyria,
+  new_base_rate = min(2 * honing_level.base_rate_permyria,
       honing_state.rate_permyria + honing_level.base_rate_permyria // 10)
 
   enhancement_rate, _ = _rate_and_cost(honing_level, combination, cache=cache)

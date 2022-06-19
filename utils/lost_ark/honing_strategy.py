@@ -2,7 +2,7 @@ from dataclasses import dataclass
 import math
 from typing import Dict, List, Optional, Set, Sequence, Tuple, Union
 
-from constants import honing_levels
+from constants import honing_data
 from utils import multi_range
 from utils.lost_ark import market_prices
 
@@ -19,7 +19,7 @@ _Combination = Tuple[int, ...]
 _DataType = Union[str, int, float]
 _PriceDict = Dict[str, Dict[str, _DataType]]
 
-def _rate_and_cost(honing_level: honing_levels.HoningLevel,
+def _rate_and_cost(honing_level: honing_data.HoningLevel,
                    combination: _Combination,
                    cache: Optional[_PriceDict] = None) -> Tuple[int, float]:
   permyria = 0
@@ -39,7 +39,7 @@ def _rate_and_cost(honing_level: honing_levels.HoningLevel,
   return permyria, cost
 
 def _get_enhancement_combination_list(
-    honing_level: honing_levels.HoningLevel,
+    honing_level: honing_data.HoningLevel,
     cache: Optional[_PriceDict] = None
 ) -> List[Tuple[int, float, _Combination]]:
   enhancements = honing_level.enhancements
@@ -70,7 +70,7 @@ def _get_enhancement_combination_list(
 
 def _apply_combination(
     honing_state: _HoningState,
-    honing_level: honing_levels.HoningLevel,
+    honing_level: honing_data.HoningLevel,
     combination: _Combination,
     cache: Optional[_PriceDict] = None
 ) -> Tuple[int, _HoningState]:
@@ -87,7 +87,7 @@ def _apply_combination(
 _EdgeDict = Dict[_HoningState, Dict[_HoningState, _Combination]]
 def _construct_graph(
     combinations: Sequence[_Combination],
-    honing_level: honing_levels.HoningLevel,
+    honing_level: honing_data.HoningLevel,
     starting_state: Optional[_HoningState] = None,
     cache: Optional[_PriceDict] = None,
 ) -> Tuple[Set[_HoningState], _EdgeDict, _EdgeDict]:
@@ -120,7 +120,7 @@ def _construct_graph(
       in_edges[out_state][state] = combination
   return states, in_edges, out_edges
 
-def get_honing_strategy(honing_level: honing_levels.HoningLevel,
+def get_honing_strategy(honing_level: honing_data.HoningLevel,
                         starting_rate: Optional[float] = None,
                         starting_artisans: float = 0,
                         cache: Optional[_PriceDict] = None):

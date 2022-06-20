@@ -36,6 +36,25 @@
         ]
     },
     {
+        "name": "hone",
+        "description": "Determine which enhancement materials to use based on current prices",
+        "type": 1,
+        "options": [
+            {
+                "name": "current_item_level",
+                "description": "The item level of the current equipment",
+                "type": 4,
+                "required": 1
+            },
+            {
+                "name": "is_weapon",
+                "description": "Whether the equipment is a weapon piece. (True for weapon, False for armor)",
+                "type": 5,
+                "required": 1
+            }
+        ]
+    },
+    {
         "name": "add_roles",
         "description": "Let people know what content you want to do by adding roles",
         "options": [

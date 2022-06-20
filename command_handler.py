@@ -3,6 +3,7 @@ from utils import discord
 
 ROLE_COMMANDS = ["add_roles", "remove_roles"]
 MARKET_COMMANDS = ["price"]
+HONING_COMMANDS = ["hone"]
 
 def handle_command(body):
     # dummy return
@@ -27,6 +28,8 @@ def handle_command(body):
         return roles.handle(command, options, user_id, server_id)
     elif command in MARKET_COMMANDS:
         return market.handle(command, options)
+    elif command in HONING_COMMANDS:
+        raise NotImplementedError('Zethorix')
     raise ValueError(f"Unrecognized command {command}, sad")
         
 
@@ -45,6 +48,8 @@ def lambda_handler(event, context):
 
     try:
         output = handle_command(body)
+    except NotImplementedError as nie:
+        return f"This function is not yet implemented. Contact the owner. ({nie})"
     except Exception as e:
         discord.delete_response(application_id, interaction_token)
         discord.send_followup(application_id, interaction_token, f"Error: {e}", ephemeral=True)

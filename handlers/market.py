@@ -20,6 +20,7 @@ def handle(command, cmd_input):
             "embed": item.format_for_embed()
         }
         return result
-
+    if command == "mari":
+        return market_prices.generate_profitable_mari_purchases_string()
     else:
         return f"UNKNOWN COMMAND: {command}"

@@ -36,6 +36,11 @@
         ]
     },
     {
+        "name": "mari",
+        "description": "Gives a list of all possible mari shop items that are currently profitable to purchase as opposed to buying from the market ",
+        "type": 1
+    },
+    {
         "name": "hone",
         "description": "Determine which enhancement materials to use based on current prices",
         "type": 1,

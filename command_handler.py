@@ -2,7 +2,7 @@ from handlers import roles, market
 from utils import discord
 
 ROLE_COMMANDS = ["add_roles", "remove_roles"]
-MARKET_COMMANDS = ["price"]
+MARKET_COMMANDS = ["price", "mari"]
 HONING_COMMANDS = ["hone"]
 
 def handle_command(body):

@@ -51,10 +51,12 @@ def _verify_signature(event):
     except Exception as e:
         raise Exception(f"[UNAUTHORIZED] Invalid request signature: {e}")
 
+
 def _ping_pong(body):
     if body.get("type") == 1:
         return True
     return False
+
 
 def check_input(event):
     _verify_signature(event)
@@ -81,13 +83,16 @@ def _get_all_roles(server_id, force_refresh=False):
     _ROLES_CACHE[server_id] = roles
     return roles
 
+
 def get_roles_by_ids(server_id, role_ids):
     roles = _get_all_roles(server_id)
     return [role for role in roles if role['id'] in role_ids]
 
+
 def get_roles_by_names(server_id, role_names):
     roles = _get_all_roles(server_id)
     return [role for role in roles if role['name'] in role_names]
+
 
 def _get_role_ids_by_name(server_id, role_names):
     results = {key: None for key in role_names}
@@ -97,6 +102,7 @@ def _get_role_ids_by_name(server_id, role_names):
         if None not in results.values():
             return results
 
+
 def _get_role_names_by_id(server_id, role_ids):
     results = {key: None for key in role_ids}
     for role in _get_all_roles(server_id):
@@ -105,23 +111,28 @@ def _get_role_names_by_id(server_id, role_ids):
         if None not in results.values():
             return results
 
+
 def remove_role(user_id, role_id, server_id):
     url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}/roles/{role_id}"
     requests.delete(url, headers=HEADERS)
 
+
 def add_role(user_id, role_id, server_id):
     url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}/roles/{role_id}"
     requests.put(url, headers=HEADERS)
+
 
 def get_user_role_ids(server_id, user_id):
     url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}"
     user = requests.get(url,  headers=HEADERS).json()
     return user['roles']
 
+
 def get_user_role_names(server_id, user_id):
     url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}"
     user = requests.get(url,  headers=HEADERS).json()
     return get_roles_by_ids(server_id, user['roles'])
+
 
 def get_all_users(server_id):
     # return all user_ids in a server
@@ -129,10 +140,12 @@ def get_all_users(server_id):
     response = requests.get(url,  headers=HEADERS)
     return response.json()
 
+
 def change_role(server_id, user_id, old_role_name, new_role_name):
     role_ids_by_name = _get_role_ids_by_name(server_id, [new_role_name, old_role_name])
     remove_role(user_id, role_ids_by_name[old_role_name], server_id)
     add_role(user_id, role_ids_by_name[new_role_name], server_id)
+
 
 def get_user_nickname_by_id(server_id, user_id):
     url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}"
@@ -141,10 +154,12 @@ def get_user_nickname_by_id(server_id, user_id):
 
 
 # Message related
+
 def post_message_in_channel(channel_id, content, ephemeral=True):
     url = f'{BASE_URL}/channels/{channel_id}/messages'
     body = {'content': content, "flags": 64}
     requests.post(url, json=body, headers=HEADERS)
+
 
 def get_messages(channel_id, limit, specified_message):
     # gets the last <limit> messages from the specified channel, and appends any message specified by id
@@ -156,6 +171,7 @@ def get_messages(channel_id, limit, specified_message):
         messages.append(requests.get(ind_url, headers=HEADERS).json())
 
     return messages
+
 
 def format_response(body, ephemeral):
     if isinstance(body, str):
@@ -185,6 +201,7 @@ def send_followup(application_id, interaction_token, content, ephemeral=False):
     url = f"{BASE_URL}/webhooks/{application_id}/{interaction_token}"
     requests.post(url, json=body, headers=HEADERS)
 
+
 def update_response(application_id, interaction_token, content, ephemeral=False):
     remaining = ''
     # TODO FIX FOR DICT CONTENT
@@ -198,16 +215,19 @@ def update_response(application_id, interaction_token, content, ephemeral=False)
     if remaining:
         send_followup(application_id, interaction_token, remaining)
 
+
 def delete_response(application_id, interaction_token):
     url = f"{BASE_URL}/webhooks/{application_id}/{interaction_token}/messages/@original"
     requests.delete(url, headers=HEADERS)
-    
+
+
 def send_response(channel_id, content, embed=None, ephemeral=False):
     body = format_response({"content": content, "embed": embed}, ephemeral=ephemeral)
     url = f"{BASE_URL}/channels/{channel_id}/messages"
     response = requests.post(url, json=body, headers=HEADERS)
     
     return response
+
 
 def edit_message(channel_id, message_id, content, embed={}):
     response = {
@@ -224,6 +244,7 @@ def edit_message(channel_id, message_id, content, embed={}):
 
 
 # Misc
+
 def initial_response(response_type, content=None, ephemeral=False):
     response = {
         "type": RESPONSE_TYPES[response_type] if response_type in RESPONSE_TYPES else RESPONSE_TYPES['MESSAGE_WITH_SOURCE'],
@@ -236,6 +257,7 @@ def initial_response(response_type, content=None, ephemeral=False):
             "flags": 64 if ephemeral else None
             }
     return response
+
 
 def _form_permission():
     result = 0

@@ -4,4 +4,5 @@ SHOULD_HIDE_COMMAND_OUTPUT = {
     "git": False,
     "price": False,
     "hone": False,
+    "mari": False
 }

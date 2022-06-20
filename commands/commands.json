@@ -37,7 +37,7 @@
     },
     {
         "name": "mari",
-        "description": "Gives a list of all possible mari shop items that are currently profitable to purchase as opposed to buying from the market ",
+        "description": "Gives a list of all possible mari shop items that are currently profitable to purchase",
         "type": 1
     },
     {

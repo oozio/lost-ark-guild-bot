@@ -8,7 +8,8 @@ def handle(command, cmd_input):
         # dunno how to put in unlimited # of autocompletable options
         item_id = md_const.ITEM_NAMES_TO_IDS[cmd_input["item"].lower()]
 
-        price_data = market_prices.get_price_data([item_id])
+        market_client = market_prices.MarketClient()
+        price_data = market_client.get_price_data([item_id])
         data = price_data[item_id]
         item = items.Item(data)
         result = {
@@ -17,6 +18,7 @@ def handle(command, cmd_input):
         }
         return result
     elif command == "mari":
-        return market_prices.profitable_mari_items()
+        market_client = market_prices.MarketClient()
+        return market_client.profitable_mari_items()
     else:
         return f"UNKNOWN COMMAND: {command}"

@@ -9,20 +9,22 @@ PING_PONG = {"type": 1}
 
 MAX_RESPONSE_LENGTH = 2000
 
-RESPONSE_TYPES =  {
-                    "PONG": 1,
-                    "ACK_NO_SOURCE": 2,
-                    "MESSAGE_NO_SOURCE": 3,
-                    "MESSAGE_WITH_SOURCE": 4,
-                    "ACK_WITH_SOURCE": 5
-                  }
+RESPONSE_TYPES = {
+    "PONG": 1,
+    "ACK_NO_SOURCE": 2,
+    "MESSAGE_NO_SOURCE": 3,
+    "MESSAGE_WITH_SOURCE": 4,
+    "ACK_WITH_SOURCE": 5
+}
 
 BASE_URL = "https://discord.com/api/v9"
 
 ssm = boto3.client('ssm', region_name='us-east-2')
 
-PUBLIC_KEY = ssm.get_parameter(Name="/discord/public_key/lost-ark-guild-bot", WithDecryption=True)['Parameter']['Value']
-BOT_TOKEN = ssm.get_parameter(Name="/discord/bot_token/lost-ark-guild-bot", WithDecryption=True)['Parameter']['Value']
+PUBLIC_KEY = ssm.get_parameter(
+    Name="/discord/public_key/lost-ark-guild-bot", WithDecryption=True)['Parameter']['Value']
+BOT_TOKEN = ssm.get_parameter(
+    Name="/discord/bot_token/lost-ark-guild-bot", WithDecryption=True)['Parameter']['Value']
 HEADERS = {
     "Authorization": f"Bot {BOT_TOKEN}",
     "Content-Type": "application/json"
@@ -39,10 +41,11 @@ _PERMISSIONS = {
 
 # Verification related
 
+
 def _verify_signature(event):
     raw_body = event.get("rawBody")
     auth_sig = event['params']['header'].get('x-signature-ed25519')
-    auth_ts  = event['params']['header'].get('x-signature-timestamp')
+    auth_ts = event['params']['header'].get('x-signature-timestamp')
     message = auth_ts.encode() + raw_body.encode()
 
     try:
@@ -71,10 +74,10 @@ def get_input(data, target):
             return option['value']
 
 
-
 # Role-related
-
 _ROLES_CACHE = {}
+
+
 def _get_all_roles(server_id, force_refresh=False):
     if server_id in _ROLES_CACHE and not force_refresh:
         return _ROLES_CACHE[server_id]
@@ -98,7 +101,7 @@ def _get_role_ids_by_name(server_id, role_names):
     results = {key: None for key in role_names}
     for role in _get_all_roles(server_id):
         if role['name'] in role_names:
-            results[ role['name'] ] = role['id']
+            results[role['name']] = role['id']
         if None not in results.values():
             return results
 
@@ -107,7 +110,7 @@ def _get_role_names_by_id(server_id, role_ids):
     results = {key: None for key in role_ids}
     for role in _get_all_roles(server_id):
         if role['id'] in role_ids:
-            results[ role['id'] ] = role['name']
+            results[role['id']] = role['name']
         if None not in results.values():
             return results
 
@@ -142,7 +145,8 @@ def get_all_users(server_id):
 
 
 def change_role(server_id, user_id, old_role_name, new_role_name):
-    role_ids_by_name = _get_role_ids_by_name(server_id, [new_role_name, old_role_name])
+    role_ids_by_name = _get_role_ids_by_name(
+        server_id, [new_role_name, old_role_name])
     remove_role(user_id, role_ids_by_name[old_role_name], server_id)
     add_role(user_id, role_ids_by_name[new_role_name], server_id)
 
@@ -179,22 +183,23 @@ def format_response(body, ephemeral):
             "content": body,
             "flags": 64 if ephemeral else 128
         }
-    else:        
+    else:
         content = body.get('content')
         embed = body.get('embed')
         response = {
-                "content": content,
-                "embeds": [embed],
-                "allowed_mentions": [],
-                "flags": 64 if ephemeral else None
-            }
+            "content": content,
+            "embeds": [embed],
+            "allowed_mentions": [],
+            "flags": 64 if ephemeral else None
+        }
 
     return response
 
-    
+
 def send_followup(application_id, interaction_token, content, ephemeral=False):
     while len(content) > MAX_RESPONSE_LENGTH:
-        send_followup(application_id, interaction_token, content[:MAX_RESPONSE_LENGTH])
+        send_followup(application_id, interaction_token,
+                      content[:MAX_RESPONSE_LENGTH])
         content = content[MAX_RESPONSE_LENGTH:]
 
     body = format_response(content, ephemeral=ephemeral)
@@ -222,10 +227,11 @@ def delete_response(application_id, interaction_token):
 
 
 def send_response(channel_id, content, embed=None, ephemeral=False):
-    body = format_response({"content": content, "embed": embed}, ephemeral=ephemeral)
+    body = format_response(
+        {"content": content, "embed": embed}, ephemeral=ephemeral)
     url = f"{BASE_URL}/channels/{channel_id}/messages"
     response = requests.post(url, json=body, headers=HEADERS)
-    
+
     return response
 
 
@@ -237,10 +243,9 @@ def edit_message(channel_id, message_id, content, embed={}):
         response['embed'] = {
             "title": f"{embed.get('title')}",
             "description": f"{embed.get('description')}"
-         }
+        }
     url = f"{BASE_URL}/channels/{channel_id}/messages/{message_id}"
     response = requests.patch(url, json=response, headers=HEADERS)
-
 
 
 # Misc
@@ -248,14 +253,14 @@ def edit_message(channel_id, message_id, content, embed={}):
 def initial_response(response_type, content=None, ephemeral=False):
     response = {
         "type": RESPONSE_TYPES[response_type] if response_type in RESPONSE_TYPES else RESPONSE_TYPES['MESSAGE_WITH_SOURCE'],
-        }
-    if response_type != 'PONG':# and "ACK" not in response_type:
+    }
+    if response_type != 'PONG':  # and "ACK" not in response_type:
         response["data"] = {
             "content": content,
             "embeds": [],
             "allowed_mentions": [],
             "flags": 64 if ephemeral else None
-            }
+        }
     return response
 
 

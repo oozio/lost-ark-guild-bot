@@ -2,33 +2,38 @@ from dataclasses import dataclass
 import enum
 from typing import Optional, Tuple
 
+
 class EquipmentType(enum.Enum):
-  ARMOR = 0
-  WEAPON = 1
+    ARMOR = 0
+    WEAPON = 1
+
 
 @dataclass(frozen=True)
 class Material:
-  item_id: str
-  amount: int
+    item_id: str
+    amount: int
+
 
 @dataclass(frozen=True)
 class Enhancement:
-  item_id: str
-  rate_increase_permyria: int
-  max_amount: int
+    item_id: str
+    rate_increase_permyria: int
+    max_amount: int
+
 
 @dataclass(frozen=True)
 class HoningLevel:
-  base_item_level: int
-  next_item_level: int
-  tier: int
-  base_level: int
-  equipment_type: EquipmentType
-  base_rate_permyria: int
-  cost: Tuple[Material]
-  enhancements: Tuple[Enhancement] = ()
-  max_enhancement_rate_permyria: int = 0
-  book_id: Optional[str] = None
+    base_item_level: int
+    next_item_level: int
+    tier: int
+    base_level: int
+    equipment_type: EquipmentType
+    base_rate_permyria: int
+    cost: Tuple[Material]
+    enhancements: Tuple[Enhancement] = ()
+    max_enhancement_rate_permyria: int = 0
+    book_id: Optional[str] = None
+
 
 HONES = (
     HoningLevel(

@@ -4,7 +4,9 @@ import time
 from functools import wraps
 from enum import Enum
 
-EXCEPTIONS_TO_CATCH = (ConnectionError, TimeoutError, requests.exceptions.HTTPError, requests.exceptions.Timeout)
+EXCEPTIONS_TO_CATCH = (ConnectionError, TimeoutError,
+                       requests.exceptions.HTTPError, requests.exceptions.Timeout)
+
 
 def retry(retries=3, backoff=2, backoff_factor=2):
     def retry_decorator(f):
@@ -19,14 +21,15 @@ def retry(retries=3, backoff=2, backoff_factor=2):
                     return f(*args, **kwargs)
                 except EXCEPTIONS_TO_CATCH as e:
                     last_exc = e
-                    print(f"Err: {e}, retrying {retries} more times in {backoff} seconds")
+                    print(
+                        f"Err: {e}, retrying {retries} more times in {backoff} seconds")
                     time.sleep(backoff)
                     retries -= 1
                     backoff *= backoff_factor
 
             if last_exc:
                 raise last_exc
-                
+
             return last_exc
         return retry_f
     return retry_decorator
@@ -35,7 +38,7 @@ def retry(retries=3, backoff=2, backoff_factor=2):
 # TODO exc carryover bug
 # @retry()
 def make_request(method, url, data=None, json=None, params=None, headers=None, timeout=5):
-    r = requests.request(method, url, data=data, json=json, params=params, headers=headers)
+    r = requests.request(method, url, data=data, json=json,
+                         params=params, headers=headers)
     r.raise_for_status()
     return r.json()
-        

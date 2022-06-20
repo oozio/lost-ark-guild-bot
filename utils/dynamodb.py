@@ -7,6 +7,7 @@ GENERAL_TABLE = "lost-ark-guild-bot"
 
 dynamodb_client = boto3.resource("dynamodb")
 
+
 def get_rows(table_name, pkey_value=None):
     table = dynamodb_client.Table(table_name)
     if pkey_value:
@@ -35,7 +36,6 @@ def set_rows(table_name, pkey_value, new_column):
                         ":s": v
                     }
                 )
-                
+
     if table_name != GENERAL_TABLE:
         set_rows(GENERAL_TABLE, pkey_value, new_column)
-

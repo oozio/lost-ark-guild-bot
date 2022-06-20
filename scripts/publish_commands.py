@@ -9,9 +9,9 @@ from time import sleep
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_REGION = os.environ.get("AWS_REGION")
-s3 = boto3.client("s3",             
-                  aws_access_key_id=AWS_ACCESS_KEY_ID, 
-                  aws_secret_access_key=AWS_SECRET_ACCESS_KEY, 
+s3 = boto3.client("s3",
+                  aws_access_key_id=AWS_ACCESS_KEY_ID,
+                  aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
                   region_name=AWS_REGION)
 
 # discord info so we know where to publish the slash commands
@@ -27,7 +27,8 @@ KEY = "commands.json"
 
 # form the APi endpoints: https://discord.com/developers/docs/interactions/slash-commands#registering-a-command
 global_url = f"https://discord.com/api/v8/applications/{APPLICATION_ID}/commands"
-guild_urls = [f"https://discord.com/api/v8/applications/{APPLICATION_ID}/guilds/{test_server_id}/commands" for test_server_id in TEST_SERVERS]
+guild_urls = [
+    f"https://discord.com/api/v8/applications/{APPLICATION_ID}/guilds/{test_server_id}/commands" for test_server_id in TEST_SERVERS]
 
 
 def get_json(bucket, key):
@@ -47,28 +48,28 @@ def publish_command(url, commands):
         print(f"Post to {url} failed; retrying once")
         print(r)
         r = requests.post(url, headers=HEADERS, json=commands)
-        
+
     # debug print
     print(f"Response from {url}: {r.status_code}- {r.text}")
 
-    
+
 def get_all_commands(url):
     existing_commands = requests.get(url, headers=HEADERS).json()
     return existing_commands if existing_commands else []
 
-    
+
 def delete_command(url):
     r = requests.delete(url, headers=HEADERS)
     print(r.text)
-    
+
 
 def run():
     # use guild_urls to test, since global changes take effect after a delay
     # optional: delete all existing commands to reset to clean state
     for guild_url in guild_urls:
-       for command in get_all_commands(guild_url):
-           delete_command(f"{guild_url}/{command['id']}")
-            
+        for command in get_all_commands(guild_url):
+            delete_command(f"{guild_url}/{command['id']}")
+
     # publish new commands
     commands = get_json(BUCKET, KEY)
     for url in guild_urls:
@@ -78,10 +79,9 @@ def run():
     # uncomment to publish globally
     # for command in commands:
     #     publish_command(global_url, command)
-      
 
     print(f"{len(commands)} published")
 
-    
+
 if __name__ == "__main__":
     run()

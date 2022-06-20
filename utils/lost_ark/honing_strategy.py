@@ -30,7 +30,7 @@ def _rate_and_cost(honing_level: honing_data.HoningLevel,
       use_book = (num == 1)
       break
     permyria += num * honing_level.enhancements[i].rate_increase_permyria
-    cost += num * market_prices.get_unit_price(honing_level.enhancements[i].id,
+    cost += num * market_prices.get_unit_price(honing_level.enhancements[i].item_id,
                                                cache=cache)
   permyria = min(permyria, honing_level.max_enhancement_rate_permyria)
   if use_book:
@@ -149,7 +149,7 @@ def get_honing_strategy(honing_level: honing_data.HoningLevel,
   terminal_states = [state for state, edges
                      in out_edges_set.items() if not edges]
 
-  base_cost = sum(market_prices.get_unit_price(m.id) * m.amount
+  base_cost = sum(market_prices.get_unit_price(m.item_id) * m.amount
                   for m in honing_level.cost)
   costs = {}
   best_out_edge = {}

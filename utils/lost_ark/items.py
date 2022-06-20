@@ -2,24 +2,25 @@ from constants.common import TrimmableClass
 
 FAVICON = "https://www.lostarkmarket.online/assets/icons/favicon.png"
 
+
 class Item(TrimmableClass):
     FIELDS = {
         "name": {
             "type": str,
             "readable_name": "_name"
-            },
+        },
         "id": {
             "type": str,
             "readable_name": "_id"
-            },
+        },
         "image": {
             "type": str,
             "readable_name": "_image_url"
-            }, 
+        },
         "lowPrice": {
             "type": int,
             "readable_name": "Current Lowest Price"
-            },
+        },
         "cheapestRemaining": {
             "type": int,
             "readable_name": "Cheapest Remaining"
@@ -28,13 +29,12 @@ class Item(TrimmableClass):
             "type": dict,
             "readable_name": "Historic Prices"
         }
-        }
+    }
 
     def __init__(self, kwargs):
         super().__init__(**kwargs)
 
-        
-    def format_for_embed(self):    
+    def format_for_embed(self):
         embed = {
             "author": {
                 "name": self.name,

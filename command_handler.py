@@ -5,16 +5,17 @@ ROLE_COMMANDS = ["add_roles", "remove_roles"]
 MARKET_COMMANDS = ["price", "mari"]
 HONING_COMMANDS = ["hone"]
 
+
 def handle_command(body):
     # dummy return
     channel_id = body["channel_id"]
     server_id = body["guild_id"]
     user_id = body["member"]["user"]["id"]
     role_ids = body["member"]["roles"]
-    
+
     data = body["data"]
     command = data["name"].lower()
-    
+
     options = {}
     if "options" in data:
         for option in data.get("options"):
@@ -31,7 +32,7 @@ def handle_command(body):
     elif command in HONING_COMMANDS:
         raise NotImplementedError('Zethorix')
     raise ValueError(f"Unrecognized command {command}, sad")
-        
+
 
 def lambda_handler(event, context):
     # get interaction metadata
@@ -40,10 +41,10 @@ def lambda_handler(event, context):
     channel_id = body["channel_id"]
     application_id = body["application_id"]
     interaction_token = body["token"]
-    
+
     user_id = body["member"]["user"]["id"]
     command = body["data"]["name"]
-    
+
     output = None
 
     try:
@@ -52,9 +53,10 @@ def lambda_handler(event, context):
         output = f"This function is not yet implemented. Contact the owner. ({nie})"
     except Exception as e:
         discord.delete_response(application_id, interaction_token)
-        discord.send_followup(application_id, interaction_token, f"Error: {e}", ephemeral=True)
+        discord.send_followup(
+            application_id, interaction_token, f"Error: {e}", ephemeral=True)
         raise e
-  
+
     if not output:
         discord.delete_response(application_id, interaction_token)
     else:

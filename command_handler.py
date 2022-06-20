@@ -49,7 +49,7 @@ def lambda_handler(event, context):
     try:
         output = handle_command(body)
     except NotImplementedError as nie:
-        return f"This function is not yet implemented. Contact the owner. ({nie})"
+        output = f"This function is not yet implemented. Contact the owner. ({nie})"
     except Exception as e:
         discord.delete_response(application_id, interaction_token)
         discord.send_followup(application_id, interaction_token, f"Error: {e}", ephemeral=True)

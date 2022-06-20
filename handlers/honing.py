@@ -15,7 +15,7 @@ def handle(command, cmd_input):
         starting_rate = cmd_input['base_rate'] / \
             100 if 'base_rate' in cmd_input else None
         starting_artisans = cmd_input['artisans_energy'] / \
-            100 if 'artisans_energy' in cmd_input else None
+            100 if 'artisans_energy' in cmd_input else 0
 
         strategy_calculator = honing_strategy.StrategyCalculator()
         average_cost, combination_list, state_list = \

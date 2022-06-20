@@ -1,4 +1,4 @@
-from handlers import roles, market
+from handlers import honing, market, roles
 from utils import discord
 
 ROLE_COMMANDS = ["add_roles", "remove_roles"]
@@ -30,7 +30,7 @@ def handle_command(body):
     elif command in MARKET_COMMANDS:
         return market.handle(command, options)
     elif command in HONING_COMMANDS:
-        raise NotImplementedError('Zethorix')
+        return honing.handle(command, options)
     raise ValueError(f"Unrecognized command {command}, sad")
 
 

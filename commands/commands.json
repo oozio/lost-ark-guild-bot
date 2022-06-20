@@ -53,9 +53,21 @@
             },
             {
                 "name": "is_weapon",
-                "description": "Whether the equipment is a weapon piece. (True for weapon, False for armor)",
+                "description": "Whether the equipment is a weapon. (True for weapon, False for armor)",
                 "type": 5,
                 "required": 1
+            },
+            {
+                "name": "base_rate",
+                "description": "How much (unenhanced) passing percentage the item currently has. E.g. 5.50 for 5.5%",
+                "type": 10,
+                "required": 0
+            },
+            {
+                "name": "artisans_energy",
+                "description": "How much Artisan's Energy percentage the item currently has. E.g. 50.35 for 50.35%",
+                "type": 10,
+                "required": 0
             }
         ]
     },

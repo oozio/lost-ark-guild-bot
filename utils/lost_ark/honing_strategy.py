@@ -16,6 +16,13 @@ class _HoningState:
     rate_permyria: int
     artisans_points: int = 0
 
+    def prettify(self):
+        pretty_rate = self.rate_permyria * 100 / _MYRIA
+        pretty_artisans = round(
+            int(self.artisans_points / _MAX_ARTISANS_POINTS * 10000) / 100, 2)
+        return (f'Unenhanced Rate: {pretty_rate}%, '
+                f'Artisan\'s Energy: {pretty_artisans}%')
+
 
 _Combination = Tuple[int, ...]
 
@@ -181,6 +188,11 @@ class StrategyCalculator(object):
             next_state, combination = best_out_edge[best_states[-1]]
             best_path.append(combination)
             best_states.append(next_state)
+
+        no_enhancements = [0] * len(self.honing_level.enhancements)
+        if self.honing_level.book_id is not None:
+            no_enhancements.append(0)
+        best_path.append(tuple(no_enhancements))
 
         del self.honing_level
 

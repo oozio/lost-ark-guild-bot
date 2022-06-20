@@ -60,7 +60,7 @@ HONES = (
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=82),
             Material(item_id='honor-shard', amount=22),
-            Material(item_id='honor-leapstone', amount=2),
+            Material(item_id='honor-leapstone-2', amount=2),
             Material(item_id='silver', amount=11380),
         ),
     ),

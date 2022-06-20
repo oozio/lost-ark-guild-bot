@@ -1,3 +1,4 @@
+from re import M
 from constants import market_data as md_const
 from typing import Dict, Optional, Sequence, Union
 from utils import http
@@ -141,7 +142,7 @@ def gold_of_crystal() -> float:
   Returns:
     A float representing the current lowest price for blue crystals
   '''
-  return item_gold_prices([md_const.BLUE_CRYSTAL_ID])
+  return item_gold_prices([md_const.BLUE_CRYSTAL_ID])[md_const.BLUE_CRYSTAL_ID]
 
 
 def item_mari_prices():
@@ -179,7 +180,7 @@ def profitable_mari_items() -> str:
   '''
   mari_prices = item_mari_prices()
   output = ""
-  for (item, gold_price) in item_gold_prices():
+  for (item, gold_price) in item_gold_prices(md_const.MARI_ITEM_INFO.keys()).items():
       price_diff = mari_prices[item] - gold_price
       #Will do a pretty format later, want to test to see how this gets displayed on discord first
       if price_diff < 0:

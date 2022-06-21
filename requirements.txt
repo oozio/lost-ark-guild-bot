@@ -4,3 +4,4 @@ pynacl
 
 # other dependencies
 boto3
+dataclasses

@@ -7,7 +7,9 @@ from utils import multi_range
 from utils.lost_ark import market_prices
 
 _BOOK_PERMYRIA = 1000
-_MAX_ARTISANS_POINTS = 21500
+_MAX_ARTISANS_POINTS = 21506
+_ARTISANS_CONVERSION_NUMERATOR = 465
+_ARTISANS_CONVERSION_DENOMINATOR = 10000
 _MYRIA = 10000
 
 
@@ -18,8 +20,9 @@ class _HoningState:
 
     def prettify(self):
         pretty_rate = self.rate_permyria * 100 / _MYRIA
-        pretty_artisans = round(
-            int(self.artisans_points / _MAX_ARTISANS_POINTS * 10000) / 100, 2)
+        pretty_artisans = round(int(
+            self.artisans_points * _ARTISANS_CONVERSION_NUMERATOR) /
+            _ARTISANS_CONVERSION_DENOMINATOR, 2)
         return (f'Unenhanced Rate: {pretty_rate}%, '
                 f'Artisan\'s Energy: {pretty_artisans}%')
 

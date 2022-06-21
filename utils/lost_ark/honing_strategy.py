@@ -27,6 +27,9 @@ class _HoningState:
 _Combination = Tuple[int, ...]
 
 
+_GUARANTEED_SUCCESS = _HoningState(rate_permyria=10000)
+
+
 class StrategyCalculator(object):
     def __init__(self):
         self.market_client = market_prices.MarketClient()
@@ -79,7 +82,7 @@ class StrategyCalculator(object):
                 continue
             min_cost = cost
             filtered.append((rate, cost, counts))
-        return filtered
+        return filtered[::-1]
 
     def _apply_combination(self,
                            honing_state: _HoningState,
@@ -120,7 +123,10 @@ class StrategyCalculator(object):
             for combination in combinations:
                 success, out_state = self._apply_combination(state,
                                                              combination)
+                if out_state in out_edges[state]:
+                    continue
                 if success == _MYRIA:
+                    out_edges[state][_GUARANTEED_SUCCESS] = combination
                     continue
                 stack.append(out_state)
                 out_edges[state][out_state] = combination
@@ -150,12 +156,12 @@ class StrategyCalculator(object):
                                                             starting_state=starting_state)
 
         out_edges_set = {k: set(v.keys()) for k, v in out_edges.items()}
-        terminal_states = [state for state, edges
-                           in out_edges_set.items() if not edges]
+        terminal_states = [state for state, edges in out_edges_set.items(
+        ) if not edges or edges == {_GUARANTEED_SUCCESS}]
 
         base_cost = sum(self.market_client.get_unit_price(m.item_id) * m.amount
                         for m in self.honing_level.cost)
-        costs = {}
+        costs = {_GUARANTEED_SUCCESS: 0.}
         best_out_edge = {}
         while terminal_states:
             state = terminal_states.pop()
@@ -179,7 +185,7 @@ class StrategyCalculator(object):
 
             for in_state, combination in in_edges[state].items():
                 out_edges_set[in_state].remove(state)
-                if not out_edges_set[in_state]:
+                if not out_edges_set[in_state] or out_edges_set[in_state] == {_GUARANTEED_SUCCESS}:
                     terminal_states.append(in_state)
 
         best_path = []

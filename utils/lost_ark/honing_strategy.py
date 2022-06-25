@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import math
-from typing import Dict, List, Optional, Set, Sequence, Tuple, Union
+from typing import Dict, Iterable, List, Optional, Set, Tuple, Union
 
 from constants import honing_data
 from utils import multi_range
@@ -30,7 +30,7 @@ class _HoningState:
 _Combination = Tuple[int, ...]
 
 
-_GUARANTEED_SUCCESS = _HoningState(rate_permyria=10000)
+_GUARANTEED_SUCCESS = _HoningState(rate_permyria=-1, artisans_points=-1)
 
 
 class StrategyCalculator(object):
@@ -104,24 +104,26 @@ class StrategyCalculator(object):
     _EdgeDict = Dict[_HoningState, Dict[_HoningState, _Combination]]
 
     def _construct_graph(self,
-                         combinations: Sequence[_Combination],
+                         combinations: Iterable[_Combination],
                          starting_state: Optional[_HoningState] = None
-                         ) -> Tuple[Set[_HoningState], _EdgeDict, _EdgeDict]:
+                         ) -> Tuple[_EdgeDict, _EdgeDict]:
         if starting_state is None:
             starting_state = _HoningState(
                 rate_permyria=self.honing_level.base_rate_permyria)
 
-        states = set()
-        in_edges = {starting_state: {}}
-        out_edges = {}
+        empty_combination = tuple([0] * len(next(iter(combinations))))
+
+        in_edges = {starting_state: {}, _GUARANTEED_SUCCESS: {}}
+        out_edges = {_GUARANTEED_SUCCESS: {}}
         stack = [starting_state]
         while stack:
             state = stack.pop()
-            if state in states:
+            if state in out_edges:
                 continue
-            states.add(state)
             out_edges[state] = {}
             if state.artisans_points == _MAX_ARTISANS_POINTS:
+                out_edges[state][_GUARANTEED_SUCCESS] = empty_combination
+                in_edges[_GUARANTEED_SUCCESS][state] = empty_combination
                 continue
             for combination in combinations:
                 success, out_state = self._apply_combination(state,
@@ -130,13 +132,14 @@ class StrategyCalculator(object):
                     continue
                 if success == _MYRIA:
                     out_edges[state][_GUARANTEED_SUCCESS] = combination
+                    in_edges[_GUARANTEED_SUCCESS][state] = combination
                     continue
                 stack.append(out_state)
                 out_edges[state][out_state] = combination
                 if out_state not in in_edges:
                     in_edges[out_state] = {}
                 in_edges[out_state][state] = combination
-        return states, in_edges, out_edges
+        return in_edges, out_edges
 
     def get_honing_strategy(self, honing_level: honing_data.HoningLevel, starting_rate: Optional[float] = None,
                             starting_artisans: float = 0):
@@ -155,16 +158,15 @@ class StrategyCalculator(object):
         enhancement_combinations = {combination: (rate, cost)
                                     for rate, cost, combination
                                     in enhancement_combination_list}
-        states, in_edges, out_edges = self._construct_graph(enhancement_combinations,
-                                                            starting_state=starting_state)
+        in_edges, out_edges = self._construct_graph(enhancement_combinations,
+                                                    starting_state=starting_state)
 
-        out_edges_set = {k: set(v.keys()) for k, v in out_edges.items()}
-        terminal_states = [state for state, edges in out_edges_set.items(
-        ) if not edges or edges == {_GUARANTEED_SUCCESS}]
+        out_edges_counts = {k: len(v) for k, v in out_edges.items()}
+        terminal_states = [_GUARANTEED_SUCCESS]
 
         base_cost = sum(self.market_client.get_unit_price(m.item_id) * m.amount
                         for m in self.honing_level.cost)
-        costs = {_GUARANTEED_SUCCESS: 0.}
+        costs = {}
         best_out_edge = {}
         while terminal_states:
             state = terminal_states.pop()
@@ -181,14 +183,14 @@ class StrategyCalculator(object):
                     min_edge = out_state, combination
 
             if min_edge is None:
-                costs[state] = base_cost
+                costs[state] = 0.
             else:
                 costs[state] = min_cost
                 best_out_edge[state] = min_edge
 
             for in_state, combination in in_edges[state].items():
-                out_edges_set[in_state].remove(state)
-                if not out_edges_set[in_state] or out_edges_set[in_state] == {_GUARANTEED_SUCCESS}:
+                out_edges_counts[in_state] -= 1
+                if not out_edges_counts[in_state]:
                     terminal_states.append(in_state)
 
         best_path = []

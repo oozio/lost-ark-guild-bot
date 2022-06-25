@@ -40,7 +40,7 @@ def handle(command, cmd_input):
                 enhancement_str = ', '.join(enhancement_builder)
             else:
                 enhancement_str = 'No Enhancement Materials'
-            output.append(f'({state.prettify()}) -> ({enhancement_str})')
+            output.append(f'({honing_strategy.prettify(state)}) -> ({enhancement_str})')
         return '\n'.join(output)
     else:
         return f"UNKNOWN COMMAND: {command}"

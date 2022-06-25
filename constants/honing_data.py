@@ -499,7 +499,7 @@ HONES = (
                         max_amount=4),
         ),
         max_enhancement_rate_permyria=4000,
-        book_id='tailoring-basic-mending-3',
+        book_id='metallurgy-basic-welding-3',
     ),
     HoningLevel(
         base_item_level=1330,
@@ -528,7 +528,7 @@ HONES = (
                         max_amount=4),
         ),
         max_enhancement_rate_permyria=5500,
-        book_id='tailoring-basic-mending-3',
+        book_id='metallurgy-basic-welding-3',
     ),
     HoningLevel(
         base_item_level=1335,
@@ -557,7 +557,7 @@ HONES = (
                         max_amount=4),
         ),
         max_enhancement_rate_permyria=7000,
-        book_id='tailoring-basic-mending-3',
+        book_id='metallurgy-basic-welding-3',
     ),
     HoningLevel(
         base_item_level=1340,
@@ -586,7 +586,7 @@ HONES = (
                         max_amount=4),
         ),
         max_enhancement_rate_permyria=3000,
-        book_id='tailoring-basic-mending-3',
+        book_id='metallurgy-basic-welding-3',
     ),
     HoningLevel(
         base_item_level=1345,
@@ -615,7 +615,7 @@ HONES = (
                         max_amount=4),
         ),
         max_enhancement_rate_permyria=1500,
-        book_id='tailoring-basic-mending-3',
+        book_id='metallurgy-basic-welding-3',
     ),
     HoningLevel(
         base_item_level=1350,
@@ -644,7 +644,7 @@ HONES = (
                         max_amount=4),
         ),
         max_enhancement_rate_permyria=1500,
-        book_id='tailoring-basic-mending-3',
+        book_id='metallurgy-basic-welding-3',
     ),
     HoningLevel(
         base_item_level=1355,
@@ -673,7 +673,7 @@ HONES = (
                         max_amount=4),
         ),
         max_enhancement_rate_permyria=1500,
-        book_id='tailoring-basic-mending-3',
+        book_id='metallurgy-basic-welding-3',
     ),
     HoningLevel(
         base_item_level=1360,
@@ -702,7 +702,7 @@ HONES = (
                         max_amount=4),
         ),
         max_enhancement_rate_permyria=1500,
-        book_id='tailoring-basic-mending-3',
+        book_id='metallurgy-basic-welding-3',
     ),
     HoningLevel(
         base_item_level=1365,
@@ -731,7 +731,7 @@ HONES = (
                         max_amount=4),
         ),
         max_enhancement_rate_permyria=1000,
-        book_id='tailoring-basic-mending-3',
+        book_id='metallurgy-basic-welding-3',
     ),
     # ----- Mid T3 (1370-1490) -----
     HoningLevel(
@@ -1162,7 +1162,7 @@ HONES = (
                         max_amount=2),
         ),
         max_enhancement_rate_permyria=4000,
-        book_id='tailoring-applied-mending-4',
+        book_id='metallurgy-applied-welding-4',
     ),
     HoningLevel(
         base_item_level=1375,
@@ -1191,7 +1191,7 @@ HONES = (
                         max_amount=2),
         ),
         max_enhancement_rate_permyria=4500,
-        book_id='tailoring-applied-mending-4',
+        book_id='metallurgy-applied-welding-4',
     ),
     HoningLevel(
         base_item_level=1380,
@@ -1220,7 +1220,7 @@ HONES = (
                         max_amount=2),
         ),
         max_enhancement_rate_permyria=3000,
-        book_id='tailoring-applied-mending-4',
+        book_id='metallurgy-applied-welding-4',
     ),
     HoningLevel(
         base_item_level=1385,
@@ -1249,7 +1249,7 @@ HONES = (
                         max_amount=2),
         ),
         max_enhancement_rate_permyria=3000,
-        book_id='tailoring-applied-mending-4',
+        book_id='metallurgy-applied-welding-4',
     ),
     HoningLevel(
         base_item_level=1390,
@@ -1278,7 +1278,7 @@ HONES = (
                         max_amount=2),
         ),
         max_enhancement_rate_permyria=3000,
-        book_id='tailoring-applied-mending-4',
+        book_id='metallurgy-applied-welding-4',
     ),
     HoningLevel(
         base_item_level=1395,
@@ -1307,7 +1307,7 @@ HONES = (
                         max_amount=2),
         ),
         max_enhancement_rate_permyria=750,
-        book_id='tailoring-applied-mending-4',
+        book_id='metallurgy-applied-welding-4',
     ),
     HoningLevel(
         base_item_level=1400,
@@ -1336,7 +1336,7 @@ HONES = (
                         max_amount=2),
         ),
         max_enhancement_rate_permyria=750,
-        book_id='tailoring-applied-mending-4',
+        book_id='metallurgy-applied-welding-4',
     ),
     HoningLevel(
         base_item_level=1405,
@@ -1365,7 +1365,7 @@ HONES = (
                         max_amount=2),
         ),
         max_enhancement_rate_permyria=750,
-        book_id='tailoring-applied-mending-4',
+        book_id='metallurgy-applied-welding-4',
     ),
     HoningLevel(
         base_item_level=1410,
@@ -1394,7 +1394,7 @@ HONES = (
                         max_amount=2),
         ),
         max_enhancement_rate_permyria=500,
-        book_id='tailoring-applied-mending-4',
+        book_id='metallurgy-applied-welding-4',
     ),
     HoningLevel(
         base_item_level=1415,

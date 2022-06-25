@@ -11,7 +11,7 @@ def handle(command, cmd_input):
         market_client = market_prices.MarketClient()
         price_data = market_client.get_price_data([item_id])
         data = price_data[item_id]
-        item = items.Item(data)
+        item = items.item_from_market(data)
         result = {
             'content': "",
             "embed": item.format_for_embed()

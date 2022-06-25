@@ -36,9 +36,12 @@ _GUARANTEED_SUCCESS = _HoningState(rate_permyria=-1, artisans_points=-1)
 class StrategyCalculator(object):
     def __init__(self):
         self.market_client = market_prices.MarketClient()
+        self.honing_level = None
+        self.combinations = None
 
     def _rate_and_cost(self,
                        combination: _Combination) -> Tuple[int, float]:
+        assert(isinstance(self.honing_level, honing_data.HoningLevel))
         permyria = 0
         cost = 0
         use_book = False
@@ -205,6 +208,6 @@ class StrategyCalculator(object):
             no_enhancements.append(0)
         best_path.append(tuple(no_enhancements))
 
-        del self.honing_level
+        self.honing_level = None
 
         return costs[starting_state], best_path, best_states

@@ -112,7 +112,7 @@ class MarketClient(object):
         price_json = self.cache[item_id]
         return price_json['lowPrice'] / price_json['amount']
 
-    def item_gold_prices(self, item_ids: Iterable[str]) -> Dict[str, _DataType]:
+    def item_gold_prices(self, item_ids: Iterable[str]) -> Dict[str, float]:
         '''
         Args:
           item_ids: sequence of item ids to fetch.
@@ -123,7 +123,7 @@ class MarketClient(object):
           item.
         '''
         prices = self.get_price_data(item_ids)
-        return {prices[item_id]['id']: prices[item_id]['lowPrice'] for item_id in item_ids}
+        return {item_id: float(prices[item_id]['lowPrice']) for item_id in item_ids}
 
     def gold_of_crystal(self) -> float:
         '''
@@ -134,7 +134,8 @@ class MarketClient(object):
         Returns:
           A float representing the current lowest price for blue crystals
         '''
-        return self.item_gold_prices([md_const.BLUE_CRYSTAL_ID])[md_const.BLUE_CRYSTAL_ID]
+        price: float = self.item_gold_prices([md_const.BLUE_CRYSTAL_ID])[md_const.BLUE_CRYSTAL_ID]
+        return price
 
     def item_mari_prices(self):
         '''

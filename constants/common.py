@@ -1,4 +1,5 @@
 from abc import ABC
+from typing import Dict, Union
 
 
 TYPED_NONES = {
@@ -7,9 +8,11 @@ TYPED_NONES = {
     list: []
 }
 
+_Fields = Dict[str, Dict[str, Union[str, type]]]
+
 
 class TrimmableClass(ABC):
-    FIELDS = []
+    FIELDS: _Fields = {}
     EMBED_TEMPLATE = {
         "title": {
             "type": str

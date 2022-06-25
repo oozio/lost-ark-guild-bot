@@ -1,38 +1,17 @@
-from constants.common import TrimmableClass
+import dataclasses
+from typing import Any, Dict
 
 FAVICON = "https://www.lostarkmarket.online/assets/icons/favicon.png"
 
+@dataclasses.dataclass
+class Item:
+    name: str
+    item_id: str
+    image: str
+    low_price: float
+    cheapest_remaining: int
+    short_historic: Dict[str, float]
 
-class Item(TrimmableClass):
-    FIELDS = {
-        "name": {
-            "type": str,
-            "readable_name": "_name"
-        },
-        "id": {
-            "type": str,
-            "readable_name": "_id"
-        },
-        "image": {
-            "type": str,
-            "readable_name": "_image_url"
-        },
-        "lowPrice": {
-            "type": int,
-            "readable_name": "Current Lowest Price"
-        },
-        "cheapestRemaining": {
-            "type": int,
-            "readable_name": "Cheapest Remaining"
-        },
-        "shortHistoric": {
-            "type": dict,
-            "readable_name": "Historic Prices"
-        }
-    }
-
-    def __init__(self, kwargs):
-        super().__init__(**kwargs)
 
     def format_for_embed(self):
         embed = {
@@ -43,12 +22,12 @@ class Item(TrimmableClass):
             "fields": [
                 {
                     "name": "Current Price",
-                    "value": f"{self.lowPrice} gold:\n{self.cheapestRemaining} remaining",
+                    "value": f"{self.low_price} gold:\n{self.cheapest_remaining} remaining",
                     "inline": True
                 },
                 {
                     "name": "Historic Price",
-                    "value": "\n".join([f"{date}: {price}" for date, price in sorted(self.shortHistoric.items())]),
+                    "value": "\n".join([f"{date}: {price}" for date, price in sorted(self.short_historic.items())]),
                     "inline": True
                 }
             ],
@@ -59,3 +38,12 @@ class Item(TrimmableClass):
         }
 
         return embed
+
+def item_from_market(d: Dict[str, Any]) -> 'Item':
+    name = d['name']
+    item_id = d['id']
+    image = d['image']
+    low_price = d['lowPrice']
+    cheapest_remaining = d['cheapestRemaining']
+    short_historic = d['shortHistoric']
+    return Item(name=name, item_id=item_id, image=image, low_price=low_price, cheapest_remaining=cheapest_remaining, short_historic=short_historic) # pytype: disable

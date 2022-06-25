@@ -29,8 +29,8 @@ class HoningLevel:
     base_level: int
     equipment_type: EquipmentType
     base_rate_permyria: int
-    cost: Tuple[Material]
-    enhancements: Tuple[Enhancement] = ()
+    cost: Tuple[Material, ...]
+    enhancements: Tuple[Enhancement, ...] = ()
     max_enhancement_rate_permyria: int = 0
     book_id: Optional[str] = None
 

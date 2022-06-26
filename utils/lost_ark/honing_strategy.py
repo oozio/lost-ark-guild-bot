@@ -20,8 +20,10 @@ _GUARANTEED_SUCCESS = (-1, -1)
 def prettify(honing_state: _HoningState) -> str:
     pretty_rate = honing_state[0] * 100 / _MYRIA
     pretty_artisans = round(
-        int(honing_state[1] * _ARTISANS_CONVERSION_NUMERATOR) /
-        _ARTISANS_CONVERSION_DENOMINATOR, 2)
+        int(
+            min(honing_state[1], _MAX_ARTISANS_POINTS) *
+            _ARTISANS_CONVERSION_NUMERATOR) / _ARTISANS_CONVERSION_DENOMINATOR,
+        2)
     return (f'Unenhanced Rate: {pretty_rate}%, '
             f'Artisan\'s Energy: {pretty_artisans}%')
 
@@ -94,7 +96,7 @@ class StrategyCalculator(object):
 
         enhancement_rate, _ = combinations[combination]
         enhanced_rate = min(_MYRIA, honing_state[0] + enhancement_rate)
-        new_points = min(_MAX_ARTISANS_POINTS, honing_state[1] + enhanced_rate)
+        new_points = honing_state[1] + enhanced_rate
         return (enhanced_rate, (new_base_rate, new_points))
 
     _EdgeDict = Dict[_HoningState, Dict[_HoningState, _Combination]]
@@ -117,7 +119,7 @@ class StrategyCalculator(object):
             if state in out_edges:
                 continue
             out_edges[state] = {}
-            if state[1] == _MAX_ARTISANS_POINTS:
+            if state[1] >= _MAX_ARTISANS_POINTS:
                 out_edges[state][_GUARANTEED_SUCCESS] = empty_combination
                 in_edges[_GUARANTEED_SUCCESS][state] = empty_combination
                 continue

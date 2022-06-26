@@ -28,7 +28,8 @@ def handle(command, cmd_input):
         output = [f'Average gold cost: {round(average_cost, 2)}\n']
         for state, combination in zip(state_list, combination_list):
             enhancement_builder = []
-            for enhancement, num in zip(honing_level.enhancements, combination):
+            for enhancement, num in zip(honing_level.enhancements,
+                                        combination):
                 if num == 0:
                     continue
                 enhancement_builder.append(
@@ -40,7 +41,8 @@ def handle(command, cmd_input):
                 enhancement_str = ', '.join(enhancement_builder)
             else:
                 enhancement_str = 'No Enhancement Materials'
-            output.append(f'({honing_strategy.prettify(state)}) -> ({enhancement_str})')
+            output.append(
+                f'({honing_strategy.prettify(state)}) -> ({enhancement_str})')
         return '\n'.join(output)
     else:
         return f"UNKNOWN COMMAND: {command}"

@@ -53,8 +53,10 @@ def lambda_handler(event, context):
         output = f"This function is not yet implemented. Contact the owner. ({nie})"
     except Exception as e:
         discord.delete_response(application_id, interaction_token)
-        discord.send_followup(
-            application_id, interaction_token, f"Error: {e}", ephemeral=True)
+        discord.send_followup(application_id,
+                              interaction_token,
+                              f"Error: {e}",
+                              ephemeral=True)
         raise e
 
     if not output:

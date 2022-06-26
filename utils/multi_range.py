@@ -2,6 +2,7 @@ from typing import Sequence
 
 
 class MultipleRange:
+
     def __init__(self, stops: Sequence[int]):
         self.stops = stops[:]
         self.num = len(stops)

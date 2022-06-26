@@ -6,7 +6,6 @@ from utils import http
 _DataType = Union[str, int, float]
 _PriceDict = Dict[str, Dict[str, _DataType]]
 
-
 _HARDCODED_PRICES = {
     'gold': 1.,
     'silver': 0.,
@@ -14,6 +13,7 @@ _HARDCODED_PRICES = {
 
 
 class MarketClient(object):
+
     def __init__(self, region: str = 'North America West'):
         self.region = region
         self.cache = {}
@@ -64,21 +64,24 @@ class MarketClient(object):
           requests.HTTPError: An error occurred retrieving data from the API.
         '''
         item_ids = [
-            item_id for item_id in item_ids if item_id not in self.cache]
+            item_id for item_id in item_ids if item_id not in self.cache
+        ]
 
         if not item_ids:
             return self.cache
 
         request_url = f'{md_const.MARKET_API}/export-market-live/{self.region}'
-        raw_json = http.make_request('GET', request_url, params={
-                                     'items': ','.join(item_ids)})
+        raw_json = http.make_request('GET',
+                                     request_url,
+                                     params={'items': ','.join(item_ids)})
         self.cache.update({item['id']: item for item in raw_json})
         return self.cache
 
     def get_price_data_for_category(self, category: str) -> _PriceDict:
         request_url = f'{md_const.MARKET_API}/export-market-live/{self.region}'
-        raw_json = http.make_request(
-            'GET', request_url, params={'category': category})
+        raw_json = http.make_request('GET',
+                                     request_url,
+                                     params={'category': category})
         self.cache.update({item['id']: item for item in raw_json})
         return self.cache
 
@@ -92,8 +95,7 @@ class MarketClient(object):
 
         if item_id.endswith('-shard'):
             low_unit_price = float('inf')
-            for suffix, amount in (('-pouch-s-1', 500),
-                                   ('-pouch-m-2', 1000),
+            for suffix, amount in (('-pouch-s-1', 500), ('-pouch-m-2', 1000),
                                    ('-pouch-l-3', 1500)):
                 pouch_id = item_id + suffix
                 price_json = self.get_price_data([pouch_id])[pouch_id]
@@ -104,8 +106,11 @@ class MarketClient(object):
                     low_price = price_json['lowPrice']
                     low_amount = price_json['amount'] * amount
                     low_id = pouch_id
-            self.cache[item_id] = {'id': low_id,
-                                   'lowPrice': low_price, 'amount': low_amount}
+            self.cache[item_id] = {
+                'id': low_id,
+                'lowPrice': low_price,
+                'amount': low_amount
+            }
         else:
             self.get_price_data([item_id])
 
@@ -123,7 +128,10 @@ class MarketClient(object):
           item.
         '''
         prices = self.get_price_data(item_ids)
-        return {item_id: float(prices[item_id]['lowPrice']) for item_id in item_ids}
+        return {
+            item_id: float(prices[item_id]['lowPrice'])
+            for item_id in item_ids
+        }
 
     def gold_of_crystal(self) -> float:
         '''
@@ -134,7 +142,8 @@ class MarketClient(object):
         Returns:
           A float representing the current lowest price for blue crystals
         '''
-        price: float = self.item_gold_prices([md_const.BLUE_CRYSTAL_ID])[md_const.BLUE_CRYSTAL_ID]
+        price: float = self.item_gold_prices([md_const.BLUE_CRYSTAL_ID
+                                              ])[md_const.BLUE_CRYSTAL_ID]
         return price
 
     def item_mari_prices(self):
@@ -172,7 +181,8 @@ class MarketClient(object):
         '''
         mari_prices = self.item_mari_prices()
         output = ""
-        for (item, gold_price) in self.item_gold_prices(md_const.MARI_ITEM_INFO).items():
+        for (item, gold_price) in self.item_gold_prices(
+                md_const.MARI_ITEM_INFO).items():
             price_diff = mari_prices[item] - gold_price
             # Will do a pretty format later, want to test to see how this gets displayed on discord first
             if price_diff < 0:

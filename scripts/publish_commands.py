@@ -3,7 +3,6 @@ import json
 import os
 import requests
 
-
 from time import sleep
 
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
@@ -28,7 +27,9 @@ KEY = "commands.json"
 # form the APi endpoints: https://discord.com/developers/docs/interactions/slash-commands#registering-a-command
 global_url = f"https://discord.com/api/v8/applications/{APPLICATION_ID}/commands"
 guild_urls = [
-    f"https://discord.com/api/v8/applications/{APPLICATION_ID}/guilds/{test_server_id}/commands" for test_server_id in TEST_SERVERS]
+    f"https://discord.com/api/v8/applications/{APPLICATION_ID}/guilds/{test_server_id}/commands"
+    for test_server_id in TEST_SERVERS
+]
 
 
 def get_json(bucket, key):

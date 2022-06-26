@@ -5,11 +5,14 @@ from functools import wraps
 from enum import Enum
 
 EXCEPTIONS_TO_CATCH = (ConnectionError, TimeoutError,
-                       requests.exceptions.HTTPError, requests.exceptions.Timeout)
+                       requests.exceptions.HTTPError,
+                       requests.exceptions.Timeout)
 
 
 def retry(retries=3, backoff=2, backoff_factor=2):
+
     def retry_decorator(f):
+
         @wraps(f)
         def retry_f(*args, **kwargs):
             nonlocal retries
@@ -22,7 +25,8 @@ def retry(retries=3, backoff=2, backoff_factor=2):
                 except EXCEPTIONS_TO_CATCH as e:
                     last_exc = e
                     print(
-                        f"Err: {e}, retrying {retries} more times in {backoff} seconds")
+                        f"Err: {e}, retrying {retries} more times in {backoff} seconds"
+                    )
                     time.sleep(backoff)
                     retries -= 1
                     backoff *= backoff_factor
@@ -31,14 +35,26 @@ def retry(retries=3, backoff=2, backoff_factor=2):
                 raise last_exc
 
             return last_exc
+
         return retry_f
+
     return retry_decorator
 
 
 # TODO exc carryover bug
 # @retry()
-def make_request(method, url, data=None, json=None, params=None, headers=None, timeout=5):
-    r = requests.request(method, url, data=data, json=json,
-                         params=params, headers=headers)
+def make_request(method,
+                 url,
+                 data=None,
+                 json=None,
+                 params=None,
+                 headers=None,
+                 timeout=5):
+    r = requests.request(method,
+                         url,
+                         data=data,
+                         json=json,
+                         params=params,
+                         headers=headers)
     r.raise_for_status()
     return r.json()

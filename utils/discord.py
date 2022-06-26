@@ -21,10 +21,10 @@ BASE_URL = "https://discord.com/api/v9"
 
 ssm = boto3.client('ssm', region_name='us-east-2')
 
-PUBLIC_KEY = ssm.get_parameter(
-    Name="/discord/public_key/lost-ark-guild-bot", WithDecryption=True)['Parameter']['Value']
-BOT_TOKEN = ssm.get_parameter(
-    Name="/discord/bot_token/lost-ark-guild-bot", WithDecryption=True)['Parameter']['Value']
+PUBLIC_KEY = ssm.get_parameter(Name="/discord/public_key/lost-ark-guild-bot",
+                               WithDecryption=True)['Parameter']['Value']
+BOT_TOKEN = ssm.get_parameter(Name="/discord/bot_token/lost-ark-guild-bot",
+                              WithDecryption=True)['Parameter']['Value']
 HEADERS = {
     "Authorization": f"Bot {BOT_TOKEN}",
     "Content-Type": "application/json"
@@ -127,37 +127,38 @@ def add_role(user_id, role_id, server_id):
 
 def get_user_role_ids(server_id, user_id):
     url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}"
-    user = requests.get(url,  headers=HEADERS).json()
+    user = requests.get(url, headers=HEADERS).json()
     return user['roles']
 
 
 def get_user_role_names(server_id, user_id):
     url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}"
-    user = requests.get(url,  headers=HEADERS).json()
+    user = requests.get(url, headers=HEADERS).json()
     return get_roles_by_ids(server_id, user['roles'])
 
 
 def get_all_users(server_id):
     # return all user_ids in a server
     url = f"{BASE_URL}/guilds/{server_id}/members?limit=1000"
-    response = requests.get(url,  headers=HEADERS)
+    response = requests.get(url, headers=HEADERS)
     return response.json()
 
 
 def change_role(server_id, user_id, old_role_name, new_role_name):
-    role_ids_by_name = _get_role_ids_by_name(
-        server_id, [new_role_name, old_role_name])
+    role_ids_by_name = _get_role_ids_by_name(server_id,
+                                             [new_role_name, old_role_name])
     remove_role(user_id, role_ids_by_name[old_role_name], server_id)
     add_role(user_id, role_ids_by_name[new_role_name], server_id)
 
 
 def get_user_nickname_by_id(server_id, user_id):
     url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}"
-    user = requests.get(url,  headers=HEADERS).json()
+    user = requests.get(url, headers=HEADERS).json()
     return user["nick"]
 
 
 # Message related
+
 
 def post_message_in_channel(channel_id, content, ephemeral=True):
     url = f'{BASE_URL}/channels/{channel_id}/messages'
@@ -179,10 +180,7 @@ def get_messages(channel_id, limit, specified_message):
 
 def format_response(body, ephemeral):
     if isinstance(body, str):
-        response = {
-            "content": body,
-            "flags": 64 if ephemeral else 128
-        }
+        response = {"content": body, "flags": 64 if ephemeral else 128}
     else:
         content = body.get('content')
         embed = body.get('embed')
@@ -207,11 +205,15 @@ def send_followup(application_id, interaction_token, content, ephemeral=False):
     requests.post(url, json=body, headers=HEADERS)
 
 
-def update_response(application_id, interaction_token, content, ephemeral=False):
+def update_response(application_id,
+                    interaction_token,
+                    content,
+                    ephemeral=False):
     remaining = ''
     # TODO FIX FOR DICT CONTENT
     if len(content) > MAX_RESPONSE_LENGTH:
-        content, remaining = content[:MAX_RESPONSE_LENGTH], content[MAX_RESPONSE_LENGTH:]
+        content, remaining = content[:MAX_RESPONSE_LENGTH], content[
+            MAX_RESPONSE_LENGTH:]
 
     body = format_response(content, ephemeral=ephemeral)
     url = f"{BASE_URL}/webhooks/{application_id}/{interaction_token}/messages/@original"
@@ -227,8 +229,11 @@ def delete_response(application_id, interaction_token):
 
 
 def send_response(channel_id, content, embed=None, ephemeral=False):
-    body = format_response(
-        {"content": content, "embed": embed}, ephemeral=ephemeral)
+    body = format_response({
+        "content": content,
+        "embed": embed
+    },
+                           ephemeral=ephemeral)
     url = f"{BASE_URL}/channels/{channel_id}/messages"
     response = requests.post(url, json=body, headers=HEADERS)
 
@@ -236,9 +241,7 @@ def send_response(channel_id, content, embed=None, ephemeral=False):
 
 
 def edit_message(channel_id, message_id, content, embed={}):
-    response = {
-        "content": content
-    }
+    response = {"content": content}
     if embed:
         response['embed'] = {
             "title": f"{embed.get('title')}",
@@ -250,9 +253,12 @@ def edit_message(channel_id, message_id, content, embed={}):
 
 # Misc
 
+
 def initial_response(response_type, content=None, ephemeral=False):
     response = {
-        "type": RESPONSE_TYPES[response_type] if response_type in RESPONSE_TYPES else RESPONSE_TYPES['MESSAGE_WITH_SOURCE'],
+        "type":
+        RESPONSE_TYPES[response_type] if response_type in RESPONSE_TYPES else
+        RESPONSE_TYPES['MESSAGE_WITH_SOURCE'],
     }
     if response_type != 'PONG':  # and "ACK" not in response_type:
         response["data"] = {

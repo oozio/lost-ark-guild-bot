@@ -1,5 +1,5 @@
 import math
-from typing import Dict, Iterable, List, Optional, Set, Tuple, Union
+from typing import Dict, Iterable, List, Mapping, Optional, Set, Tuple, Union
 
 from constants import honing_data
 from utils import multi_range
@@ -85,13 +85,14 @@ class StrategyCalculator(object):
         return filtered[::-1]
 
     def _apply_combination(
-            self, honing_state: _HoningState,
-            combination: _Combination) -> Tuple[int, _HoningState]:
+        self, honing_state: _HoningState, combination: _Combination,
+        combinations: Mapping[_Combination, Tuple[int, float]]
+    ) -> Tuple[int, _HoningState]:
         new_base_rate = min(
             2 * self.honing_level.base_rate_permyria,
             honing_state[0] + self.honing_level.base_rate_permyria // 10)
 
-        enhancement_rate, _ = self._rate_and_cost(combination)
+        enhancement_rate, _ = combinations[combination]
         enhanced_rate = min(_MYRIA, honing_state[0] + enhancement_rate)
         new_points = min(_MAX_ARTISANS_POINTS, honing_state[1] + enhanced_rate)
         return (enhanced_rate, (new_base_rate, new_points))
@@ -100,7 +101,7 @@ class StrategyCalculator(object):
 
     def _construct_graph(
         self,
-        combinations: Iterable[_Combination],
+        combinations: Mapping[_Combination, Tuple[int, float]],
         starting_state: Optional[_HoningState] = None
     ) -> Tuple[_EdgeDict, _EdgeDict]:
         if starting_state is None:
@@ -122,7 +123,7 @@ class StrategyCalculator(object):
                 continue
             for combination in combinations:
                 success, out_state = self._apply_combination(
-                    state, combination)
+                    state, combination, combinations)
                 if out_state in out_edges[state]:
                     continue
                 if success == _MYRIA:
@@ -170,7 +171,7 @@ class StrategyCalculator(object):
             min_cost = float('inf')
             min_edge = None
             for out_state, combination in out_edges[state].items():
-                rate, cost = self._rate_and_cost(combination)
+                rate, cost = enhancement_combinations[combination]
                 enhanced_rate = min(_MYRIA, state[0] + rate)
                 ev = (base_cost + cost + costs[out_state] *
                       (_MYRIA - enhanced_rate) / _MYRIA)

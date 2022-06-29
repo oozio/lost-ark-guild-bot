@@ -5,7 +5,7 @@ def main():
     module_1 = Extension('honing_cpp', sources=['honing_cpp.cpp'])
 
     setup(name='LostArkTraderPackage',
-          version='1.0',
+          version='1.0.0',
           description='Package for the Trader guild Discord bot.',
           ext_modules=[module_1])
 

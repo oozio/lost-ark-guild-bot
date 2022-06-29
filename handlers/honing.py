@@ -17,15 +17,17 @@ def handle(command, cmd_input):
         starting_artisans = cmd_input['artisans_energy'] / \
             100 if 'artisans_energy' in cmd_input else 0
 
-        strategy_calculator = honing_strategy.StrategyCalculator()
-        average_cost, combination_list, state_list = \
-            strategy_calculator.get_honing_strategy(
+        num_hones, average_cost, combination_list, state_list = \
+            honing_strategy.get_honing_strategy(
                 honing_level,
                 starting_rate=starting_rate,
                 starting_artisans=starting_artisans
             )
 
-        output = [f'Average gold cost: {round(average_cost, 2)}\n']
+        output = [
+            f'Average number of hones: {round(num_hones, 2)}',
+            f'Average gold cost: {round(average_cost, 2)}\n'
+        ]
         for state, combination in zip(state_list, combination_list):
             enhancement_builder = []
             for enhancement, num in zip(honing_level.enhancements,
@@ -41,8 +43,7 @@ def handle(command, cmd_input):
                 enhancement_str = ', '.join(enhancement_builder)
             else:
                 enhancement_str = 'No Enhancement Materials'
-            output.append(
-                f'({honing_strategy.prettify(state)}) -> ({enhancement_str})')
+            output.append(f'({state.prettify()}) -> ({enhancement_str})')
         return '\n'.join(output)
     else:
         return f"UNKNOWN COMMAND: {command}"

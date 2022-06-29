@@ -38,6 +38,8 @@ struct hash_state {
 };
 
 using Combination = std::vector<int>;
+using InnerEdgeMap = std::unordered_map<State, Combination, hash_state>;
+using EdgeMap = std::unordered_map<State, InnerEdgeMap, hash_state>;
 
 static double combination_price(const Combination &combination,
                                 const std::vector<Enhancement> &enhancements,
@@ -72,11 +74,12 @@ static long combination_rate(const Combination &combination,
   return total;
 }
 
-static std::vector<Combination>
-get_combination_vec(bool has_book, double book_price, size_t num_enhancements,
-                    size_t num_enhancements_with_book,
-                    std::vector<Enhancement> &enhancement_vec,
-                    long max_enhancement_rate) {
+static void load_combination_vec(std::vector<Combination> &combinations,
+                                 bool has_book, double book_price,
+                                 size_t num_enhancements,
+                                 size_t num_enhancements_with_book,
+                                 std::vector<Enhancement> &enhancement_vec,
+                                 long max_enhancement_rate) {
   // Calculate enhancement combination list
 
   std::vector<Combination> all_combinations;
@@ -139,7 +142,7 @@ get_combination_vec(bool has_book, double book_price, size_t num_enhancements,
               return combination_price_vec[a] < combination_price_vec[b];
             });
 
-  std::vector<Combination> combinations;
+  combinations.clear();
   double min_price = MAX_PRICE;
   long prev_rate = -1;
   for (size_t i : indices) {
@@ -158,35 +161,25 @@ get_combination_vec(bool has_book, double book_price, size_t num_enhancements,
     Combination combination = all_combinations[i];
     combinations.push_back(combination);
   }
-  return combinations;
 }
 
-static std::pair<
-    std::unordered_map<
-        State, std::unordered_map<State, Combination, hash_state>, hash_state>,
-    std::unordered_map<
-        State, std::unordered_map<State, Combination, hash_state>, hash_state>>
-construct_graph(long base_rate, long starting_rate,
-                long starting_artisans_points,
-                size_t num_enhancements_with_book,
-                std::vector<Combination> &combinations,
-                std::vector<Enhancement> &enhancement_vec) {
+static void load_graph(EdgeMap &in_edges, EdgeMap &out_edges, long base_rate,
+                       long starting_rate, long starting_artisans_points,
+                       size_t num_enhancements_with_book,
+                       std::vector<Combination> &combinations,
+                       std::vector<Enhancement> &enhancement_vec) {
   size_t num_combinations = combinations.size();
   long max_base_rate = base_rate << 1;
 
   State starting_state = {starting_rate, starting_artisans_points};
   Combination empty_combination = Combination(num_enhancements_with_book, 0);
 
-  std::unordered_map<State, std::unordered_map<State, Combination, hash_state>,
-                     hash_state>
-      in_edges, out_edges;
+  in_edges.clear();
+  out_edges.clear();
 
-  in_edges[starting_state] =
-      std::unordered_map<State, Combination, hash_state>();
-  in_edges[GUARANTEED_SUCCESS] =
-      std::unordered_map<State, Combination, hash_state>();
-  out_edges[GUARANTEED_SUCCESS] =
-      std::unordered_map<State, Combination, hash_state>();
+  in_edges[starting_state] = InnerEdgeMap();
+  in_edges[GUARANTEED_SUCCESS] = InnerEdgeMap();
+  out_edges[GUARANTEED_SUCCESS] = InnerEdgeMap();
 
   std::vector<State> stack{starting_state};
   while (!stack.empty()) {
@@ -196,8 +189,7 @@ construct_graph(long base_rate, long starting_rate,
     if (found != out_edges.end()) {
       continue;
     }
-    out_edges[current_state] =
-        std::unordered_map<State, Combination, hash_state>();
+    out_edges[current_state] = InnerEdgeMap();
     if (current_state.artisans_points >= MAX_ARTISANS_POINTS) {
       out_edges[current_state][GUARANTEED_SUCCESS] = empty_combination;
       in_edges[GUARANTEED_SUCCESS][current_state] = empty_combination;
@@ -225,13 +217,11 @@ construct_graph(long base_rate, long starting_rate,
       out_edges[current_state][out_state] = combination;
       found_inner = in_edges[out_state].find(current_state);
       if (found_inner != in_edges[out_state].end()) {
-        in_edges[out_state] =
-            std::unordered_map<State, Combination, hash_state>();
+        in_edges[out_state] = InnerEdgeMap();
       }
       in_edges[out_state][current_state] = combination;
     }
   }
-  return {in_edges, out_edges};
 }
 
 static PyObject *honing_c_get_strategy(PyObject *self, PyObject *args) {
@@ -334,16 +324,15 @@ static PyObject *honing_c_get_strategy(PyObject *self, PyObject *args) {
   size_t num_enhancements_with_book =
       has_book ? num_enhancements + 1 : num_enhancements;
 
-  std::vector<Combination> combinations = get_combination_vec(
-      has_book, book_price, num_enhancements, num_enhancements_with_book,
-      enhancement_vec, max_enhancement_rate);
+  std::vector<Combination> combinations;
+  load_combination_vec(combinations, has_book, book_price, num_enhancements,
+                       num_enhancements_with_book, enhancement_vec,
+                       max_enhancement_rate);
 
-  auto graph = construct_graph(
-      base_rate, starting_rate, starting_artisans_points,
-      num_enhancements_with_book, combinations, enhancement_vec);
-
-  auto in_edges = graph.first;
-  auto out_edges = graph.second;
+  EdgeMap in_edges, out_edges;
+  load_graph(in_edges, out_edges, base_rate, starting_rate,
+             starting_artisans_points, num_enhancements_with_book, combinations,
+             enhancement_vec);
 
   // Calculate lowest price
 

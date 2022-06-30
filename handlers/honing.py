@@ -62,13 +62,13 @@ def handle(command, cmd_input):
         if starting_artisans_str and starting_rate_str:
             summary_header = '\n'.join(
                 [starting_rate_str, starting_artisans_str, '\n'])
-        output = {
-            'author': {
+        output = {"content": "", "embed": {
+            "author": {
                 "name":
                 f"Hone {equipment_type_str}: +{base_level} ({ilevel}) -> "
                 f"+{base_level + 1} ({honing_level.next_item_level})",
             },
-            'fields': [{
+            "fields": [{
                 "name":
                 "Summary",
                 "value":

@@ -66,20 +66,18 @@ def handle(command, cmd_input):
             summary_header = '\n'.join(
                 [starting_rate_str, starting_artisans_str, '\n'])
 
-        material_emojis = []
         quantities = []
         prices = []
+        gold_emoji = emojis.EMOJI_IDS['gold']
         for material in honing_level.cost:
             item_id = material.item_id
-            material_emojis.append(emojis.EMOJI_IDS[item_id])
             amount = material.amount * num_hones
-            quantities.append(str(round(amount, 2)))
-            prices.append(
-                str(
-                    round(
-                        amount *
-                        strategy_calculator.market_client.get_unit_price(
-                            item_id), 2)))
+            quantities.append(f'{emojis.EMOJI_IDS[item_id]}{round(amount, 2)}')
+
+            unit_price = strategy_calculator.market_client.get_unit_price(
+                item_id)
+            price = round(amount * unit_price, 2)
+            prices.append(f'{gold_emoji}{price}')
 
         output = {
             "content":
@@ -125,11 +123,6 @@ def handle(command, cmd_input):
                         "https://www.lostarkmarket.online/north-america-west/market",
                     },
                     "fields": [
-                        {
-                            "name": "Material",
-                            "value": '\n'.join(material_emojis),
-                            "inline": True,
-                        },
                         {
                             "name": "Quantity",
                             "value": '\n'.join(quantities),

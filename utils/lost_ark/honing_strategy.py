@@ -19,14 +19,20 @@ class _HoningState:
     artisans: int
 
     def prettify(self) -> str:
-        pretty_rate = self.rate * 100 / _MYRIA
-        pretty_artisans = round(
+        return (f'Unenhanced Rate: {self.pretty_rate()}, '
+                f'Artisan\'s Energy: {self.pretty_artisans()}')
+
+    def pretty_rate(self) -> str:
+        pr = self.rate * 100 / _MYRIA
+        return f'{pr}%'
+
+    def pretty_artisans(self) -> str:
+        pa = round(
             int(
                 min(self.artisans, _MAX_ARTISANS_POINTS) *
                 _ARTISANS_CONVERSION_NUMERATOR) /
             _ARTISANS_CONVERSION_DENOMINATOR, 2)
-        return (f'Unenhanced Rate: {pretty_rate}%, '
-                f'Artisan\'s Energy: {pretty_artisans}%')
+        return f'{pa}%'
 
 
 _Combination = Tuple[int, ...]

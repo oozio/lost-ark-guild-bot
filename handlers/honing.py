@@ -67,6 +67,7 @@ def handle(command, cmd_input):
                 [starting_rate_str, starting_artisans_str, '\n'])
 
         quantities = []
+        unit_prices = []
         prices = []
         gold_emoji = emojis.EMOJI_IDS['gold']
         for material in honing_level.cost:
@@ -76,6 +77,7 @@ def handle(command, cmd_input):
 
             unit_price = strategy_calculator.market_client.get_unit_price(
                 item_id)
+            unit_prices.append(f'{gold_emoji}{unit_price}')
             price = round(amount * unit_price, 2)
             prices.append(f'{gold_emoji}{price}')
 
@@ -118,18 +120,26 @@ def handle(command, cmd_input):
                 {
                     "author": {
                         "name":
-                        "Materials Used (Prices from lostarkmarket.online)",
+                        "Prices from lostarkmarket.online",
                         "url":
                         "https://www.lostarkmarket.online/north-america-west/market",
                     },
                     "fields": [
+                        {
+                            "name": "Materials Used (On Average)",
+                        },
                         {
                             "name": "Quantity",
                             "value": '\n'.join(quantities),
                             "inline": True,
                         },
                         {
-                            "name": "Price",
+                            "name": "Unit Price",
+                            "value": '\n'.join(unit_prices),
+                            "inline": True,
+                        },
+                        {
+                            "name": "Total Price",
                             "value": '\n'.join(prices),
                             "inline": True,
                         },

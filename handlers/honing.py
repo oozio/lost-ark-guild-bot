@@ -29,8 +29,9 @@ def handle(command, cmd_input):
             starting_artisans = 0
             starting_artisans_str = ''
 
+        strategy_calculator = honing_strategy.StrategyCalculator()
         num_hones, average_cost, combination_list, state_list = \
-            honing_strategy.get_honing_strategy(
+            strategy_calculator.get_honing_strategy(
                 honing_level,
                 starting_rate=starting_rate,
                 starting_artisans=starting_artisans)
@@ -64,36 +65,84 @@ def handle(command, cmd_input):
         if starting_artisans_str and starting_rate_str:
             summary_header = '\n'.join(
                 [starting_rate_str, starting_artisans_str, '\n'])
+
+        material_emojis = []
+        quantities = []
+        prices = []
+        for material in honing_level.cost:
+            item_id = material.item_id
+            material_emojis.append(emojis.EMOJI_IDS[item_id])
+            amount = material.amount * num_hones
+            quantities.append(str(round(amount, 2)))
+            prices.append(
+                str(
+                    round(
+                        amount *
+                        strategy_calculator.market_client.get_unit_price(
+                            item_id), 2)))
+
         output = {
             "content":
             "",
-            "embeds": [{
-                "author": {
-                    "name":
-                    f"Hone {equipment_type_str}: +{base_level} ({ilevel}) -> "
-                    f"+{base_level + 1} ({honing_level.next_item_level})",
+            "embeds": [
+                {
+                    "author": {
+                        "name":
+                        f"Hone {equipment_type_str}: +{base_level} ({ilevel}) -> "
+                        f"+{base_level + 1} ({honing_level.next_item_level})",
+                    },
+                    "fields": [
+                        {
+                            "name":
+                            "Summary",
+                            "value":
+                            f"{summary_header}"
+                            f"Avg # of hones: {round(num_hones, 2)}\n"
+                            f"Avg gold cost: {round(average_cost, 2)}",
+                        },
+                        {
+                            "name": "Rate",
+                            "value": '\n'.join(hsr_builder),
+                            "inline": True,
+                        },
+                        {
+                            "name": "Artisan's",
+                            "value": '\n'.join(ae_builder),
+                            "inline": True,
+                        },
+                        {
+                            "name": "Use",
+                            "value": '\n'.join(enh_builder),
+                            "inline": True,
+                        },
+                    ],
                 },
-                "fields": [{
-                    "name":
-                    "Summary",
-                    "value":
-                    f"{summary_header}"
-                    f"Avg # of hones: {round(num_hones, 2)}\n"
-                    f"Avg gold cost: {round(average_cost, 2)}"
-                }, {
-                    "name": "Rate",
-                    "value": '\n'.join(hsr_builder),
-                    "inline": True
-                }, {
-                    "name": "Artisan's",
-                    "value": '\n'.join(ae_builder),
-                    "inline": True
-                }, {
-                    "name": "Enhancements",
-                    "value": '\n'.join(enh_builder),
-                    "inline": True
-                }]
-            }]
+                {
+                    "author": {
+                        "name":
+                        "Materials Used (Prices from lostarkmarket.online)",
+                        "url":
+                        "https://www.lostarkmarket.online/north-america-west/market",
+                    },
+                    "fields": [
+                        {
+                            "name": "Material",
+                            "value": '\n'.join(material_emojis),
+                            "inline": True,
+                        },
+                        {
+                            "name": "Quantity",
+                            "value": '\n'.join(quantities),
+                            "inline": True,
+                        },
+                        {
+                            "name": "Price",
+                            "value": '\n'.join(prices),
+                            "inline": True,
+                        },
+                    ],
+                },
+            ]
         }
         return output
     else:

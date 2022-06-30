@@ -98,7 +98,7 @@ def handle(command, cmd_input):
                             "value":
                             f"{summary_header}"
                             f"Avg # of hones: {round(num_hones, 2)}\n"
-                            f"Avg gold cost: {round(average_cost, 2)}",
+                            f"Avg cost: {gold_emoji}{round(average_cost, 2)}",
                         },
                         {
                             "name": "Rate",
@@ -126,7 +126,8 @@ def handle(command, cmd_input):
                     },
                     "fields": [
                         {
-                            "name": "Materials Used (On Average)",
+                            "name": "Materials Used",
+                            "value": "(On Average)",
                         },
                         {
                             "name": "Quantity",

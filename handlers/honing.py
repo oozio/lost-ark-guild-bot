@@ -62,32 +62,35 @@ def handle(command, cmd_input):
         if starting_artisans_str and starting_rate_str:
             summary_header = '\n'.join(
                 [starting_rate_str, starting_artisans_str, '\n'])
-        output = {"content": "", "embed": {
-            "author": {
-                "name":
-                f"Hone {equipment_type_str}: +{base_level} ({ilevel}) -> "
-                f"+{base_level + 1} ({honing_level.next_item_level})",
-            },
-            "fields": [{
-                "name":
-                "Summary",
-                "value":
-                f"{summary_header}"
-                f"Avg # of hones: {round(num_hones, 2)}\n"
-                f"Avg gold cost: {round(average_cost, 2)}"
-            }, {
-                "name": "Rate",
-                "value": '\n'.join(hsr_builder),
-                "inline": True
-            }, {
-                "name": "Artisan's",
-                "value": '\n'.join(ae_builder),
-                "inline": True
-            }, {
-                "name": "Enhancements",
-                "value": '\n'.join(enh_builder),
-                "inline": True
-            }]
+        output = {
+            "content": "",
+            "embed": {
+                "author": {
+                    "name":
+                    f"Hone {equipment_type_str}: +{base_level} ({ilevel}) -> "
+                    f"+{base_level + 1} ({honing_level.next_item_level})",
+                },
+                "fields": [{
+                    "name":
+                    "Summary",
+                    "value":
+                    f"{summary_header}"
+                    f"Avg # of hones: {round(num_hones, 2)}\n"
+                    f"Avg gold cost: {round(average_cost, 2)}"
+                }, {
+                    "name": "Rate",
+                    "value": '\n'.join(hsr_builder),
+                    "inline": True
+                }, {
+                    "name": "Artisan's",
+                    "value": '\n'.join(ae_builder),
+                    "inline": True
+                }, {
+                    "name": "Enhancements",
+                    "value": '\n'.join(enh_builder),
+                    "inline": True
+                }]
+            }
         }
         return output
     else:

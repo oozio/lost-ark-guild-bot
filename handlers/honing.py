@@ -65,8 +65,9 @@ def handle(command, cmd_input):
             summary_header = '\n'.join(
                 [starting_rate_str, starting_artisans_str, '\n'])
         output = {
-            "content": "",
-            "embed": {
+            "content":
+            "",
+            "embeds": [{
                 "author": {
                     "name":
                     f"Hone {equipment_type_str}: +{base_level} ({ilevel}) -> "
@@ -92,7 +93,7 @@ def handle(command, cmd_input):
                     "value": '\n'.join(enh_builder),
                     "inline": True
                 }]
-            }
+            }]
         }
         return output
     else:

@@ -183,10 +183,10 @@ def format_response(body, ephemeral):
         response = {"content": body, "flags": 64 if ephemeral else 128}
     else:
         content = body.get('content')
-        embed = body.get('embed')
+        embeds = body.get('embeds')
         response = {
             "content": content,
-            "embeds": [embed],
+            "embeds": embeds,
             "allowed_mentions": [],
             "flags": 64 if ephemeral else None
         }
@@ -228,10 +228,12 @@ def delete_response(application_id, interaction_token):
     requests.delete(url, headers=HEADERS)
 
 
-def send_response(channel_id, content, embed=None, ephemeral=False):
+def send_response(channel_id, content, embeds=None, ephemeral=False):
+    if embeds is None:
+        embeds = []
     body = format_response({
         "content": content,
-        "embed": embed
+        "embeds": embeds
     },
                            ephemeral=ephemeral)
     url = f"{BASE_URL}/channels/{channel_id}/messages"
@@ -243,10 +245,10 @@ def send_response(channel_id, content, embed=None, ephemeral=False):
 def edit_message(channel_id, message_id, content, embed={}):
     response = {"content": content}
     if embed:
-        response['embed'] = {
+        response['embed'] = [{
             "title": f"{embed.get('title')}",
             "description": f"{embed.get('description')}"
-        }
+        }]
     url = f"{BASE_URL}/channels/{channel_id}/messages/{message_id}"
     response = requests.patch(url, json=response, headers=HEADERS)
 

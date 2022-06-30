@@ -1,0 +1,34 @@
+EMOJI_IDS = {
+    'gold':
+    '<:gold:991944972804829185>',
+    'silver':
+    '<:silver:991945407473143929>',
+    'honor-shard':
+    '<:honorshard:991942576020140052>',
+    'guardian-stone-crystal-0':
+    '<:guardianstonecrystal0:991945647492178000>',
+    'destruction-stone-crystal-0':
+    '<:destructionstonecrystal0:991945773237416048>',
+    'honor-leapstone-2':
+    '<:honorleapstone2:991946666204741682>',
+    'great-honor-leapstone-2':
+    '<:greathonorleapstone2:991946650010533918>',
+    'simple-oreha-fusion-material-1':
+    '<:simpleorehafusionmaterial1:991946707480891473>',
+    'basic-oreha-fusion-material-2':
+    '<:basicorehafusionmaterial2:991946731128356916>',
+    'solar-grace-1':
+    '<:solargrace1:991942897861677108>',
+    'solar-blesing-2':
+    '<:solarblessing2:991942770510024704>',
+    'solar-protection-3':
+    '<:solarprotection3:991943070767644742>',
+    'tailoring-basic-mending-3':
+    '<:tailoringbasicmending3:991946764590526464>',
+    'metallurgy-basic-welding-3':
+    '<:metallurgybasicwelding3:991946786392514710>',
+    'tailoring-applied-mending-4':
+    '<:tailoringappliedmending4:991943401484320778>',
+    'metallurgy-applied-welding-4':
+    '<:metallurgyappliedwelding4:991943536096321546>',
+}

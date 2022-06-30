@@ -1,4 +1,4 @@
-from constants import honing_data as hd_const
+from constants import emojis, honing_data as hd_const
 from utils.lost_ark import honing_strategy
 
 
@@ -45,10 +45,10 @@ def handle(command, cmd_input):
                 if num == 0:
                     continue
                 enhancement_builder.append(
-                    f':{enhancement.item_id.replace("-", "")}:x{num}')
+                    f'{emojis.EMOJI_IDS[enhancement.item_id]}x{num}')
             if honing_level.book_id is not None and combination[-1] == 1:
                 enhancement_builder.append(
-                    f':{honing_level.book_id.replace("-", "")}:')
+                    f'{emojis.EMOJI_IDS[honing_level.book_id]}')
 
             if enhancement_builder:
                 enhancement_str = ','.join(enhancement_builder)

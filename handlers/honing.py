@@ -44,12 +44,14 @@ def handle(command, cmd_input):
                                         combination):
                 if num == 0:
                     continue
-                enhancement_builder.append(f'{enhancement.item_id} (x{num})')
+                enhancement_builder.append(
+                    f':{enhancement.item_id.replace("-", "")}:x{num}')
             if honing_level.book_id is not None and combination[-1] == 1:
-                enhancement_builder.append(f'{honing_level.book_id}')
+                enhancement_builder.append(
+                    f':{honing_level.book_id.replace("-", "")}:')
 
             if enhancement_builder:
-                enhancement_str = ', '.join(enhancement_builder)
+                enhancement_str = ','.join(enhancement_builder)
             else:
                 enhancement_str = '----'
             enh_builder.append(enhancement_str)

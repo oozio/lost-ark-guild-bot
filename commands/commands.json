@@ -68,6 +68,12 @@
                 "description": "How much Artisan's Energy percentage the item currently has. E.g. 50.35 for 50.35%",
                 "type": 10,
                 "required": 0
+            },
+            {
+                "name": "researched",
+                "description": "Whether the (honing rate increase) stronghold research has been completed for this hone.",
+                "type": 5,
+                "required": 0
             }
         ]
     },

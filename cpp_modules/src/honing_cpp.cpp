@@ -134,10 +134,10 @@ static void load_combination_vec(std::vector<Combination> &combinations,
 
 static void load_graph(EdgeMap &in_edges, EdgeMap &out_edges, long base_rate,
                        long starting_rate, long starting_artisans_points,
-                       size_t num_enhancements_with_book,
+                       long research_bonus, size_t num_enhancements_with_book,
                        const std::vector<long> &rates) {
   size_t num_combinations = rates.size();
-  long max_base_rate = base_rate << 1;
+  long max_base_rate = (base_rate << 1) + research_bonus;
 
   State starting_state = {starting_rate, starting_artisans_points};
   size_t empty_combination_index = num_combinations - 1;
@@ -198,8 +198,9 @@ static PyObject *honing_c_get_strategy(PyObject *self, PyObject *args) {
   double base_cost;
   PyObject *enhancement_price_list;
   long starting_rate, starting_artisans_points;
-  if (!PyArg_ParseTuple(args, "OdOll", &honing_level, &base_cost,
-                        &enhancement_price_list, &starting_rate,
+  int researched;
+  if (!PyArg_ParseTuple(args, "OdOlpl", &honing_level, &base_cost,
+                        &enhancement_price_list, &starting_rate, &researched,
                         &starting_artisans_points)) {
     return NULL;
   }
@@ -214,6 +215,20 @@ static PyObject *honing_c_get_strategy(PyObject *self, PyObject *args) {
   if (base_rate == -1 && PyErr_Occurred() != NULL) {
     return NULL;
   }
+
+  long research_bonus = 0;
+  if (researched) {
+    PyObject *py_research_bonus =
+        PyObject_GetAttrString(honing_level, "research_bonus_permyria");
+    if (py_research_bonus == NULL) {
+      return NULL;
+    }
+    research_bonus = PyLong_AsLong(py_research_bonus);
+    if (research_bonus == -1 && PyErr_Occurred() != NULL) {
+      return NULL;
+    }
+  }
+  starting_rate += research_bonus;
 
   PyObject *py_book_id = PyObject_GetAttrString(honing_level, "book_id");
   if (py_book_id == NULL) {
@@ -230,6 +245,7 @@ static PyObject *honing_c_get_strategy(PyObject *self, PyObject *args) {
   if (max_enhancement_rate == -1 && PyErr_Occurred() != NULL) {
     return NULL;
   }
+  max_enhancement_rate = std::min(max_enhancement_rate, MYRIA - starting_rate);
 
   PyObject *py_enhancement_list =
       PyObject_GetAttrString(honing_level, "enhancements");
@@ -301,7 +317,8 @@ static PyObject *honing_c_get_strategy(PyObject *self, PyObject *args) {
 
   EdgeMap in_edges, out_edges;
   load_graph(in_edges, out_edges, base_rate, starting_rate,
-             starting_artisans_points, num_enhancements_with_book, rates);
+             starting_artisans_points, research_bonus,
+             num_enhancements_with_book, rates);
 
   // Calculate lowest price
 

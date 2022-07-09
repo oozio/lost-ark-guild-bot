@@ -29,6 +29,7 @@ class HoningLevel:
     base_level: int
     equipment_type: EquipmentType
     base_rate_permyria: int
+    research_bonus_permyria: int
     cost: Tuple[Material, ...]
     enhancements: Tuple[Enhancement, ...] = ()
     max_enhancement_rate_permyria: int = 0
@@ -44,6 +45,7 @@ HONES = (
         base_level=0,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=10000,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=82),
             Material(item_id='honor-leapstone-2', amount=2),
@@ -58,6 +60,7 @@ HONES = (
         base_level=1,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=10000,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=82),
             Material(item_id='honor-leapstone-2', amount=2),
@@ -72,6 +75,7 @@ HONES = (
         base_level=2,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=10000,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=82),
             Material(item_id='honor-leapstone-2', amount=2),
@@ -86,6 +90,7 @@ HONES = (
         base_level=3,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=10000,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=120),
             Material(item_id='honor-leapstone-2', amount=4),
@@ -101,6 +106,7 @@ HONES = (
         base_level=4,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=10000,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=120),
             Material(item_id='honor-leapstone-2', amount=4),
@@ -116,6 +122,7 @@ HONES = (
         base_level=5,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=10000,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=120),
             Material(item_id='honor-leapstone-2', amount=4),
@@ -131,6 +138,7 @@ HONES = (
         base_level=6,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=6000,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=156),
             Material(item_id='honor-leapstone-2', amount=4),
@@ -160,6 +168,7 @@ HONES = (
         base_level=7,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=4500,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=156),
             Material(item_id='honor-leapstone-2', amount=4),
@@ -189,6 +198,7 @@ HONES = (
         base_level=8,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=3000,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=156),
             Material(item_id='honor-leapstone-2', amount=4),
@@ -218,6 +228,7 @@ HONES = (
         base_level=9,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=3000,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=192),
             Material(item_id='honor-leapstone-2', amount=6),
@@ -247,6 +258,7 @@ HONES = (
         base_level=10,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=3000,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=192),
             Material(item_id='honor-leapstone-2', amount=6),
@@ -276,6 +288,7 @@ HONES = (
         base_level=11,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=1500,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=192),
             Material(item_id='honor-leapstone-2', amount=6),
@@ -305,6 +318,7 @@ HONES = (
         base_level=12,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=1500,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=228),
             Material(item_id='honor-leapstone-2', amount=6),
@@ -334,6 +348,7 @@ HONES = (
         base_level=13,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=1500,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=228),
             Material(item_id='honor-leapstone-2', amount=8),
@@ -363,6 +378,7 @@ HONES = (
         base_level=14,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=1000,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=228),
             Material(item_id='honor-leapstone-2', amount=8),
@@ -392,6 +408,7 @@ HONES = (
         base_level=0,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=10000,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=138),
             Material(item_id='honor-leapstone-2', amount=4),
@@ -406,6 +423,7 @@ HONES = (
         base_level=1,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=10000,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=138),
             Material(item_id='honor-leapstone-2', amount=4),
@@ -420,6 +438,7 @@ HONES = (
         base_level=2,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=10000,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=198),
             Material(item_id='honor-leapstone-2', amount=6),
@@ -434,6 +453,7 @@ HONES = (
         base_level=3,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=10000,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=198),
             Material(item_id='honor-leapstone-2', amount=6),
@@ -449,6 +469,7 @@ HONES = (
         base_level=4,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=10000,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=198),
             Material(item_id='honor-leapstone-2', amount=6),
@@ -464,6 +485,7 @@ HONES = (
         base_level=5,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=10000,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=198),
             Material(item_id='honor-leapstone-2', amount=6),
@@ -479,6 +501,7 @@ HONES = (
         base_level=6,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=6000,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=258),
             Material(item_id='honor-leapstone-2', amount=8),
@@ -508,6 +531,7 @@ HONES = (
         base_level=7,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=4500,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=258),
             Material(item_id='honor-leapstone-2', amount=8),
@@ -537,6 +561,7 @@ HONES = (
         base_level=8,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=3000,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=258),
             Material(item_id='honor-leapstone-2', amount=8),
@@ -566,6 +591,7 @@ HONES = (
         base_level=9,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=3000,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=320),
             Material(item_id='honor-leapstone-2', amount=10),
@@ -595,6 +621,7 @@ HONES = (
         base_level=10,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=3000,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=320),
             Material(item_id='honor-leapstone-2', amount=10),
@@ -624,6 +651,7 @@ HONES = (
         base_level=11,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=1500,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=320),
             Material(item_id='honor-leapstone-2', amount=10),
@@ -653,6 +681,7 @@ HONES = (
         base_level=12,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=1500,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=380),
             Material(item_id='honor-leapstone-2', amount=12),
@@ -682,6 +711,7 @@ HONES = (
         base_level=13,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=1500,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=380),
             Material(item_id='honor-leapstone-2', amount=12),
@@ -711,6 +741,7 @@ HONES = (
         base_level=14,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=1000,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=380),
             Material(item_id='honor-leapstone-2', amount=12),
@@ -741,6 +772,7 @@ HONES = (
         base_level=6,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=6000,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=404),
             Material(item_id='great-honor-leapstone-2', amount=8),
@@ -770,6 +802,7 @@ HONES = (
         base_level=7,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=4500,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=404),
             Material(item_id='great-honor-leapstone-2', amount=10),
@@ -799,6 +832,7 @@ HONES = (
         base_level=8,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=3000,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=404),
             Material(item_id='great-honor-leapstone-2', amount=10),
@@ -828,6 +862,7 @@ HONES = (
         base_level=9,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=3000,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=498),
             Material(item_id='great-honor-leapstone-2', amount=10),
@@ -857,6 +892,7 @@ HONES = (
         base_level=10,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=3000,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=498),
             Material(item_id='great-honor-leapstone-2', amount=10),
@@ -886,6 +922,7 @@ HONES = (
         base_level=11,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=1500,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=498),
             Material(item_id='great-honor-leapstone-2', amount=12),
@@ -915,6 +952,7 @@ HONES = (
         base_level=12,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=1500,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=592),
             Material(item_id='great-honor-leapstone-2', amount=12),
@@ -944,6 +982,7 @@ HONES = (
         base_level=13,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=1500,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=592),
             Material(item_id='great-honor-leapstone-2', amount=12),
@@ -973,6 +1012,7 @@ HONES = (
         base_level=14,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=1000,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=592),
             Material(item_id='great-honor-leapstone-2', amount=12),
@@ -1002,6 +1042,7 @@ HONES = (
         base_level=15,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=1000,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=686),
             Material(item_id='great-honor-leapstone-2', amount=14),
@@ -1030,6 +1071,7 @@ HONES = (
         base_level=16,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=1000,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=686),
             Material(item_id='great-honor-leapstone-2', amount=16),
@@ -1058,6 +1100,7 @@ HONES = (
         base_level=17,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=500,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=686),
             Material(item_id='great-honor-leapstone-2', amount=16),
@@ -1086,6 +1129,7 @@ HONES = (
         base_level=18,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=500,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=780),
             Material(item_id='great-honor-leapstone-2', amount=18),
@@ -1114,6 +1158,7 @@ HONES = (
         base_level=19,
         equipment_type=EquipmentType.ARMOR,
         base_rate_permyria=300,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='guardian-stone-crystal-0', amount=780),
             Material(item_id='great-honor-leapstone-2', amount=20),
@@ -1142,6 +1187,7 @@ HONES = (
         base_level=6,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=6000,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=672),
             Material(item_id='great-honor-leapstone-2', amount=12),
@@ -1171,6 +1217,7 @@ HONES = (
         base_level=7,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=4500,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=672),
             Material(item_id='great-honor-leapstone-2', amount=14),
@@ -1200,6 +1247,7 @@ HONES = (
         base_level=8,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=3000,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=672),
             Material(item_id='great-honor-leapstone-2', amount=14),
@@ -1229,6 +1277,7 @@ HONES = (
         base_level=9,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=3000,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=830),
             Material(item_id='great-honor-leapstone-2', amount=16),
@@ -1258,6 +1307,7 @@ HONES = (
         base_level=10,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=3000,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=830),
             Material(item_id='great-honor-leapstone-2', amount=16),
@@ -1287,6 +1337,7 @@ HONES = (
         base_level=11,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=1500,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=830),
             Material(item_id='great-honor-leapstone-2', amount=18),
@@ -1316,6 +1367,7 @@ HONES = (
         base_level=12,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=1500,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=968),
             Material(item_id='great-honor-leapstone-2', amount=18),
@@ -1345,6 +1397,7 @@ HONES = (
         base_level=13,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=1500,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=968),
             Material(item_id='great-honor-leapstone-2', amount=20),
@@ -1374,6 +1427,7 @@ HONES = (
         base_level=14,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=1000,
+        research_bonus_permyria=1000,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=968),
             Material(item_id='great-honor-leapstone-2', amount=20),
@@ -1403,6 +1457,7 @@ HONES = (
         base_level=15,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=1000,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=1144),
             Material(item_id='great-honor-leapstone-2', amount=22),
@@ -1431,6 +1486,7 @@ HONES = (
         base_level=16,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=1000,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=1144),
             Material(item_id='great-honor-leapstone-2', amount=24),
@@ -1459,6 +1515,7 @@ HONES = (
         base_level=17,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=500,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=1144),
             Material(item_id='great-honor-leapstone-2', amount=28),
@@ -1487,6 +1544,7 @@ HONES = (
         base_level=18,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=500,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=1300),
             Material(item_id='great-honor-leapstone-2', amount=30),
@@ -1515,6 +1573,7 @@ HONES = (
         base_level=19,
         equipment_type=EquipmentType.WEAPON,
         base_rate_permyria=300,
+        research_bonus_permyria=0,
         cost=(
             Material(item_id='destruction-stone-crystal-0', amount=1300),
             Material(item_id='great-honor-leapstone-2', amount=32),

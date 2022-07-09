@@ -67,7 +67,8 @@ class StrategyCalculator:
         self,
         honing_level: honing_data.HoningLevel,
         starting_rate: Optional[float] = None,
-        starting_artisans: float = 0
+        starting_artisans: float = 0,
+        researched: bool = False,
     ) -> Tuple[float, float, List[_Combination], List[_HoningState]]:
         self.market_client.get_price_data_for_category('Enhancement Material')
         base_cost = sum(
@@ -88,7 +89,7 @@ class StrategyCalculator:
             math.ceil(starting_artisans * _MAX_ARTISANS_POINTS))
 
         best_actions, best_states_tuples = honing_cpp.get_strategy(
-            honing_level, base_cost, enhancement_price_list, rate,
+            honing_level, base_cost, enhancement_price_list, rate, researched,
             artisans_points)
         best_states = [
             _HoningState(rate=t[0], artisans=t[1]) for t in best_states_tuples

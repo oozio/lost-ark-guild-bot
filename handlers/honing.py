@@ -28,13 +28,20 @@ def handle(command, cmd_input):
         else:
             starting_artisans = 0
             starting_artisans_str = ''
+        if 'researched' in cmd_input:
+            researched = cmd_input['researched']
+            research_str = 'Honing Research Bonus Active'
+        else:
+            researched = False
+            research_str = ''
 
         strategy_calculator = honing_strategy.StrategyCalculator()
         num_hones, average_cost, combination_list, state_list = \
             strategy_calculator.get_honing_strategy(
                 honing_level,
                 starting_rate=starting_rate,
-                starting_artisans=starting_artisans)
+                starting_artisans=starting_artisans,
+                researched=researched)
 
         hsr_builder = []
         ae_builder = []
@@ -61,10 +68,15 @@ def handle(command, cmd_input):
             ae_builder.append(state.pretty_artisans())
 
         base_level = honing_level.base_level
-        summary_header = ''
+        summary_header_builder = []
         if starting_artisans_str and starting_rate_str:
-            summary_header = '\n'.join(
-                [starting_rate_str, starting_artisans_str, '\n'])
+            summary_header_builder.append(starting_rate_str)
+            summary_header_builder.append(starting_artisans_str)
+        if research_str:
+            summary_header_builder.append(research_str)
+        if summary_header_builder:
+            summary_header_builder.append('\n')
+        summary_header = '\n'.join(summary_header_builder)
 
         quantities = []
         unit_prices = []

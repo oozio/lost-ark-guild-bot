@@ -28,12 +28,9 @@ def handle(command, cmd_input):
         else:
             starting_artisans = 0
             starting_artisans_str = ''
-        if 'researched' in cmd_input:
-            researched = cmd_input['researched']
-            research_str = 'Honing Research Bonus Active'
-        else:
-            researched = False
-            research_str = ''
+
+        researched = cmd_input.get('researched', False)
+        research_str = 'Honing Research Bonus Active' if researched else ''
 
         strategy_calculator = honing_strategy.StrategyCalculator()
         num_hones, average_cost, combination_list, state_list = \

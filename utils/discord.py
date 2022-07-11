@@ -184,11 +184,13 @@ def format_response(body, ephemeral):
     else:
         content = body.get('content')
         embeds = body.get('embeds')
+        components = body.get('components')
         response = {
             "content": content,
             "embeds": embeds,
             "allowed_mentions": [],
-            "flags": 64 if ephemeral else None
+            "flags": 64 if ephemeral else None,
+            "components": components
         }
 
     return response

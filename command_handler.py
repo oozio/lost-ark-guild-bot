@@ -1,10 +1,10 @@
-from handlers import honing, market, roles
+from handlers import honing, market, roles, role_buttons
 from utils import discord
 
 ROLE_COMMANDS = ["add_roles", "remove_roles"]
 MARKET_COMMANDS = ["price", "mari"]
 HONING_COMMANDS = ["hone"]
-
+BUTTON_COMMANDS = ["role_buttons"]
 
 def handle_command(body):
     # dummy return
@@ -31,6 +31,8 @@ def handle_command(body):
         return market.handle(command, options)
     elif command in HONING_COMMANDS:
         return honing.handle(command, options)
+    elif command in BUTTON_COMMANDS:
+        return role_buttons.handle()
     raise ValueError(f"Unrecognized command {command}, sad")
 
 

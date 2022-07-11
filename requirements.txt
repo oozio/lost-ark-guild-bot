@@ -1,6 +1,7 @@
 # need for discord integration
 requests
 pynacl
+discord-ui
 
 # other dependencies
 boto3

@@ -1,12 +1,24 @@
-from utils import discord
-import discord.ext.commands as commands
-from discord_ui import Button, Components, SlashInteraction, UI
+# from utils import discord
+# import discord.ext.commands as commands
+# from discord_ui import Button, Components, SlashInteraction, UI
 
 #currently in testing to see if bot will display buttons
 class RoleButtonView:
 
-    COMPONENTS = [[Button("Vykas", color="purple")]]
+    COMPONENTS = [
+        {
+            "type": 1,
+            "components": [
+                {
+                    "type": 2,
+                    "label": "Vykas",
+                    "style": 1,
+                    "custom_id": "click_one"
+                }
+            ]
 
+        }
+    ]
     # guild_id = ''
     # BOT_TOKEN = discord.BOT_TOKEN
 

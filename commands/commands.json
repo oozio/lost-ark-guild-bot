@@ -162,7 +162,7 @@
         ]
     },
     {
-        "name": "role_buttons",
+        "name": "role_selector",
         "description": "test function to display role buttons",
         "type": 1
     }

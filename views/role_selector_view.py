@@ -3,7 +3,7 @@
 # from discord_ui import Button, Components, SlashInteraction, UI
 
 #currently in testing to see if bot will display buttons
-class RoleButtonView:
+class RoleSelectorView:
 
     COMPONENTS = [
         {

@@ -5,5 +5,5 @@ SHOULD_HIDE_COMMAND_OUTPUT = {
     "price": False,
     "hone": False,
     "mari": False,
-    "role_buttons": False
+    "role_selector": False
 }

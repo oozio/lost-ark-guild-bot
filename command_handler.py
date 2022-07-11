@@ -1,4 +1,5 @@
-from handlers import honing, market, roles, role_buttons
+from handlers import honing, market, role_selector, roles
+from constants import interactions
 from utils import discord
 
 ROLE_COMMANDS = ["add_roles", "remove_roles"]
@@ -8,6 +9,7 @@ BUTTON_COMMANDS = ["role_buttons"]
 
 def handle_command(body):
     # dummy return
+    type = body["type"]
     channel_id = body["channel_id"]
     server_id = body["guild_id"]
     user_id = body["member"]["user"]["id"]
@@ -23,6 +25,9 @@ def handle_command(body):
             option_value = option["value"]
             options[option_key] = option_value
 
+    if type == interactions.InteractionsType.MESSAGE_COMPONENT:
+        return role_selector.respond()
+
     if command == "git":
         return f"Code lives at https://github.com/oozio/lost-ark-guild-bot; feel free to contribute!!"
     elif command in ROLE_COMMANDS:
@@ -32,7 +37,7 @@ def handle_command(body):
     elif command in HONING_COMMANDS:
         return honing.handle(command, options)
     elif command in BUTTON_COMMANDS:
-        return role_buttons.handle()
+        return role_selector.display()
     raise ValueError(f"Unrecognized command {command}, sad")
 
 

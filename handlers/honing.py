@@ -30,7 +30,13 @@ def handle(command, cmd_input):
             starting_artisans_str = ''
 
         researched = cmd_input.get('researched', False)
-        research_str = 'Honing Research Bonus Active' if researched else ''
+        if researched:
+            research_rate = honing_level.research_bonus_permyria // 100
+            if starting_rate is not None:
+                starting_rate -= research_rate / 100
+            research_str = f'Honing Research Bonus Active (+{research_rate}%)'
+        else:
+            research_str = ''
 
         strategy_calculator = honing_strategy.StrategyCalculator()
         num_hones, average_cost, combination_list, state_list = \

@@ -44,9 +44,9 @@ def handle_component_interaction(body):
 
 def lambda_handler(event, context):
     # get interaction metadata
+    body = event["body-json"]
     interaction_id = body["id"]
     type = body["type"]
-    body = event["body-json"]
     application_id = body["application_id"]
     interaction_token = body["token"]
 

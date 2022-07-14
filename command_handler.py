@@ -47,13 +47,8 @@ def lambda_handler(event, context):
     interaction_id = body["id"]
     type = body["type"]
     body = event["body-json"]
-    server_id = body["guild_id"]
-    channel_id = body["channel_id"]
     application_id = body["application_id"]
     interaction_token = body["token"]
-
-    user_id = body["member"]["user"]["id"]
-    command = body["data"]["name"]
 
     output = None
 

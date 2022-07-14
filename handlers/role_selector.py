@@ -11,9 +11,6 @@ def display():
 
 def respond(data):
     output = {
-        "tts": False,
-        "content": str(data), #printing out interaction data for now
-        "embeds": [],
-        "allowed_mentions": { "parse": [] }
+        "content": "Congrats! we pressed a button"
     }
     return output

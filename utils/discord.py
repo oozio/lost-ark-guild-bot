@@ -264,12 +264,11 @@ def send_component_response(interaction_id, interaction_token,
         body = initial_response(InteractionsCallbackType.PONG)
     else:
         body = {
-            "type": InteractionsCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
-            "data": content
+            "type": InteractionsCallbackType.CHANNEL_MESSAGE_WITH_SOURCE
         }
-
+        body["data"] = content
     url=f"{BASE_URL}/interactions/{interaction_id}/{interaction_token}/callback"
-    response = requests.post(url, json=body, headers=HEADERS)
+    requests.post(url, json=body, headers=HEADERS)
 
 # Misc
 

@@ -36,7 +36,7 @@ def handle_command(body):
         return role_selector.display()
     raise ValueError(f"Unrecognized command {command}, sad")
 
-def handleComponentInteraction(body):
+def handle_component_interaction(body):
     #Handles user interactions with buttons 
     #(for right now, currently only have 1 button for role selector)
     data = body["data"]
@@ -55,7 +55,7 @@ def lambda_handler(event, context):
 
     try:
         if type == interactions.InteractionsType.MESSAGE_COMPONENT:
-            output = handleComponentInteraction(body)
+            output = handle_component_interaction(body)
         else:
             output = handle_command(body)
     except NotImplementedError as nie:

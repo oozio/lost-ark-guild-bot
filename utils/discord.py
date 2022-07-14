@@ -5,6 +5,8 @@ import requests
 from nacl.signing import VerifyKey
 from nacl.exceptions import BadSignatureError
 
+from constants.interactions import InteractionsCallbackType
+
 PING_PONG = {"type": 1}
 
 MAX_RESPONSE_LENGTH = 2000
@@ -254,6 +256,20 @@ def edit_message(channel_id, message_id, content, embed={}):
     url = f"{BASE_URL}/channels/{channel_id}/messages/{message_id}"
     response = requests.patch(url, json=response, headers=HEADERS)
 
+#Component related
+
+def send_component_response(interaction_id, interaction_token, 
+                                     content = None):
+    if content is None:
+        body = initial_response(InteractionsCallbackType.PONG)
+    else:
+        body = {
+            "type": InteractionsCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
+            "data": content
+        }
+
+    url=f"{BASE_URL}/interactions/{interaction_id}/{interaction_token}/callback"
+    response = requests.post(url, json=body, headers=HEADERS)
 
 # Misc
 

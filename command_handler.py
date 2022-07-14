@@ -9,7 +9,6 @@ BUTTON_COMMANDS = ["role_buttons"]
 
 def handle_command(body):
     # dummy return
-    type = body["type"]
     channel_id = body["channel_id"]
     server_id = body["guild_id"]
     user_id = body["member"]["user"]["id"]
@@ -25,9 +24,6 @@ def handle_command(body):
             option_value = option["value"]
             options[option_key] = option_value
 
-    if type == interactions.InteractionsType.MESSAGE_COMPONENT:
-        return role_selector.respond()
-
     if command == "git":
         return f"Code lives at https://github.com/oozio/lost-ark-guild-bot; feel free to contribute!!"
     elif command in ROLE_COMMANDS:
@@ -40,9 +36,16 @@ def handle_command(body):
         return role_selector.display()
     raise ValueError(f"Unrecognized command {command}, sad")
 
+def handleComponentInteraction(body):
+    #Handles user interactions with buttons 
+    #(for right now, currently only have 1 button for role selector)
+    data = body["data"]
+    return role_selector.respond(data)
 
 def lambda_handler(event, context):
     # get interaction metadata
+    interaction_id = body["id"]
+    type = body["type"]
     body = event["body-json"]
     server_id = body["guild_id"]
     channel_id = body["channel_id"]
@@ -54,8 +57,12 @@ def lambda_handler(event, context):
 
     output = None
 
+
     try:
-        output = handle_command(body)
+        if type == interactions.InteractionsType.MESSAGE_COMPONENT:
+            output = handleComponentInteraction(body)
+        else:
+            output = handle_command(body)
     except NotImplementedError as nie:
         output = f"This function is not yet implemented. Contact the owner. ({nie})"
     except Exception as e:
@@ -69,4 +76,8 @@ def lambda_handler(event, context):
     if not output:
         discord.delete_response(application_id, interaction_token)
     else:
-        discord.update_response(application_id, interaction_token, output)
+        if type == interactions.InteractionsType.MESSAGE_COMPONENT:
+            discord.send_component_response(interaction_id, interaction_token,
+                                            output)
+        else:
+            discord.update_response(application_id, interaction_token, output)

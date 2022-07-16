@@ -19,7 +19,7 @@ EMOJI_IDS = {
     '<:basicorehafusionmaterial2:991946731128356916>',
     'solar-grace-1':
     '<:solargrace1:991942897861677108>',
-    'solar-blesing-2':
+    'solar-blessing-2':
     '<:solarblessing2:991942770510024704>',
     'solar-protection-3':
     '<:solarprotection3:991943070767644742>',

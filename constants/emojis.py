@@ -5,9 +5,9 @@ EMOJI_IDS = {
     '<:silver:991945407473143929>',
     'honor-shard':
     '<:honorshard:991942576020140052>',
-    'guardian-stone-crystal-0':
+    'crystallized-guardian-stone-0':
     '<:guardianstonecrystal0:991945647492178000>',
-    'destruction-stone-crystal-0':
+    'crystallized-destruction-stone-0':
     '<:destructionstonecrystal0:991945773237416048>',
     'honor-leapstone-2':
     '<:honorleapstone2:991946666204741682>',

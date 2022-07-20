@@ -47,7 +47,7 @@ HONES = (
         base_rate_permyria=10000,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=82),
+            Material(item_id='crystallized-guardian-stone-0', amount=82),
             Material(item_id='honor-leapstone-2', amount=2),
             Material(item_id='honor-shard', amount=22),
             Material(item_id='silver', amount=11100),
@@ -62,7 +62,7 @@ HONES = (
         base_rate_permyria=10000,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=82),
+            Material(item_id='crystallized-guardian-stone-0', amount=82),
             Material(item_id='honor-leapstone-2', amount=2),
             Material(item_id='honor-shard', amount=22),
             Material(item_id='silver', amount=11380),
@@ -77,7 +77,7 @@ HONES = (
         base_rate_permyria=10000,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=82),
+            Material(item_id='crystallized-guardian-stone-0', amount=82),
             Material(item_id='honor-leapstone-2', amount=2),
             Material(item_id='honor-shard', amount=22),
             Material(item_id='silver', amount=11660),
@@ -92,7 +92,7 @@ HONES = (
         base_rate_permyria=10000,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=120),
+            Material(item_id='crystallized-guardian-stone-0', amount=120),
             Material(item_id='honor-leapstone-2', amount=4),
             Material(item_id='simple-oreha-fusion-material-1', amount=2),
             Material(item_id='honor-shard', amount=32),
@@ -108,7 +108,7 @@ HONES = (
         base_rate_permyria=10000,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=120),
+            Material(item_id='crystallized-guardian-stone-0', amount=120),
             Material(item_id='honor-leapstone-2', amount=4),
             Material(item_id='simple-oreha-fusion-material-1', amount=2),
             Material(item_id='honor-shard', amount=32),
@@ -124,7 +124,7 @@ HONES = (
         base_rate_permyria=10000,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=120),
+            Material(item_id='crystallized-guardian-stone-0', amount=120),
             Material(item_id='honor-leapstone-2', amount=4),
             Material(item_id='simple-oreha-fusion-material-1', amount=2),
             Material(item_id='honor-shard', amount=32),
@@ -140,7 +140,7 @@ HONES = (
         base_rate_permyria=6000,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=156),
+            Material(item_id='crystallized-guardian-stone-0', amount=156),
             Material(item_id='honor-leapstone-2', amount=4),
             Material(item_id='simple-oreha-fusion-material-1', amount=2),
             Material(item_id='honor-shard', amount=42),
@@ -170,7 +170,7 @@ HONES = (
         base_rate_permyria=4500,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=156),
+            Material(item_id='crystallized-guardian-stone-0', amount=156),
             Material(item_id='honor-leapstone-2', amount=4),
             Material(item_id='simple-oreha-fusion-material-1', amount=2),
             Material(item_id='honor-shard', amount=42),
@@ -200,7 +200,7 @@ HONES = (
         base_rate_permyria=3000,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=156),
+            Material(item_id='crystallized-guardian-stone-0', amount=156),
             Material(item_id='honor-leapstone-2', amount=4),
             Material(item_id='simple-oreha-fusion-material-1', amount=2),
             Material(item_id='honor-shard', amount=42),
@@ -230,7 +230,7 @@ HONES = (
         base_rate_permyria=3000,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=192),
+            Material(item_id='crystallized-guardian-stone-0', amount=192),
             Material(item_id='honor-leapstone-2', amount=6),
             Material(item_id='simple-oreha-fusion-material-1', amount=4),
             Material(item_id='honor-shard', amount=50),
@@ -260,7 +260,7 @@ HONES = (
         base_rate_permyria=3000,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=192),
+            Material(item_id='crystallized-guardian-stone-0', amount=192),
             Material(item_id='honor-leapstone-2', amount=6),
             Material(item_id='simple-oreha-fusion-material-1', amount=4),
             Material(item_id='honor-shard', amount=50),
@@ -290,7 +290,7 @@ HONES = (
         base_rate_permyria=1500,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=192),
+            Material(item_id='crystallized-guardian-stone-0', amount=192),
             Material(item_id='honor-leapstone-2', amount=6),
             Material(item_id='simple-oreha-fusion-material-1', amount=4),
             Material(item_id='honor-shard', amount=50),
@@ -320,7 +320,7 @@ HONES = (
         base_rate_permyria=1500,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=228),
+            Material(item_id='crystallized-guardian-stone-0', amount=228),
             Material(item_id='honor-leapstone-2', amount=6),
             Material(item_id='simple-oreha-fusion-material-1', amount=4),
             Material(item_id='honor-shard', amount=60),
@@ -350,7 +350,7 @@ HONES = (
         base_rate_permyria=1500,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=228),
+            Material(item_id='crystallized-guardian-stone-0', amount=228),
             Material(item_id='honor-leapstone-2', amount=8),
             Material(item_id='simple-oreha-fusion-material-1', amount=4),
             Material(item_id='honor-shard', amount=60),
@@ -380,7 +380,7 @@ HONES = (
         base_rate_permyria=1000,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=228),
+            Material(item_id='crystallized-guardian-stone-0', amount=228),
             Material(item_id='honor-leapstone-2', amount=8),
             Material(item_id='simple-oreha-fusion-material-1', amount=4),
             Material(item_id='honor-shard', amount=60),
@@ -410,7 +410,7 @@ HONES = (
         base_rate_permyria=10000,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=138),
+            Material(item_id='crystallized-destruction-stone-0', amount=138),
             Material(item_id='honor-leapstone-2', amount=4),
             Material(item_id='honor-shard', amount=32),
             Material(item_id='silver', amount=15860),
@@ -425,7 +425,7 @@ HONES = (
         base_rate_permyria=10000,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=138),
+            Material(item_id='crystallized-destruction-stone-0', amount=138),
             Material(item_id='honor-leapstone-2', amount=4),
             Material(item_id='honor-shard', amount=32),
             Material(item_id='silver', amount=16240),
@@ -440,7 +440,7 @@ HONES = (
         base_rate_permyria=10000,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=198),
+            Material(item_id='crystallized-destruction-stone-0', amount=198),
             Material(item_id='honor-leapstone-2', amount=6),
             Material(item_id='honor-shard', amount=32),
             Material(item_id='silver', amount=16640),
@@ -455,7 +455,7 @@ HONES = (
         base_rate_permyria=10000,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=198),
+            Material(item_id='crystallized-destruction-stone-0', amount=198),
             Material(item_id='honor-leapstone-2', amount=6),
             Material(item_id='simple-oreha-fusion-material-1', amount=2),
             Material(item_id='honor-shard', amount=46),
@@ -471,7 +471,7 @@ HONES = (
         base_rate_permyria=10000,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=198),
+            Material(item_id='crystallized-destruction-stone-0', amount=198),
             Material(item_id='honor-leapstone-2', amount=6),
             Material(item_id='simple-oreha-fusion-material-1', amount=2),
             Material(item_id='honor-shard', amount=46),
@@ -487,7 +487,7 @@ HONES = (
         base_rate_permyria=10000,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=198),
+            Material(item_id='crystallized-destruction-stone-0', amount=198),
             Material(item_id='honor-leapstone-2', amount=6),
             Material(item_id='simple-oreha-fusion-material-1', amount=2),
             Material(item_id='honor-shard', amount=46),
@@ -503,7 +503,7 @@ HONES = (
         base_rate_permyria=6000,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=258),
+            Material(item_id='crystallized-destruction-stone-0', amount=258),
             Material(item_id='honor-leapstone-2', amount=8),
             Material(item_id='simple-oreha-fusion-material-1', amount=4),
             Material(item_id='honor-shard', amount=60),
@@ -533,7 +533,7 @@ HONES = (
         base_rate_permyria=4500,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=258),
+            Material(item_id='crystallized-destruction-stone-0', amount=258),
             Material(item_id='honor-leapstone-2', amount=8),
             Material(item_id='simple-oreha-fusion-material-1', amount=4),
             Material(item_id='honor-shard', amount=60),
@@ -563,7 +563,7 @@ HONES = (
         base_rate_permyria=3000,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=258),
+            Material(item_id='crystallized-destruction-stone-0', amount=258),
             Material(item_id='honor-leapstone-2', amount=8),
             Material(item_id='simple-oreha-fusion-material-1', amount=4),
             Material(item_id='honor-shard', amount=60),
@@ -593,7 +593,7 @@ HONES = (
         base_rate_permyria=3000,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=320),
+            Material(item_id='crystallized-destruction-stone-0', amount=320),
             Material(item_id='honor-leapstone-2', amount=10),
             Material(item_id='simple-oreha-fusion-material-1', amount=4),
             Material(item_id='honor-shard', amount=74),
@@ -623,7 +623,7 @@ HONES = (
         base_rate_permyria=3000,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=320),
+            Material(item_id='crystallized-destruction-stone-0', amount=320),
             Material(item_id='honor-leapstone-2', amount=10),
             Material(item_id='simple-oreha-fusion-material-1', amount=4),
             Material(item_id='honor-shard', amount=74),
@@ -653,7 +653,7 @@ HONES = (
         base_rate_permyria=1500,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=320),
+            Material(item_id='crystallized-destruction-stone-0', amount=320),
             Material(item_id='honor-leapstone-2', amount=10),
             Material(item_id='simple-oreha-fusion-material-1', amount=4),
             Material(item_id='honor-shard', amount=74),
@@ -683,7 +683,7 @@ HONES = (
         base_rate_permyria=1500,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=380),
+            Material(item_id='crystallized-destruction-stone-0', amount=380),
             Material(item_id='honor-leapstone-2', amount=12),
             Material(item_id='simple-oreha-fusion-material-1', amount=6),
             Material(item_id='honor-shard', amount=88),
@@ -713,7 +713,7 @@ HONES = (
         base_rate_permyria=1500,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=380),
+            Material(item_id='crystallized-destruction-stone-0', amount=380),
             Material(item_id='honor-leapstone-2', amount=12),
             Material(item_id='simple-oreha-fusion-material-1', amount=6),
             Material(item_id='honor-shard', amount=88),
@@ -743,7 +743,7 @@ HONES = (
         base_rate_permyria=1000,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=380),
+            Material(item_id='crystallized-destruction-stone-0', amount=380),
             Material(item_id='honor-leapstone-2', amount=12),
             Material(item_id='simple-oreha-fusion-material-1', amount=6),
             Material(item_id='honor-shard', amount=88),
@@ -774,7 +774,7 @@ HONES = (
         base_rate_permyria=6000,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=404),
+            Material(item_id='crystallized-guardian-stone-0', amount=404),
             Material(item_id='great-honor-leapstone-2', amount=8),
             Material(item_id='basic-oreha-fusion-material-2', amount=6),
             Material(item_id='honor-shard', amount=108),
@@ -804,7 +804,7 @@ HONES = (
         base_rate_permyria=4500,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=404),
+            Material(item_id='crystallized-guardian-stone-0', amount=404),
             Material(item_id='great-honor-leapstone-2', amount=10),
             Material(item_id='basic-oreha-fusion-material-2', amount=6),
             Material(item_id='honor-shard', amount=108),
@@ -834,7 +834,7 @@ HONES = (
         base_rate_permyria=3000,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=404),
+            Material(item_id='crystallized-guardian-stone-0', amount=404),
             Material(item_id='great-honor-leapstone-2', amount=10),
             Material(item_id='basic-oreha-fusion-material-2', amount=6),
             Material(item_id='honor-shard', amount=108),
@@ -864,7 +864,7 @@ HONES = (
         base_rate_permyria=3000,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=498),
+            Material(item_id='crystallized-guardian-stone-0', amount=498),
             Material(item_id='great-honor-leapstone-2', amount=10),
             Material(item_id='basic-oreha-fusion-material-2', amount=8),
             Material(item_id='honor-shard', amount=132),
@@ -894,7 +894,7 @@ HONES = (
         base_rate_permyria=3000,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=498),
+            Material(item_id='crystallized-guardian-stone-0', amount=498),
             Material(item_id='great-honor-leapstone-2', amount=10),
             Material(item_id='basic-oreha-fusion-material-2', amount=8),
             Material(item_id='honor-shard', amount=132),
@@ -924,7 +924,7 @@ HONES = (
         base_rate_permyria=1500,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=498),
+            Material(item_id='crystallized-guardian-stone-0', amount=498),
             Material(item_id='great-honor-leapstone-2', amount=12),
             Material(item_id='basic-oreha-fusion-material-2', amount=8),
             Material(item_id='honor-shard', amount=132),
@@ -954,7 +954,7 @@ HONES = (
         base_rate_permyria=1500,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=592),
+            Material(item_id='crystallized-guardian-stone-0', amount=592),
             Material(item_id='great-honor-leapstone-2', amount=12),
             Material(item_id='basic-oreha-fusion-material-2', amount=8),
             Material(item_id='honor-shard', amount=158),
@@ -984,7 +984,7 @@ HONES = (
         base_rate_permyria=1500,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=592),
+            Material(item_id='crystallized-guardian-stone-0', amount=592),
             Material(item_id='great-honor-leapstone-2', amount=12),
             Material(item_id='basic-oreha-fusion-material-2', amount=8),
             Material(item_id='honor-shard', amount=158),
@@ -1014,7 +1014,7 @@ HONES = (
         base_rate_permyria=1000,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=592),
+            Material(item_id='crystallized-guardian-stone-0', amount=592),
             Material(item_id='great-honor-leapstone-2', amount=12),
             Material(item_id='basic-oreha-fusion-material-2', amount=8),
             Material(item_id='honor-shard', amount=158),
@@ -1044,7 +1044,7 @@ HONES = (
         base_rate_permyria=1000,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=686),
+            Material(item_id='crystallized-guardian-stone-0', amount=686),
             Material(item_id='great-honor-leapstone-2', amount=14),
             Material(item_id='basic-oreha-fusion-material-2', amount=10),
             Material(item_id='honor-shard', amount=216),
@@ -1073,7 +1073,7 @@ HONES = (
         base_rate_permyria=1000,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=686),
+            Material(item_id='crystallized-guardian-stone-0', amount=686),
             Material(item_id='great-honor-leapstone-2', amount=16),
             Material(item_id='basic-oreha-fusion-material-2', amount=10),
             Material(item_id='honor-shard', amount=292),
@@ -1102,7 +1102,7 @@ HONES = (
         base_rate_permyria=500,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=686),
+            Material(item_id='crystallized-guardian-stone-0', amount=686),
             Material(item_id='great-honor-leapstone-2', amount=16),
             Material(item_id='basic-oreha-fusion-material-2', amount=12),
             Material(item_id='honor-shard', amount=292),
@@ -1131,7 +1131,7 @@ HONES = (
         base_rate_permyria=500,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=780),
+            Material(item_id='crystallized-guardian-stone-0', amount=780),
             Material(item_id='great-honor-leapstone-2', amount=18),
             Material(item_id='basic-oreha-fusion-material-2', amount=12),
             Material(item_id='honor-shard', amount=536),
@@ -1160,7 +1160,7 @@ HONES = (
         base_rate_permyria=300,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=780),
+            Material(item_id='crystallized-guardian-stone-0', amount=780),
             Material(item_id='great-honor-leapstone-2', amount=20),
             Material(item_id='basic-oreha-fusion-material-2', amount=14),
             Material(item_id='honor-shard', amount=728),
@@ -1189,7 +1189,7 @@ HONES = (
         base_rate_permyria=6000,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=672),
+            Material(item_id='crystallized-destruction-stone-0', amount=672),
             Material(item_id='great-honor-leapstone-2', amount=12),
             Material(item_id='basic-oreha-fusion-material-2', amount=6),
             Material(item_id='honor-shard', amount=156),
@@ -1219,7 +1219,7 @@ HONES = (
         base_rate_permyria=4500,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=672),
+            Material(item_id='crystallized-destruction-stone-0', amount=672),
             Material(item_id='great-honor-leapstone-2', amount=14),
             Material(item_id='basic-oreha-fusion-material-2', amount=6),
             Material(item_id='honor-shard', amount=156),
@@ -1249,7 +1249,7 @@ HONES = (
         base_rate_permyria=3000,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=672),
+            Material(item_id='crystallized-destruction-stone-0', amount=672),
             Material(item_id='great-honor-leapstone-2', amount=14),
             Material(item_id='basic-oreha-fusion-material-2', amount=8),
             Material(item_id='honor-shard', amount=156),
@@ -1279,7 +1279,7 @@ HONES = (
         base_rate_permyria=3000,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=830),
+            Material(item_id='crystallized-destruction-stone-0', amount=830),
             Material(item_id='great-honor-leapstone-2', amount=16),
             Material(item_id='basic-oreha-fusion-material-2', amount=8),
             Material(item_id='honor-shard', amount=192),
@@ -1309,7 +1309,7 @@ HONES = (
         base_rate_permyria=3000,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=830),
+            Material(item_id='crystallized-destruction-stone-0', amount=830),
             Material(item_id='great-honor-leapstone-2', amount=16),
             Material(item_id='basic-oreha-fusion-material-2', amount=8),
             Material(item_id='honor-shard', amount=192),
@@ -1339,7 +1339,7 @@ HONES = (
         base_rate_permyria=1500,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=830),
+            Material(item_id='crystallized-destruction-stone-0', amount=830),
             Material(item_id='great-honor-leapstone-2', amount=18),
             Material(item_id='basic-oreha-fusion-material-2', amount=8),
             Material(item_id='honor-shard', amount=192),
@@ -1369,7 +1369,7 @@ HONES = (
         base_rate_permyria=1500,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=968),
+            Material(item_id='crystallized-destruction-stone-0', amount=968),
             Material(item_id='great-honor-leapstone-2', amount=18),
             Material(item_id='basic-oreha-fusion-material-2', amount=10),
             Material(item_id='honor-shard', amount=228),
@@ -1399,7 +1399,7 @@ HONES = (
         base_rate_permyria=1500,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=968),
+            Material(item_id='crystallized-destruction-stone-0', amount=968),
             Material(item_id='great-honor-leapstone-2', amount=20),
             Material(item_id='basic-oreha-fusion-material-2', amount=10),
             Material(item_id='honor-shard', amount=228),
@@ -1429,7 +1429,7 @@ HONES = (
         base_rate_permyria=1000,
         research_bonus_permyria=1000,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=968),
+            Material(item_id='crystallized-destruction-stone-0', amount=968),
             Material(item_id='great-honor-leapstone-2', amount=20),
             Material(item_id='basic-oreha-fusion-material-2', amount=10),
             Material(item_id='honor-shard', amount=228),
@@ -1459,7 +1459,7 @@ HONES = (
         base_rate_permyria=1000,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=1144),
+            Material(item_id='crystallized-destruction-stone-0', amount=1144),
             Material(item_id='great-honor-leapstone-2', amount=22),
             Material(item_id='basic-oreha-fusion-material-2', amount=12),
             Material(item_id='honor-shard', amount=310),
@@ -1488,7 +1488,7 @@ HONES = (
         base_rate_permyria=1000,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=1144),
+            Material(item_id='crystallized-destruction-stone-0', amount=1144),
             Material(item_id='great-honor-leapstone-2', amount=24),
             Material(item_id='basic-oreha-fusion-material-2', amount=14),
             Material(item_id='honor-shard', amount=422),
@@ -1517,7 +1517,7 @@ HONES = (
         base_rate_permyria=500,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=1144),
+            Material(item_id='crystallized-destruction-stone-0', amount=1144),
             Material(item_id='great-honor-leapstone-2', amount=28),
             Material(item_id='basic-oreha-fusion-material-2', amount=16),
             Material(item_id='honor-shard', amount=572),
@@ -1546,7 +1546,7 @@ HONES = (
         base_rate_permyria=500,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=1300),
+            Material(item_id='crystallized-destruction-stone-0', amount=1300),
             Material(item_id='great-honor-leapstone-2', amount=30),
             Material(item_id='basic-oreha-fusion-material-2', amount=18),
             Material(item_id='honor-shard', amount=776),
@@ -1575,7 +1575,7 @@ HONES = (
         base_rate_permyria=300,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=1300),
+            Material(item_id='crystallized-destruction-stone-0', amount=1300),
             Material(item_id='great-honor-leapstone-2', amount=32),
             Material(item_id='basic-oreha-fusion-material-2', amount=20),
             Material(item_id='honor-shard', amount=1054),
@@ -1605,7 +1605,7 @@ HONES = (
         base_rate_permyria=300,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=780),
+            Material(item_id='crystallized-guardian-stone-0', amount=780),
             Material(item_id='great-honor-leapstone-2', amount=22),
             Material(item_id='basic-oreha-fusion-material-2', amount=16),
             Material(item_id='honor-shard', amount=988),
@@ -1634,7 +1634,7 @@ HONES = (
         base_rate_permyria=100,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=874),
+            Material(item_id='crystallized-guardian-stone-0', amount=874),
             Material(item_id='great-honor-leapstone-2', amount=24),
             Material(item_id='basic-oreha-fusion-material-2', amount=18),
             Material(item_id='honor-shard', amount=1340),
@@ -1663,7 +1663,7 @@ HONES = (
         base_rate_permyria=100,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=874),
+            Material(item_id='crystallized-guardian-stone-0', amount=874),
             Material(item_id='great-honor-leapstone-2', amount=26),
             Material(item_id='basic-oreha-fusion-material-2', amount=20),
             Material(item_id='honor-shard', amount=1818),
@@ -1692,7 +1692,7 @@ HONES = (
         base_rate_permyria=50,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=874),
+            Material(item_id='crystallized-guardian-stone-0', amount=874),
             Material(item_id='great-honor-leapstone-2', amount=28),
             Material(item_id='basic-oreha-fusion-material-2', amount=22),
             Material(item_id='honor-shard', amount=2466),
@@ -1721,7 +1721,7 @@ HONES = (
         base_rate_permyria=50,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='guardian-stone-crystal-0', amount=968),
+            Material(item_id='crystallized-guardian-stone-0', amount=968),
             Material(item_id='great-honor-leapstone-2', amount=30),
             Material(item_id='basic-oreha-fusion-material-2', amount=24),
             Material(item_id='honor-shard', amount=3346),
@@ -1750,7 +1750,7 @@ HONES = (
         base_rate_permyria=300,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=1300),
+            Material(item_id='crystallized-destruction-stone-0', amount=1300),
             Material(item_id='great-honor-leapstone-2', amount=34),
             Material(item_id='basic-oreha-fusion-material-2', amount=22),
             Material(item_id='honor-shard', amount=1432),
@@ -1779,7 +1779,7 @@ HONES = (
         base_rate_permyria=100,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=1458),
+            Material(item_id='crystallized-destruction-stone-0', amount=1458),
             Material(item_id='great-honor-leapstone-2', amount=38),
             Material(item_id='basic-oreha-fusion-material-2', amount=26),
             Material(item_id='honor-shard', amount=1944),
@@ -1808,7 +1808,7 @@ HONES = (
         base_rate_permyria=100,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=1458),
+            Material(item_id='crystallized-destruction-stone-0', amount=1458),
             Material(item_id='great-honor-leapstone-2', amount=42),
             Material(item_id='basic-oreha-fusion-material-2', amount=28),
             Material(item_id='honor-shard', amount=2640),
@@ -1837,7 +1837,7 @@ HONES = (
         base_rate_permyria=50,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=1458),
+            Material(item_id='crystallized-destruction-stone-0', amount=1458),
             Material(item_id='great-honor-leapstone-2', amount=44),
             Material(item_id='basic-oreha-fusion-material-2', amount=32),
             Material(item_id='honor-shard', amount=3586),
@@ -1866,7 +1866,7 @@ HONES = (
         base_rate_permyria=50,
         research_bonus_permyria=0,
         cost=(
-            Material(item_id='destruction-stone-crystal-0', amount=1614),
+            Material(item_id='crystallized-destruction-stone-0', amount=1614),
             Material(item_id='great-honor-leapstone-2', amount=48),
             Material(item_id='basic-oreha-fusion-material-2', amount=36),
             Material(item_id='honor-shard', amount=4868),

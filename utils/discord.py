@@ -185,7 +185,7 @@ def get_messages(channel_id, limit, specified_message):
     return requests.get(url, headers=HEADERS).json()
 
 def get_message_by_id(channel_id, message_id):
-    url = f"https://discord.com/api/v8/channels/{channel_id}/messages/{message_id}"
+    url = f"{BASE_URL}/channels/{channel_id}/messages/{message_id}"
     
     return requests.get(url, headers=HEADERS).json()
 
@@ -257,10 +257,8 @@ def send_response(channel_id, content, embeds=None, ephemeral=False):
 
 def edit_message(channel_id, message_id, output):
     response = format_response(output, ephemeral=False)
-    print(response)
     url = f"{BASE_URL}/channels/{channel_id}/messages/{message_id}"
     response = requests.patch(url, json=response, headers=HEADERS)
-    print(response.status_code)
 
 
 #Component related

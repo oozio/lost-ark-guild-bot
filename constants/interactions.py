@@ -34,7 +34,7 @@ def parse_button_input(action_rows):
         for component in action_row["components"]:
             # TODO: is there only ever one button per interaction?
             button_info = {
-                "id": component["custom_id"],
+                "id": component["custom_id"].lower(),
                 "label": component["label"]
             }
             
@@ -50,7 +50,7 @@ def parse_component_input(body):
     
     action_rows = message["components"]
     
-    info["base_interaction_msg"] = message["interaction"]["name"]
+    info["base_interaction_msg"] = message["interaction"]["name"].lower()
     info["base_msg_id"] = message["id"]
     info["base_interaction_id"] = message["interaction"]["id"]
     info["buttons"] = parse_button_input(action_rows)

@@ -35,7 +35,8 @@ def handle(info):
     # new_schedule = _update_schedule()
     # new_msg      = _prettify_schedule(new_schedule)
     
-    new_msg = original_msg.strip() + ' !'
+    user_id = info["user_id"]
+    new_msg = original_msg.strip() + f"; <@{user_id}> clicked!"
     
     return new_msg
 

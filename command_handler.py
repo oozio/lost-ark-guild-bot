@@ -41,10 +41,10 @@ def handle_component_interaction(info):
             button_id = button["id"]
             button_label = button["label"]
             if button_id in SCHEDULING_BUTTONS:
-                return scheduler.handle(base_interaction, button_id, info)
+                return scheduler.handle(info)
             elif button_id in ROLE_BUTTONS: 
                 return role_selector.respond(info)
-            raise ValueError(f"Unrecognized button: [{button_label}]")
+            raise ValueError(f"Unrecognized button: `{button_label}` with ID `{button_id}`")
     
     raise ValueError(f"No followup interactions defined for {base_interaction}")
     

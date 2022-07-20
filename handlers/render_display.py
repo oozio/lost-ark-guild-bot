@@ -4,7 +4,7 @@ from . import role_selector, scheduler
 
 CMD_DISPLAYS = {
     "role_selector": role_selector.display,
-    "schedule": scheduler.display
+    "scheduler": scheduler.display
 }
     
 

@@ -13,7 +13,7 @@ class RoleSelectorView:
                     "type": 2,
                     "label": "Vykas",
                     "style": 1,
-                    "custom_id": "click_one"
+                    "custom_id": "vykas"
                 }
             ]
 

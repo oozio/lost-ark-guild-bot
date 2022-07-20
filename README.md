@@ -2,7 +2,7 @@
 
 
 ## adding a new command:
-- request to be a repo collaborator/msg #bot-testing for aws permissions
+- request to be a repo collaborator/msg #bot-testing for aws permissions; alternatively, fork and make a pull request
 - add command to commands/commands.json
     - how to format input/description/etc: https://discord.com/developers/docs/interactions/slash-commands#applicationcommandoption
 - add preferred command output visibility in commands/visibility.py

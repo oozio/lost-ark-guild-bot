@@ -16,8 +16,11 @@ RESPONSE_TYPES = {
     "ACK_NO_SOURCE": 2,
     "MESSAGE_NO_SOURCE": 3,
     "MESSAGE_WITH_SOURCE": 4,
-    "ACK_WITH_SOURCE": 5
+    "ACK_WITH_SOURCE": 5, 
+    "DEFERRED_UPDATE_MESSAGE": 6,
+    "MODAL": 9
 }
+
 
 BASE_URL = "https://discord.com/api/v9"
 
@@ -76,9 +79,19 @@ def get_input(data, target):
             return option['value']
 
 
+# Channel-related
+def get_channel_by_id(channel_id):
+    """ Returns a channel object.
+
+    returns channel object (dict).
+    Params found at https://discord.com/developers/docs/resources/channel
+    """
+    url = f"{BASE_URL}/channels/{channel_id}"
+    return requests.get(url, headers=HEADERS).json()
+
+
 # Role-related
 _ROLES_CACHE = {}
-
 
 def _get_all_roles(server_id, force_refresh=False):
     if server_id in _ROLES_CACHE and not force_refresh:
@@ -160,25 +173,21 @@ def get_user_nickname_by_id(server_id, user_id):
 
 
 # Message related
-
-
-def post_message_in_channel(channel_id, content, ephemeral=True):
+def post_message_in_channel(channel_id, message, ephemeral=True):
     url = f'{BASE_URL}/channels/{channel_id}/messages'
-    body = {'content': content, "flags": 64}
+    body = format_response(message, ephemeral)
     requests.post(url, json=body, headers=HEADERS)
 
 
 def get_messages(channel_id, limit, specified_message):
-    # gets the last <limit> messages from the specified channel, and appends any message specified by id
-    # doesn't check if <specified_message> is duplicated
+    # gets the last <limit> messages from the specified channel
     url = f"https://discord.com/api/v8/channels/{channel_id}/messages?limit={limit}"
-    ind_url = f"https://discord.com/api/v8/channels/{channel_id}/messages/{specified_message}"
-    messages = requests.get(url, headers=HEADERS).json()
-    if specified_message:
-        messages.append(requests.get(ind_url, headers=HEADERS).json())
+    return requests.get(url, headers=HEADERS).json()
 
-    return messages
-
+def get_message_by_id(channel_id, message_id):
+    url = f"https://discord.com/api/v8/channels/{channel_id}/messages/{message_id}"
+    
+    return requests.get(url, headers=HEADERS).json()
 
 def format_response(body, ephemeral):
     if isinstance(body, str):
@@ -246,18 +255,15 @@ def send_response(channel_id, content, embeds=None, ephemeral=False):
     return response
 
 
-def edit_message(channel_id, message_id, content, embed={}):
-    response = {"content": content}
-    if embed:
-        response['embed'] = [{
-            "title": f"{embed.get('title')}",
-            "description": f"{embed.get('description')}"
-        }]
+def edit_message(channel_id, message_id, output):
+    response = format_response(output, ephemeral=False)
+    print(response)
     url = f"{BASE_URL}/channels/{channel_id}/messages/{message_id}"
     response = requests.patch(url, json=response, headers=HEADERS)
+    print(response.status_code)
+
 
 #Component related
-
 def send_component_response(interaction_id, interaction_token, 
                                      content = None):
     if content is None:
@@ -270,9 +276,8 @@ def send_component_response(interaction_id, interaction_token,
     url=f"{BASE_URL}/interactions/{interaction_id}/{interaction_token}/callback"
     requests.post(url, json=body, headers=HEADERS)
 
+
 # Misc
-
-
 def initial_response(response_type, content=None, ephemeral=False):
     response = {
         "type":

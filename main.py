@@ -2,8 +2,10 @@ import json
 import boto3
 import requests
 
-from commands.visibility import SHOULD_HIDE_COMMAND_OUTPUT
+from constants import interactions
 from utils import discord, aws_lambda
+
+from commands.visibility import SHOULD_HIDE_COMMAND_OUTPUT
 
 
 def lambda_handler(event, context):
@@ -15,10 +17,14 @@ def lambda_handler(event, context):
     # pass event to processor
     aws_lambda.invoke_processor(event)
 
-    # get interaction metadata
-    command = event["body-json"]["data"]["name"]
+    interaction_type = event["body-json"]["type"] 
 
-    # return :thinking:
-    return discord.initial_response('ACK_WITH_SOURCE',
-                                    ephemeral=SHOULD_HIDE_COMMAND_OUTPUT.get(
-                                        command, True))
+    if interaction_type == interactions.InteractionsType.MESSAGE_COMPONENT:
+        return discord.initial_response("DEFERRED_UPDATE_MESSAGE")
+    elif interaction_type == interactions.InteractionsType.APPLICATION_COMMAND:
+        command = event["body-json"]["data"]["name"]
+        
+        # return :thinking:
+        return discord.initial_response('ACK_WITH_SOURCE',
+                                        ephemeral=SHOULD_HIDE_COMMAND_OUTPUT.get(
+                                            command, True))

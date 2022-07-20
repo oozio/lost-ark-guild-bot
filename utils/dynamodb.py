@@ -3,7 +3,7 @@ import boto3
 from boto3.dynamodb.conditions import Key
 
 PKEY_NAME = "pk"
-GENERAL_TABLE = "lost-ark-guild-bot"
+# GENERAL_TABLE = "lost-ark-guild-bot"
 
 dynamodb_client = boto3.resource("dynamodb")
 
@@ -29,9 +29,14 @@ def set_rows(table_name, pkey_value, new_column):
     else:
         for k, v in new_column.items():
             for row in existing_rows:
-                table.update_item(Key={PKEY_NAME: pkey_value},
-                                  UpdateExpression=f"set {k}=:s",
-                                  ExpressionAttributeValues={":s": v})
+                table.update_item(
+                    Key={PKEY_NAME: pkey_value},
+                    UpdateExpression=f"set {k}=:s",
+                    ExpressionAttributeValues={
+                        ":s": v
+                    }
+                )
+                
+    # if table_name != GENERAL_TABLE:
+    #     set_rows(GENERAL_TABLE, pkey_value, new_column)
 
-    if table_name != GENERAL_TABLE:
-        set_rows(GENERAL_TABLE, pkey_value, new_column)

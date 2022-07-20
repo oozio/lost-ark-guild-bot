@@ -163,7 +163,12 @@
     },
     {
         "name": "role_selector",
-        "description": "test function to display role buttons",
+        "description": "<under construction> generate button-based role selector",
+        "type": 1
+    },
+    {
+        "name": "scheduler",
+        "description": "<under construction> generate event sign ups",
         "type": 1
     }
 ]

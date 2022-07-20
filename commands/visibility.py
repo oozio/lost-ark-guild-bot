@@ -3,7 +3,7 @@ SHOULD_HIDE_COMMAND_OUTPUT = {
     "remove_role": True,
     "git": False,
     "price": False,
-    "hone": False,
+    "hone": True,
     "mari": False,
     "role_selector": False
 }

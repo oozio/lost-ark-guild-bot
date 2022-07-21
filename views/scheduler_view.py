@@ -1,15 +1,59 @@
+from typing import List
+
+from constants.emojis import AvailabilityEmoji, ClassEmoji, EmojiEnum
+
+
+# TODO: better typing
+def _generate_emoji_button(emojiEnum: EmojiEnum) -> dict:
+    emoji = {
+        "id": emojiEnum.emoji_id,
+        "name": emojiEnum.emoji_name
+    }
+
+    return {
+        "type": 2,
+        "label": f"{emojiEnum.name.replace('_', ' ').title()}",
+        "style": 1,
+        "custom_id": f"{emojiEnum.name}",
+        "emoji": emoji
+    }
+    
+def _generate_emoji_dropdown(choices: List[EmojiEnum]) -> dict:
+    options = []
+    for emojiEnum in choices:
+        emoji = {
+            "id": emojiEnum.emoji_id,
+            "name": emojiEnum.emoji_name
+        }
+    
+        options.append(
+            {
+                "label": f"{emojiEnum.name.title()}",
+                "value": f"{emojiEnum.name}",
+                "emoji": emoji,
+            }
+        )
+
+    return {
+        "type": 3,
+        "custom_id": "class_selector",
+        "placeholder": "Choose a class if not already registered",
+        "options": options
+    }    
+
+
 class SchedulerView:
     COMPONENTS = [
         {
             "type": 1,
             "components": [
-                {
-                    "type": 2,
-                    "label": "toggle interest",
-                    "style": 1,
-                    "custom_id": "toggle_event_interest"
-                }
+                _generate_emoji_button(availability) for availability in AvailabilityEmoji
             ]
-
+        }, 
+        {
+            "type": 1,
+            "components": [
+                _generate_emoji_dropdown([char_class for char_class in ClassEmoji])
+            ]
         }
     ]

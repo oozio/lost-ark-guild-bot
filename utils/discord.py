@@ -90,6 +90,10 @@ def get_channel_by_id(channel_id):
     return requests.get(url, headers=HEADERS).json()
 
 
+def get_thread_members(channel_id):
+    url = f"{BASE_URL}/channels/{channel_id}/thread-members"
+    return requests.get(url, headers=HEADERS).json()
+    
 # Role-related
 _ROLES_CACHE = {}
 

@@ -9,6 +9,7 @@ class InteractionsType(int, Enum):
     APPLICATION_COMMAND_AUTOCOMPLETE = 4
     MODAL_SUBMIT = 5
 
+
 class InteractionsCallbackType(int, Enum):
     PONG = 1
     CHANNEL_MESSAGE_WITH_SOURCE = 4
@@ -19,6 +20,13 @@ class InteractionsCallbackType(int, Enum):
     MODAL = 9
     
 
+class ComponentType(int, Enum):
+    ACTION_ROW = 1
+    BUTTON = 2
+    SELECT = 3
+    TEXT_INPUT = 4
+
+
 def parse_basic_input(body):
     return {
         "channel_id": body["channel_id"],
@@ -27,34 +35,44 @@ def parse_basic_input(body):
         "role_ids": body["member"]["roles"]
     }
 
-def parse_button_input(action_rows):
-    buttons = []
+
+def parse_button_input(data, action_rows):
+    all_buttons = [component for row in action_rows for component in row["components"] if component["type"] == ComponentType.BUTTON]
+    curr_id = data["custom_id"]
+    curr_button = next((button for button in all_buttons if button["custom_id"] == curr_id), None)
+
+    assert curr_button, f"Button `{curr_id}` not found in list of all buttons on original message"
     
-    for action_row in action_rows:
-        for component in action_row["components"]:
-            # TODO: is there only ever one button per interaction?
-            button_info = {
-                "id": component["custom_id"].lower(),
-                "label": component["label"]
-            }
+    button_info = {
+        "id": curr_id,
+        "label": curr_button["label"]
+    }
             
-            buttons.append(button_info)
+    return button_info
+
+
+def parse_select_input(data, action_rows):
+    selection_info = {
+        "id": data["custom_id"],
+        "values": data["values"]
+    }
             
-    return buttons
-            
+    return selection_info
+
             
 def parse_component_input(body):
     info = parse_basic_input(body)
     
-    message = body["message"]
-    
-    action_rows = message["components"]
-    
-    info["base_interaction_msg"] = message["interaction"]["name"].lower()
+    message = body["message"]    
+    info["base_interaction_msg"] = message["interaction"]["name"]
     info["base_msg_id"] = message["id"]
     info["base_interaction_id"] = message["interaction"]["id"]
-    info["buttons"] = parse_button_input(action_rows)
-    
+
+    action_rows = message["components"]
+    data = body["data"]
+
+    info["data"] = COMPONENT_PARSERS[data["component_type"]](data, action_rows)
+
     return info
 
 
@@ -73,7 +91,12 @@ def parse_slash_command_input(body):
     
     return info
     
-    
+
+COMPONENT_PARSERS = {
+    ComponentType.BUTTON: parse_button_input,
+    ComponentType.SELECT: parse_select_input
+}
+
 INPUT_PARSERS = {
     InteractionsType.APPLICATION_COMMAND: parse_slash_command_input, 
     InteractionsType.MESSAGE_COMPONENT: parse_component_input

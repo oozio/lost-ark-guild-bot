@@ -5,7 +5,6 @@ TYPED_NONES = {str: "", dict: {}, list: []}
 
 _Fields = Dict[str, Dict[str, Union[str, type]]]
 
-
 class TrimmableClass(ABC):
     FIELDS: _Fields = {}
     EMBED_TEMPLATE = {"title": {"type": str}, "url": {"type": str}}

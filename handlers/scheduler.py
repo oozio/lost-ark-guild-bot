@@ -6,9 +6,9 @@ from utils import discord, dynamodb
 # TODO seems like a bad import
 from constants.emojis import AvailabilityEmoji, ClassEmoji
 
-SCHEDULE_TEMPLATE = f"""<:{AvailabilityEmoji.COMING.emoji_name}:{AvailabilityEmoji.COMING.emoji_id}> : {{0}}
-<:{AvailabilityEmoji.MAYBE.emoji_name}:{AvailabilityEmoji.MAYBE.emoji_id}> : {{1}}
-<:{AvailabilityEmoji.NOT_COMING.emoji_name}:{AvailabilityEmoji.NOT_COMING.emoji_id}> : {{2}}"""
+SCHEDULE_TEMPLATE = f"""{AvailabilityEmoji.COMING}: {{0}}
+{AvailabilityEmoji.NOT_COMING}: {{1}}
+{AvailabilityEmoji.MAYBE}: {{2}}"""
 
 SCHEDULE_TABLE = "lost_ark_schedule"
 PKEY = "pk"
@@ -70,6 +70,10 @@ def _generate_header(event_type):
     return f"Scheduling for {event_type}"
 
 
+
+
+
+# public
 def display(info):
     event_type = discord.get_channel_by_id(info["channel_id"])["name"]
     return {
@@ -78,6 +82,14 @@ def display(info):
     }
 
 
+def is_schedule_button(component_id):
+    return component_id in [state.name for state in AvailabilityEmoji]
+
+
+def is_schedule_selector(component_id):
+    return component_id == scheduler_view.CLASS_SELECTOR_ID
+
+    
 def handle_button(info):
     channel_name = discord.get_channel_by_id(info["channel_id"])["name"]
     event_type = channel_name
@@ -89,6 +101,8 @@ def handle_button(info):
     # TODO: track different instances of the same event type
 
     return new_msg
+
+
 
 
 def handle_selector(info):

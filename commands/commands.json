@@ -14,7 +14,7 @@
         "type": 1,
         "options": [
             {
-                "name": "item", 
+                "name": "item",
                 "description": "Item to check",
                 "type": 3,
                 "required": 1,
@@ -85,37 +85,37 @@
                 "name": "role",
                 "description": "A role to add",
                 "type": 8,
-                "required": 1               
+                "required": 1
             },
             {
                 "name": "optional_role_1",
                 "description": "A role to add",
                 "type": 8,
-                "required": 0                
+                "required": 0
             },
             {
                 "name": "optional_role_2",
                 "description": "A role to add",
                 "type": 8,
-                "required": 0                
+                "required": 0
             },
             {
                 "name": "optional_role_3",
                 "description": "A role to add",
                 "type": 8,
-                "required": 0                
+                "required": 0
             },
             {
                 "name": "optional_role_4",
                 "description": "A role to add",
                 "type": 8,
-                "required": 0                
+                "required": 0
             },
             {
                 "name": "optional_role_5",
                 "description": "A role to add",
                 "type": 8,
-                "required": 0                
+                "required": 0
             }
         ]
     },
@@ -133,37 +133,37 @@
                 "name": "optional_role_1",
                 "description": "A role to remove",
                 "type": 8,
-                "required": 0                
+                "required": 0
             },
             {
                 "name": "optional_role_2",
                 "description": "A role to remove",
                 "type": 8,
-                "required": 0                
+                "required": 0
             },
             {
                 "name": "optional_role_3",
                 "description": "A role to remove",
                 "type": 8,
-                "required": 0                
+                "required": 0
             },
             {
                 "name": "optional_role_4",
                 "description": "A role to remove",
                 "type": 8,
-                "required": 0                
+                "required": 0
             },
             {
                 "name": "optional_role_5",
                 "description": "A role to remove",
                 "type": 8,
-                "required": 0                
+                "required": 0
             }
         ]
     },
     {
         "name": "role_selector",
-        "description": "<under construction> generate button-based role selector",
+        "description": "generate button-based role selector",
         "type": 1
     },
     {

@@ -180,6 +180,7 @@ def get_user_nickname_by_id(server_id, user_id):
 def post_message_in_channel(channel_id, message, ephemeral=True):
     url = f'{BASE_URL}/channels/{channel_id}/messages'
     body = format_response(message, ephemeral)
+    print(body)
     requests.post(url, json=body, headers=HEADERS)
 
 

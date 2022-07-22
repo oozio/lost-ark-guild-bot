@@ -1,6 +1,7 @@
 from handlers import honing, market, render_display, role_selector, roles, scheduler
-from constants import interactions
+from constants import interactions, roles
 from utils import discord
+
 
 # TODO: move this entire section to /constants'
 # text-only slash commands
@@ -15,11 +16,10 @@ SELECTOR_COMMANDS = ["scheduler"]
 RENDER_VIEW_COMMANDS = set([*BUTTON_COMMANDS, *SELECTOR_COMMANDS])
 
 # component interactions 
-# TODO: pull roles from api instead
 COMPONENT_HANDLERS = {
-    frozenset(("vykas", )): role_selector.respond,
-    frozenset(("COMING", "NOT_COMING", "MAYBE")): scheduler.handle_button,
-    frozenset(("class_selector", )): scheduler.handle_selector
+    role_selector.is_role_button: role_selector.respond,
+    scheduler.is_schedule_button: scheduler.handle_button,
+    scheduler.is_schedule_selector: scheduler.handle_selector
 }
 
 def handle_command(info):
@@ -46,7 +46,7 @@ def handle_component_interaction(info):
     base_interaction = info["base_interaction_msg"]
     component_id = info["data"]["id"]
 
-    handler = [f for k, f in COMPONENT_HANDLERS.items() if component_id in k]
+    handler = [func for is_match, func in COMPONENT_HANDLERS.items() if is_match(component_id)]
 
     if handler:
         assert len(handler)==1, f"Duplicate handler found for `{component_id}`"
@@ -68,15 +68,18 @@ def lambda_handler(event, context):
 
     # Handling an request can either succeed or fail.
     #   If it succeeds, take any output that came from the handler and 
-    #           - if the request was a simple slash command, it'll have generated a loading message; when done, update
-    #             that message.
-    #           - if the request was a component interaction, edit the body of the original message.
-    #           - if no output is necessary, delete the original message to reduce spam. 
+    #           - if the request was a simple slash command, it'll have generated a loading 
+    #             message; when done, update that message.
+    #               - if no output is necessary, delete the original message to reduce spam. 
+    #           - if the request was a component interaction, edit the body of the original     
+    #             message. 
+    #               - if no output is necessary, do nothing 
     #   
     #   If it failed, 
-    #           - for slash commands, delete the original message and show the error to the user who made the request.
-    #           - for component interactions, keep the original message so that other people can still interact with 
-    #             it; show the error to the user who made the request.
+    #           - for slash commands, delete the original message and show the error to the user 
+    #             who made the request.
+    #           - for component interactions, keep the original message so that other people can 
+    #             still interact with it; show the error to the user who made the request.
 
     try:
         info = interactions.INPUT_PARSERS[interaction_type](body)   
@@ -101,12 +104,12 @@ def lambda_handler(event, context):
     print(f"output: {output}")
 
     if not output:
-        discord.delete_response(application_id, interaction_token)
+        if interaction_type == interactions.InteractionsType.APPLICATION_COMMAND:
+            discord.delete_response(application_id, interaction_token)
     else:
         if interaction_type == interactions.InteractionsType.APPLICATION_COMMAND:
             discord.update_response(application_id, interaction_token, output)
         elif interaction_type == interactions.InteractionsType.MESSAGE_COMPONENT:
-            discord.edit_message(info["channel_id"], info["base_msg_id"],
-                                            output)
+            discord.edit_message(info["channel_id"], info["base_msg_id"], output)
         else:
             discord.post_message_in_channel(info["channel_id"], f"Don't know how to handle this interaction type: {interaction_type}", ephemeral=True)

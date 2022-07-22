@@ -2,6 +2,7 @@ from typing import List
 
 from constants.emojis import AvailabilityEmoji, ClassEmoji, EmojiEnum
 
+CLASS_SELECTOR_ID = "class_selector"
 
 # TODO: better typing
 def _generate_emoji_button(emojiEnum: EmojiEnum) -> dict:
@@ -36,7 +37,7 @@ def _generate_emoji_dropdown(choices: List[EmojiEnum]) -> dict:
 
     return {
         "type": 3,
-        "custom_id": "class_selector",
+        "custom_id": CLASS_SELECTOR_ID,
         "placeholder": "Choose a class if not already registered",
         "options": options
     }    

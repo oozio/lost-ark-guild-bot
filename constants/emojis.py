@@ -7,11 +7,16 @@ class EmojiEnum(Enum):
         obj = object.__new__(cls)
         obj._value_ = value
         return obj
+
     def __init__(self, emoji_name: str, emoji_id: str = None):
+        # Expects <name>: <emoji_name>, <emoji_id>
         self.emoji_name = emoji_name
         self.emoji_id = emoji_id
         
+    def __repr__(self):
+        return f"<:{self.emoji_name}:{self.emoji_id}>"
         
+
 class AvailabilityEmoji(EmojiEnum):
     COMING = "mokoko_lets_play", "984283567859331086"
     NOT_COMING = "mokoko_puddle", "984284429671338014"

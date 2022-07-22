@@ -32,7 +32,8 @@ def parse_basic_input(body):
         "channel_id": body["channel_id"],
         "server_id": body["guild_id"],
         "user_id": body["member"]["user"]["id"],
-        "role_ids": body["member"]["roles"]
+        "application_id": body["application_id"],
+        "interaction_token": body["token"]
     }
 
 

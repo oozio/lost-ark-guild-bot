@@ -182,7 +182,7 @@
                 "description": "when this proposed raid will start",
                 "type": 3,
                 "required": 1
-            },
+            }
         ]
     }
 ]

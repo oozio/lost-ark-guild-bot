@@ -172,16 +172,16 @@
         "type": 1,
         "options": [
             {
-                "name": "raid_name",
-                "description": "Optionally, provide the name of the raid",
-                "type": 3,
-                "required": 0
-            },
-            {
                 "name": "start_time",
                 "description": "when this proposed raid will start",
                 "type": 3,
                 "required": 1
+            },
+            {
+                "name": "raid_name",
+                "description": "Optionally, provide the name of the raid",
+                "type": 3,
+                "required": 0
             }
         ]
     }

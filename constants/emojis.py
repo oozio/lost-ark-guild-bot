@@ -12,16 +12,16 @@ class EmojiEnum(Enum):
         # Expects <name>: <emoji_name>, <emoji_id>
         self.emoji_name = emoji_name
         self.emoji_id = emoji_id
-        
-    def __repr__(self):
+
+    def __str__(self):
         return f"<:{self.emoji_name}:{self.emoji_id}>"
-        
+
 
 class AvailabilityEmoji(EmojiEnum):
     COMING = "mokoko_lets_play", "984283567859331086"
     NOT_COMING = "mokoko_puddle", "984284429671338014"
-    MAYBE = "mokoko_huh", "984283548095750195" 
- 
+    MAYBE = "mokoko_huh", "984283548095750195"
+
 
 class ClassEmoji(EmojiEnum):
     ARCANIST = "arcanist", "999209761285361774"
@@ -48,37 +48,24 @@ class ClassEmoji(EmojiEnum):
     WARDANCER = "wardancer", "999210110389866546"
 
 
+SUPPORT_CLASSES = [ClassEmoji.ARTIST, ClassEmoji.BARD, ClassEmoji.PALADIN]
+DPS_CLASSES = [x for x in ClassEmoji if x not in SUPPORT_CLASSES]
+
 EMOJI_IDS = {
-    'gold':
-    '<:gold:991944972804829185>',
-    'silver':
-    '<:silver:991945407473143929>',
-    'honor-shard':
-    '<:honorshard:991942576020140052>',
-    'crystallized-guardian-stone-0':
-    '<:guardianstonecrystal0:991945647492178000>',
-    'crystallized-destruction-stone-0':
-    '<:destructionstonecrystal0:991945773237416048>',
-    'honor-leapstone-2':
-    '<:honorleapstone2:991946666204741682>',
-    'great-honor-leapstone-2':
-    '<:greathonorleapstone2:991946650010533918>',
-    'simple-oreha-fusion-material-1':
-    '<:simpleorehafusionmaterial1:991946707480891473>',
-    'basic-oreha-fusion-material-2':
-    '<:basicorehafusionmaterial2:991946731128356916>',
-    'solar-grace-1':
-    '<:solargrace1:991942897861677108>',
-    'solar-blessing-2':
-    '<:solarblessing2:991942770510024704>',
-    'solar-protection-3':
-    '<:solarprotection3:991943070767644742>',
-    'tailoring-basic-mending-3':
-    '<:tailoringbasicmending3:991946764590526464>',
-    'metallurgy-basic-welding-3':
-    '<:metallurgybasicwelding3:991946786392514710>',
-    'tailoring-applied-mending-4':
-    '<:tailoringappliedmending4:991943401484320778>',
-    'metallurgy-applied-welding-4':
-    '<:metallurgyappliedwelding4:991943536096321546>',
+    "gold": "<:gold:991944972804829185>",
+    "silver": "<:silver:991945407473143929>",
+    "honor-shard": "<:honorshard:991942576020140052>",
+    "crystallized-guardian-stone-0": "<:guardianstonecrystal0:991945647492178000>",
+    "crystallized-destruction-stone-0": "<:destructionstonecrystal0:991945773237416048>",
+    "honor-leapstone-2": "<:honorleapstone2:991946666204741682>",
+    "great-honor-leapstone-2": "<:greathonorleapstone2:991946650010533918>",
+    "simple-oreha-fusion-material-1": "<:simpleorehafusionmaterial1:991946707480891473>",
+    "basic-oreha-fusion-material-2": "<:basicorehafusionmaterial2:991946731128356916>",
+    "solar-grace-1": "<:solargrace1:991942897861677108>",
+    "solar-blessing-2": "<:solarblessing2:991942770510024704>",
+    "solar-protection-3": "<:solarprotection3:991943070767644742>",
+    "tailoring-basic-mending-3": "<:tailoringbasicmending3:991946764590526464>",
+    "metallurgy-basic-welding-3": "<:metallurgybasicwelding3:991946786392514710>",
+    "tailoring-applied-mending-4": "<:tailoringappliedmending4:991943401484320778>",
+    "metallurgy-applied-welding-4": "<:metallurgyappliedwelding4:991943536096321546>",
 }

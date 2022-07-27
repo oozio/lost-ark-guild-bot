@@ -2,6 +2,7 @@ from enum import Enum
 
 # TODO: move this file into utils
 
+
 class InteractionsType(int, Enum):
     PING = 1
     APPLICATION_COMMAND = 2
@@ -18,7 +19,7 @@ class InteractionsCallbackType(int, Enum):
     UPDATE_MESSAGE = 7
     APPLICATION_COMMAND_AUTOCOMPLETE_RESULT = 8
     MODAL = 9
-    
+
 
 class ComponentType(int, Enum):
     ACTION_ROW = 1
@@ -33,41 +34,45 @@ def parse_basic_input(body):
         "server_id": body["guild_id"],
         "user_id": body["member"]["user"]["id"],
         "application_id": body["application_id"],
-        "interaction_token": body["token"]
+        "interaction_token": body["token"],
     }
 
 
 def parse_button_input(data, action_rows):
-    all_buttons = [component for row in action_rows for component in row["components"] if component["type"] == ComponentType.BUTTON]
+    all_buttons = [
+        component
+        for row in action_rows
+        for component in row["components"]
+        if component["type"] == ComponentType.BUTTON
+    ]
     curr_id = data["custom_id"]
-    curr_button = next((button for button in all_buttons if button["custom_id"] == curr_id), None)
+    curr_button = next(
+        (button for button in all_buttons if button["custom_id"] == curr_id), None
+    )
 
-    assert curr_button, f"Button `{curr_id}` not found in list of all buttons on original message"
-    
-    button_info = {
-        "id": curr_id,
-        "label": curr_button["label"]
-    }
-            
+    assert (
+        curr_button
+    ), f"Button `{curr_id}` not found in list of all buttons on original message"
+
+    button_info = {"id": curr_id, "label": curr_button["label"]}
+
     return button_info
 
 
 def parse_select_input(data, action_rows):
-    selection_info = {
-        "id": data["custom_id"],
-        "values": data["values"]
-    }
-            
+    selection_info = {"id": data["custom_id"], "values": data["values"]}
+
     return selection_info
 
-            
+
 def parse_component_input(body):
     info = parse_basic_input(body)
-    
-    message = body["message"]    
+
+    message = body["message"]
     info["base_interaction_msg"] = message["interaction"]["name"]
     info["base_msg_id"] = message["id"]
     info["base_interaction_id"] = message["interaction"]["id"]
+    # info["base_interaction_options"] = message["interaction"]["options"]
 
     action_rows = message["components"]
     data = body["data"]
@@ -88,17 +93,17 @@ def parse_slash_command_input(body):
         for option in data.get("options"):
             option_key = option["name"]
             option_value = option["value"]
-            info["options"][option_key] = option_value    
-    
+            info["options"][option_key] = option_value
+
     return info
-    
+
 
 COMPONENT_PARSERS = {
     ComponentType.BUTTON: parse_button_input,
-    ComponentType.SELECT: parse_select_input
+    ComponentType.SELECT: parse_select_input,
 }
 
 INPUT_PARSERS = {
-    InteractionsType.APPLICATION_COMMAND: parse_slash_command_input, 
-    InteractionsType.MESSAGE_COMPONENT: parse_component_input
+    InteractionsType.APPLICATION_COMMAND: parse_slash_command_input,
+    InteractionsType.MESSAGE_COMPONENT: parse_component_input,
 }

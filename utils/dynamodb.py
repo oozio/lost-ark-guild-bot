@@ -8,21 +8,51 @@ PKEY_NAME = "pk"
 dynamodb_client = boto3.resource("dynamodb")
 
 
-def get_rows(table_name, pkey_value=None, filterExpression=None):
+def query_index(
+    table_name: str,
+    index: str,
+    key_condition: dict,
+    filterExpression: str = "",
+    expressionAttributeValues: dict = {},
+):
+    table = dynamodb_client.Table(table_name)
+    if filterExpression:
+        response = table.query(
+            IndexName=index,
+            KeyConditionExpression=Key(list(key_condition.keys())[0]).eq(
+                list(key_condition.values())[0]
+            ),
+            FilterExpression=filterExpression,
+            ExpressionAttributeValues=expressionAttributeValues,
+        )
+    else:
+        response = table.query(
+            IndexName=index,
+            KeyConditionExpression=Key(list(key_condition.keys())[0]).eq(
+                list(key_condition.values())[0]
+            ),
+        )
+    return response["Items"]
+
+
+def get_rows(
+    table_name: str,
+    pkey_value: str = None,
+    filterExpression: str = "",
+    expressionAttributeValues: dict = {},
+):
     table = dynamodb_client.Table(table_name)
 
     if pkey_value:
         if filterExpression:
             response = table.query(
                 KeyConditionExpression=Key(PKEY_NAME).eq(pkey_value),
-                FilterExpression=filterExpression
+                FilterExpression=filterExpression,
+                ExpressionAttributeValues=expressionAttributeValues,
             )
-
-            return response['Items']
+            return response["Items"]
         else:
-            response = table.get_item(Key={
-                    PKEY_NAME: str(pkey_value)
-                })
+            response = table.get_item(Key={PKEY_NAME: str(pkey_value)})
             if response and "Item" in response:
                 return [response["Item"]]
             else:
@@ -31,7 +61,7 @@ def get_rows(table_name, pkey_value=None, filterExpression=None):
     return table.scan()["Items"]
 
 
-def set_rows(table_name, pkey_value, new_column):
+def set_rows(table_name: str, pkey_value: str, new_column: dict):
     table = dynamodb_client.Table(table_name)
     existing_rows = get_rows(table_name, pkey_value)
     if not existing_rows:
@@ -43,11 +73,8 @@ def set_rows(table_name, pkey_value, new_column):
                 table.update_item(
                     Key={PKEY_NAME: pkey_value},
                     UpdateExpression=f"set {k}=:s",
-                    ExpressionAttributeValues={
-                        ":s": v
-                    }
+                    ExpressionAttributeValues={":s": v},
                 )
-                
+
     # if table_name != GENERAL_TABLE:
     #     set_rows(GENERAL_TABLE, pkey_value, new_column)
-

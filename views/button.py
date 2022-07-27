@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Button(object):
     class Styles(Enum):
         blue = 1
@@ -10,11 +11,11 @@ class Button(object):
 
     DEFAULT_STYLE = 1
     COMPONENT_TYPE = 2
-    
+
     def __init__(self, custom_id, **kwargs) -> None:
         # type is the same for all buttons
         self.type = self.COMPONENT_TYPE
-        
+
         # mandatory fields
         self.custom_id = custom_id
 

@@ -16,32 +16,31 @@ RESPONSE_TYPES = {
     "ACK_NO_SOURCE": 2,
     "MESSAGE_NO_SOURCE": 3,
     "MESSAGE_WITH_SOURCE": 4,
-    "ACK_WITH_SOURCE": 5, 
+    "ACK_WITH_SOURCE": 5,
     "DEFERRED_UPDATE_MESSAGE": 6,
-    "MODAL": 9
+    "MODAL": 9,
 }
 
 
 BASE_URL = "https://discord.com/api/v9"
 
-ssm = boto3.client('ssm', region_name='us-east-2')
+ssm = boto3.client("ssm", region_name="us-east-2")
 
-PUBLIC_KEY = ssm.get_parameter(Name="/discord/public_key/lost-ark-guild-bot",
-                               WithDecryption=True)['Parameter']['Value']
-BOT_TOKEN = ssm.get_parameter(Name="/discord/bot_token/lost-ark-guild-bot",
-                              WithDecryption=True)['Parameter']['Value']
-HEADERS = {
-    "Authorization": f"Bot {BOT_TOKEN}",
-    "Content-Type": "application/json"
-}
+PUBLIC_KEY = ssm.get_parameter(
+    Name="/discord/public_key/lost-ark-guild-bot", WithDecryption=True
+)["Parameter"]["Value"]
+BOT_TOKEN = ssm.get_parameter(
+    Name="/discord/bot_token/lost-ark-guild-bot", WithDecryption=True
+)["Parameter"]["Value"]
+HEADERS = {"Authorization": f"Bot {BOT_TOKEN}", "Content-Type": "application/json"}
 
-SIZE_ROLE_NAME_PATTERN = re.compile(r'Size (?P<size>\d+)')
+SIZE_ROLE_NAME_PATTERN = re.compile(r"Size (?P<size>\d+)")
 
 _PERMISSIONS = {
     "VIEW_AND_USE_SLASH_COMMANDS": 0x0080000400,
     "ADD_REACTIONS": 0x0000000040,
     "USE_EXTERNAL_EMOJIS": 0x0000040000,
-    "SEND_MESSAGES": 0x0000000800
+    "SEND_MESSAGES": 0x0000000800,
 }
 
 # Verification related
@@ -49,8 +48,8 @@ _PERMISSIONS = {
 
 def _verify_signature(event):
     raw_body = event.get("rawBody")
-    auth_sig = event['params']['header'].get('x-signature-ed25519')
-    auth_ts = event['params']['header'].get('x-signature-timestamp')
+    auth_sig = event["params"]["header"].get("x-signature-ed25519")
+    auth_ts = event["params"]["header"].get("x-signature-timestamp")
     message = auth_ts.encode() + raw_body.encode()
 
     try:
@@ -68,20 +67,20 @@ def _ping_pong(body):
 
 def check_input(event):
     _verify_signature(event)
-    body = event.get('body-json')
+    body = event.get("body-json")
     if _ping_pong(body):
         return PING_PONG
 
 
 def get_input(data, target):
-    for option in data.get('options', []):
-        if option['name'] == target:
-            return option['value']
+    for option in data.get("options", []):
+        if option["name"] == target:
+            return option["value"]
 
 
 # Channel-related
 def get_channel_by_id(channel_id):
-    """ Returns a channel object.
+    """Returns a channel object.
 
     returns channel object (dict).
     Params found at https://discord.com/developers/docs/resources/channel
@@ -93,9 +92,11 @@ def get_channel_by_id(channel_id):
 def get_thread_members(channel_id):
     url = f"{BASE_URL}/channels/{channel_id}/thread-members"
     return requests.get(url, headers=HEADERS).json()
-    
+
+
 # Role-related
 _ROLES_CACHE = {}
+
 
 def _get_all_roles(server_id, force_refresh=False):
     if server_id in _ROLES_CACHE and not force_refresh:
@@ -108,19 +109,19 @@ def _get_all_roles(server_id, force_refresh=False):
 
 def get_roles_by_ids(server_id, role_ids):
     roles = _get_all_roles(server_id)
-    return [role for role in roles if role['id'] in role_ids]
+    return [role for role in roles if role["id"] in role_ids]
 
 
 def get_roles_by_names(server_id, role_names):
     roles = _get_all_roles(server_id)
-    return [role for role in roles if role['name'] in role_names]
+    return [role for role in roles if role["name"] in role_names]
 
 
 def _get_role_ids_by_name(server_id, role_names):
     results = {key: None for key in role_names}
     for role in _get_all_roles(server_id):
-        if role['name'] in role_names:
-            results[role['name']] = role['id']
+        if role["name"] in role_names:
+            results[role["name"]] = role["id"]
         if None not in results.values():
             return results
 
@@ -128,8 +129,8 @@ def _get_role_ids_by_name(server_id, role_names):
 def _get_role_names_by_id(server_id, role_ids):
     results = {key: None for key in role_ids}
     for role in _get_all_roles(server_id):
-        if role['id'] in role_ids:
-            results[role['id']] = role['name']
+        if role["id"] in role_ids:
+            results[role["id"]] = role["name"]
         if None not in results.values():
             return results
 
@@ -147,13 +148,13 @@ def add_role(user_id, role_id, server_id):
 def get_user_role_ids(server_id, user_id):
     url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}"
     user = requests.get(url, headers=HEADERS).json()
-    return user['roles']
+    return user["roles"]
 
 
 def get_user_role_names(server_id, user_id):
     url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}"
     user = requests.get(url, headers=HEADERS).json()
-    return get_roles_by_ids(server_id, user['roles'])
+    return get_roles_by_ids(server_id, user["roles"])
 
 
 def get_all_users(server_id):
@@ -164,8 +165,7 @@ def get_all_users(server_id):
 
 
 def change_role(server_id, user_id, old_role_name, new_role_name):
-    role_ids_by_name = _get_role_ids_by_name(server_id,
-                                             [new_role_name, old_role_name])
+    role_ids_by_name = _get_role_ids_by_name(server_id, [new_role_name, old_role_name])
     remove_role(user_id, role_ids_by_name[old_role_name], server_id)
     add_role(user_id, role_ids_by_name[new_role_name], server_id)
 
@@ -178,9 +178,8 @@ def get_user_nickname_by_id(server_id, user_id):
 
 # Message related
 def post_message_in_channel(channel_id, message, ephemeral=True):
-    url = f'{BASE_URL}/channels/{channel_id}/messages'
+    url = f"{BASE_URL}/channels/{channel_id}/messages"
     body = format_response(message, ephemeral)
-    print(body)
     requests.post(url, json=body, headers=HEADERS)
 
 
@@ -189,24 +188,26 @@ def get_messages(channel_id, limit, specified_message):
     url = f"https://discord.com/api/v8/channels/{channel_id}/messages?limit={limit}"
     return requests.get(url, headers=HEADERS).json()
 
+
 def get_message_by_id(channel_id, message_id):
     url = f"{BASE_URL}/channels/{channel_id}/messages/{message_id}"
-    
+
     return requests.get(url, headers=HEADERS).json()
+
 
 def format_response(body, ephemeral):
     if isinstance(body, str):
         response = {"content": body, "flags": 64 if ephemeral else 128}
     else:
-        content = body.get('content')
-        embeds = body.get('embeds')
-        components = body.get('components')
+        content = body.get("content")
+        embeds = body.get("embeds")
+        components = body.get("components")
         response = {
             "content": content,
             "embeds": embeds,
             "allowed_mentions": [],
             "flags": 64 if ephemeral else None,
-            "components": components
+            "components": components,
         }
 
     return response
@@ -214,8 +215,7 @@ def format_response(body, ephemeral):
 
 def send_followup(application_id, interaction_token, content, ephemeral=False):
     while len(content) > MAX_RESPONSE_LENGTH:
-        send_followup(application_id, interaction_token,
-                      content[:MAX_RESPONSE_LENGTH])
+        send_followup(application_id, interaction_token, content[:MAX_RESPONSE_LENGTH])
         content = content[MAX_RESPONSE_LENGTH:]
 
     body = format_response(content, ephemeral=ephemeral)
@@ -223,15 +223,14 @@ def send_followup(application_id, interaction_token, content, ephemeral=False):
     requests.post(url, json=body, headers=HEADERS)
 
 
-def update_response(application_id,
-                    interaction_token,
-                    content,
-                    ephemeral=False):
-    remaining = ''
+def update_response(application_id, interaction_token, content, ephemeral=False):
+    remaining = ""
     # TODO FIX FOR DICT CONTENT
     if len(content) > MAX_RESPONSE_LENGTH:
-        content, remaining = content[:MAX_RESPONSE_LENGTH], content[
-            MAX_RESPONSE_LENGTH:]
+        content, remaining = (
+            content[:MAX_RESPONSE_LENGTH],
+            content[MAX_RESPONSE_LENGTH:],
+        )
 
     body = format_response(content, ephemeral=ephemeral)
     url = f"{BASE_URL}/webhooks/{application_id}/{interaction_token}/messages/@original"
@@ -249,11 +248,7 @@ def delete_response(application_id, interaction_token):
 def send_response(channel_id, content, embeds=None, ephemeral=False):
     if embeds is None:
         embeds = []
-    body = format_response({
-        "content": content,
-        "embeds": embeds
-    },
-                           ephemeral=ephemeral)
+    body = format_response({"content": content, "embeds": embeds}, ephemeral=ephemeral)
     url = f"{BASE_URL}/channels/{channel_id}/messages"
     response = requests.post(url, json=body, headers=HEADERS)
 
@@ -265,34 +260,33 @@ def edit_message(channel_id, message_id, output):
     url = f"{BASE_URL}/channels/{channel_id}/messages/{message_id}"
     response = requests.patch(url, json=response, headers=HEADERS)
 
+    return response
 
-#Component related
-def send_component_response(interaction_id, interaction_token, 
-                                     content = None):
+
+# Component related
+def send_component_response(interaction_id, interaction_token, content=None):
     if content is None:
         body = initial_response(InteractionsCallbackType.PONG)
     else:
-        body = {
-            "type": InteractionsCallbackType.CHANNEL_MESSAGE_WITH_SOURCE
-        }
+        body = {"type": InteractionsCallbackType.CHANNEL_MESSAGE_WITH_SOURCE}
         body["data"] = content
-    url=f"{BASE_URL}/interactions/{interaction_id}/{interaction_token}/callback"
+    url = f"{BASE_URL}/interactions/{interaction_id}/{interaction_token}/callback"
     requests.post(url, json=body, headers=HEADERS)
 
 
 # Misc
 def initial_response(response_type, content=None, ephemeral=False):
     response = {
-        "type":
-        RESPONSE_TYPES[response_type] if response_type in RESPONSE_TYPES else
-        RESPONSE_TYPES['MESSAGE_WITH_SOURCE'],
+        "type": RESPONSE_TYPES[response_type]
+        if response_type in RESPONSE_TYPES
+        else RESPONSE_TYPES["MESSAGE_WITH_SOURCE"],
     }
-    if response_type != 'PONG':  # and "ACK" not in response_type:
+    if response_type != "PONG":  # and "ACK" not in response_type:
         response["data"] = {
             "content": content,
             "embeds": [],
             "allowed_mentions": [],
-            "flags": 64 if ephemeral else None
+            "flags": 64 if ephemeral else None,
         }
     return response
 

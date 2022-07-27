@@ -6,5 +6,5 @@ SHOULD_HIDE_COMMAND_OUTPUT = {
     "hone": True,
     "mari": False,
     "role_selector": False,
-    "scheduler": False
+    "make_raid": False,
 }

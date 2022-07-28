@@ -1,5 +1,5 @@
 from handlers import honing, market, render_display, role_selector, roles, scheduler
-from constants import interactions, roles
+from constants import interactions
 from utils import discord
 
 
@@ -40,6 +40,8 @@ def handle_command(info):
         return honing.handle(command, options)
     elif command in RENDER_VIEW_COMMANDS:
         return render_display.display(command)(info)
+    elif command == "see_signups":
+        return scheduler.get_all_user_commitments(info)
     raise ValueError(f"Unrecognized command {command}, sad")
 
 

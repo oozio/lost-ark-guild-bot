@@ -7,4 +7,5 @@ SHOULD_HIDE_COMMAND_OUTPUT = {
     "mari": False,
     "role_selector": False,
     "make_raid": False,
+    "see_signups": True,
 }

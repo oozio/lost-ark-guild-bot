@@ -35,6 +35,7 @@ def parse_basic_input(body):
         "user_id": body["member"]["user"]["id"],
         "application_id": body["application_id"],
         "interaction_token": body["token"],
+        "interaction_id": body["id"],
     }
 
 

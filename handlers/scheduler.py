@@ -3,6 +3,7 @@ import re
 import time
 from enum import Enum
 from datetime import datetime, tzinfo, timedelta
+from tracemalloc import start
 from dateutil import parser
 
 from views import scheduler_view
@@ -337,7 +338,7 @@ def display(info: dict) -> dict:
         _create_event(
             event_type,
             event_id,
-            time_string,
+            start_time.isoformat(),
             user_id,
             message_id,
             channel_id,

@@ -375,9 +375,9 @@ def handle_button(info):
     )
 
     if button == AvailabilityEmoji.NOT_COMING.name:
-        print(discord.remove_thread_member(thread_id, user_id))
+        discord.remove_thread_member(thread_id, user_id)
     else:
-        print(discord.add_thread_member(thread_id, user_id))
+        discord.add_thread_member(thread_id, user_id)
 
     new_msg = {"embeds": [schedule_embed(event_id, server_id)]}
     return new_msg

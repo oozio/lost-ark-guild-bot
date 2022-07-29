@@ -16,7 +16,7 @@ from constants.emojis import AvailabilityEmoji, ClassEmoji, DPS_CLASSES, SUPPORT
 
 
 IND_CALENDAR_TEMPLATE = f"""
-Event: {{event_type}}
+Event: {{event_type}}: {{event_id}}
 Start time: {{start_time}}
 Jump to original message: {{message_link}}
 """
@@ -58,6 +58,7 @@ USER_COLUMN = "user_id"
 STATUS_COLUMN = "status_str"
 CLASS_COLUMN = "char_class"
 TIME_COLUMN = "start_time"
+CHANNEL_COLUMN = "channel_id"
 MESSAGE_COLUMN = "message_id"
 THREAD_COLUMN = "thread_id"
 
@@ -161,22 +162,24 @@ def get_all_user_commitments(info):
 
     relevant_rows = []
     for row in user_events:
-        if MESSAGE_COLUMN in row:
-            message_link = f"https://discord.com/channels/{info['server_id']}/{info['channel_id']}/{row[MESSAGE_COLUMN]}"
+        if MESSAGE_COLUMN in row and CHANNEL_COLUMN in row:
+            message_link = f"https://discord.com/channels/{info['server_id']}/{row[CHANNEL_COLUMN]}/{row[MESSAGE_COLUMN]}"
         else:
             message_link = "lost 4ever"
 
         time_string = row.get(TIME_COLUMN, "unknown")
         event_type = row.get(EVENT_TYPE_COLUMN)
+        event_id = row.get(EVENT_ID_COLUMN)
 
         try:
             start_time = parser.parse(time_string).replace(tzinfo=PacificTime())
-            if start_time >= datetime.now():
+            if start_time >= datetime.now().replace(tzinfo=PacificTime()):
                 relevant_rows.append(
                     {
                         EVENT_TYPE_COLUMN: event_type,
                         TIME_COLUMN: start_time.ctime(),
                         "message_link": message_link,
+                        EVENT_ID_COLUMN: event_id,
                     }
                 )
 
@@ -190,9 +193,10 @@ def get_all_user_commitments(info):
     output = ""
     for row in relevant_rows:
         output += IND_CALENDAR_TEMPLATE.format(
-            event_type=event_type,
-            start_time=start_time.ctime(),
-            message_link=message_link,
+            event_type=row[EVENT_TYPE_COLUMN],
+            event_id=row[EVENT_ID_COLUMN],
+            start_time=row[TIME_COLUMN],
+            message_link=row["message_link"],
         )
 
     return output
@@ -256,7 +260,9 @@ def _update_schedule(event_type, user, event_id, **kwargs):
     )
 
 
-def _create_event(event_type, event_id, start_time, user_id, message_id, thread_id):
+def _create_event(
+    event_type, event_id, start_time, user_id, message_id, channeL_id, thread_id
+):
     dynamodb.set_rows(
         SCHEDULE_TABLE,
         EVENT_INFO_PKEY.format(event_id),
@@ -267,6 +273,7 @@ def _create_event(event_type, event_id, start_time, user_id, message_id, thread_
             STATUS_COLUMN: EventStatus.TENTATIVE.value,
             USER_COLUMN: user_id,
             MESSAGE_COLUMN: message_id,
+            CHANNEL_COLUMN: channeL_id,
             THREAD_COLUMN: thread_id,
         },
     )
@@ -327,7 +334,15 @@ def display(info: dict) -> dict:
         )
         thread_id = thread_info["id"]
 
-        _create_event(event_type, event_id, time_string, user_id, message_id, thread_id)
+        _create_event(
+            event_type,
+            event_id,
+            time_string,
+            user_id,
+            message_id,
+            channel_id,
+            thread_id,
+        )
 
         time.sleep(2)
 
@@ -349,6 +364,7 @@ def is_schedule_selector(component_id):
 
 def handle_button(info):
     event_id = info["base_interaction_id"]
+    base_channel_id = info["base_channel_id"]
     message_id = info["base_msg_id"]
     server_id = info["server_id"]
     user_id = info["user_id"]
@@ -371,6 +387,7 @@ def handle_button(info):
             STATUS_COLUMN: button,
             TIME_COLUMN: start_time,
             MESSAGE_COLUMN: message_id,
+            CHANNEL_COLUMN: base_channel_id,
         },
     )
 

@@ -15,6 +15,24 @@ def _add_to_calendar_button():
     )
 
 
+def _change_time_button():
+    return Button(
+        custom_id="change_start_time",
+        label="Change Start Time",
+        style=Button.Styles.grey.value,
+        disabled=True,
+    )
+
+
+def _see_commitments_button():
+    return Button(
+        custom_id="see_signups",
+        label="My Existing Events",
+        style=Button.Styles.grey.value,
+        disabled=True,
+    )
+
+
 def _generate_emoji_button(emojiEnum: EmojiEnum) -> dict:
     emoji = {"id": emojiEnum.emoji_id, "name": emojiEnum.emoji_name}
 
@@ -53,13 +71,20 @@ class SchedulerView:
             "components": [
                 vars(_generate_emoji_button(availability))
                 for availability in AvailabilityEmoji
-            ]
-            + [vars(_add_to_calendar_button())],
+            ],
         },
         {
             "type": 1,
             "components": [
                 _generate_emoji_dropdown([char_class for char_class in ClassEmoji])
+            ],
+        },
+        {
+            "type": 1,
+            "components": [
+                vars(_add_to_calendar_button()),
+                vars(_change_time_button()),
+                vars(_see_commitments_button()),
             ],
         },
     ]

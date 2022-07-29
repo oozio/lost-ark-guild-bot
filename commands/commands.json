@@ -168,12 +168,12 @@
     },
     {
         "name": "make_raid",
-        "description": "<under construction> generate event sign ups",
+        "description": "Generate event sign up form + thread",
         "type": 1,
         "options": [
             {
                 "name": "start_time",
-                "description": "when this proposed raid will start (in Pacific Time!) Some examples: `saturday 8 pm`, `2022 07 30 20:00:00`",
+                "description": "Pacific time! Some examples: `saturday 8 pm`, `2022 07 30 20:00:00`",
                 "type": 3,
                 "required": 1
             },
@@ -187,7 +187,7 @@
     },
     {
         "name": "see_signups",
-        "description": "<under construction> see which events to which u rsvp'd",
+        "description": "<under construction> see events to which u rsvp'd",
         "type": 1
     }
 ]

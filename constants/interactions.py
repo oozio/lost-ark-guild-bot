@@ -70,8 +70,9 @@ def parse_component_input(body):
     info = parse_basic_input(body)
 
     message = body["message"]
-    info["base_interaction_msg"] = message["interaction"]["name"]
     info["base_msg_id"] = message["id"]
+    info["base_channel_id"] = message["channel_id"]
+    info["base_interaction_msg"] = message["interaction"]["name"]
     info["base_interaction_id"] = message["interaction"]["id"]
     # info["base_interaction_options"] = message["interaction"]["options"]
 

@@ -173,7 +173,7 @@
         "options": [
             {
                 "name": "start_time",
-                "description": "when this proposed raid will start (in PST!)",
+                "description": "when this proposed raid will start (in Pacific Time!) Some examples: `saturday 8 pm`, `2022 07 30 20:00:00`",
                 "type": 3,
                 "required": 1
             },

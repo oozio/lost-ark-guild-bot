@@ -1,14 +1,15 @@
-from dis import disco
+import os
 import re
 import time
 from enum import Enum
 from datetime import datetime, tzinfo, timedelta
-from tracemalloc import start
 from dateutil import parser
 
 from views import scheduler_view
 from utils import discord, dynamodb
 
+os.putenv("TZ", "America/Los_Angeles")
+time.tzset()
 
 # TODO seems like a bad import
 from constants.emojis import AvailabilityEmoji, ClassEmoji, DPS_CLASSES, SUPPORT_CLASSES
@@ -31,11 +32,18 @@ class PacificTime(tzinfo):
         return "PT"
 
     def utcoffset(self, dt):
-        return timedelta(hours=-7)
+        return timedelta(hours=-8) + self.dst(dt)
+
+    def dst(self, dt):
+        tt = time.localtime()
+
+        if tt.tm_isdst:
+            return timedelta(hours=1)
+        return timedelta(hours=0)
 
 
 BLANK = "\u200b"
-
+DOT = "\u2022"
 
 SCHEDULE_TABLE = "lost_ark_schedule"
 PKEY = "pk"
@@ -83,8 +91,7 @@ def schedule_embed(event_id: str, server_id) -> dict:
     creator = event_info[USER_COLUMN]
 
     start_time_iso = start_time.isoformat()
-    print(start_time_iso)
-    start_time_ctime = start_time.ctime()
+    start_time_pretty = start_time.strftime("%A %B %d, %I:%M %p")
 
     all_rows = dynamodb.query_index(
         SCHEDULE_TABLE,
@@ -116,19 +123,22 @@ def schedule_embed(event_id: str, server_id) -> dict:
             {
                 "name": f"{state} {state.name}",
                 "value": f"{statuses[state.name] if statuses[state.name] else BLANK}",
-                "inline": False,
+                "inline": True,
             }
         )
 
     return {
         "type": "rich",
         "title": f"Scheduling for {event_name}",
-        "description": f"{event_name} at {start_time_ctime} PT",
+        "description": f"{start_time_pretty} PT",
         "color": 0xFFFF00 if event_status == EventStatus.TENTATIVE else 0x00FF00,
-        "fields": [*party_fields, *signup_fields],
+        "fields": [
+            *party_fields,
+            *signup_fields,
+        ],
         "timestamp": start_time_iso,
         "footer": {
-            "text": f"{event_status} ? created by {discord.get_user_nickname_by_id(server_id, creator)}"
+            "text": f"{event_status} | created by {discord.get_user_nickname_by_id(server_id, creator)}"
         },
     }
 
@@ -229,6 +239,7 @@ def _get_party_fields(event_name, event_id):
     return [
         {"name": "DPS", "value": f"{dps}/{n_dps}", "inline": True},
         {"name": "Supports", "value": f"{supp}/{n_supp}", "inline": True},
+        {"name": BLANK, "value": BLANK, "inline": True},
     ]
 
 
@@ -297,7 +308,7 @@ def display(info: dict) -> dict:
         event_type = cmd_input.get("raid_name")
         user_id = info["user_id"]
         if not event_type:
-            event_type = discord.get_channel_by_id(info["channel_id"])["name"]
+            event_type = discord.get_channel_by_id(info["channel_id"])["name"].title()
         event_id = info["interaction_id"]
 
         try:
@@ -311,7 +322,9 @@ def display(info: dict) -> dict:
             info["application_id"], info["interaction_token"]
         )["id"]
 
-        thread_info = discord.create_thread(channel_id, f"{event_type}", message_id)
+        thread_info = discord.create_thread(
+            channel_id, f"{event_type}", message_id, duration=3 * 24 * 60
+        )
         thread_id = thread_info["id"]
 
         _create_event(event_type, event_id, time_string, user_id, message_id, thread_id)

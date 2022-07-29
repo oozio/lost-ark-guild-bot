@@ -90,12 +90,14 @@ def get_channel_by_id(channel_id):
     return requests.get(url, headers=HEADERS).json()
 
 
-def create_thread(channel_id: str, thread_name: str, message_id=None) -> dict:
+def create_thread(
+    channel_id: str, thread_name: str, message_id=None, duration=1 * 24 * 60
+) -> dict:
     if not message_id:
         url = f"{BASE_URL}/channels/{channel_id}/threads"
     else:
         url = f"{BASE_URL}/channels/{channel_id}/messages/{message_id}/threads"
-    return requests.post(url, json={"name": thread_name}, headers=HEADERS).json()
+    return requests.post(url, json={"name": thread_name, "auto_archive_duration": duration}, headers=HEADERS).json()
 
 
 def get_thread_members(channel_id):

@@ -1,7 +1,10 @@
+from dis import disco
+import re
 import time
 from enum import Enum
-from dateutil import parser, ParseError
-
+from datetime import datetime, tzinfo, timedelta
+from tracemalloc import start
+from dateutil import parser
 
 from views import scheduler_view
 from utils import discord, dynamodb
@@ -10,11 +13,6 @@ from utils import discord, dynamodb
 # TODO seems like a bad import
 from constants.emojis import AvailabilityEmoji, ClassEmoji, DPS_CLASSES, SUPPORT_CLASSES
 
-SCHEDULE_TEMPLATE = f"""
-DPS: {{3}}/6 | Supports: {{4}}/2
-:\n{{0}}
-:\n{{1}}
-:\n{{2}}"""
 
 IND_CALENDAR_TEMPLATE = f"""
 Event: {{event_type}}
@@ -28,7 +26,16 @@ class EventStatus(str, Enum):
     CONFIRMED = "confirmed"
 
 
+class PacificTime(tzinfo):
+    def tzname(self, **kwargs):
+        return "PT"
+
+    def utcoffset(self, dt):
+        return timedelta(hours=-7)
+
+
 BLANK = "\u200b"
+
 
 SCHEDULE_TABLE = "lost_ark_schedule"
 PKEY = "pk"
@@ -44,6 +51,7 @@ STATUS_COLUMN = "status_str"
 CLASS_COLUMN = "char_class"
 TIME_COLUMN = "start_time"
 MESSAGE_COLUMN = "message_id"
+THREAD_COLUMN = "thread_id"
 
 EVENT_ID_INDEX = "event_id-index"
 USER_INDEX = "user_id-index"
@@ -51,16 +59,17 @@ USER_INDEX = "user_id-index"
 # class table schema = "lost_ark_sc
 CLASS_PKEY = "user_class"
 
-EIGHT_PPL_RAIDS = [
-    "argos",
-    "valtan",
-    "valtan normal",
-    "valtan hard",
-    "vykas",
-    "vykas normal",
-    "vykas hard",
-]
-FOUR_PPL_RAIDS = ["oreha"]
+EIGHT_PPL_RAIDS = "(?:{})".format(
+    "|".join(
+        [
+            r".*argos.*",
+            r".*valtan.*",
+            r".*vykas.*",
+        ]
+    )
+)
+
+FOUR_PPL_RAIDS = "(?:{})".format("|".join([r".*oreha.*"]))
 
 
 def schedule_embed(event_id: str, server_id) -> dict:
@@ -69,11 +78,12 @@ def schedule_embed(event_id: str, server_id) -> dict:
     )[0]
 
     event_name = event_info[EVENT_TYPE_COLUMN]
-    start_time = parser.parse(event_info[TIME_COLUMN])
+    start_time = parser.parse(event_info[TIME_COLUMN]).replace(tzinfo=PacificTime())
     event_status = event_info[STATUS_COLUMN]
     creator = event_info[USER_COLUMN]
 
     start_time_iso = start_time.isoformat()
+    print(start_time_iso)
     start_time_ctime = start_time.ctime()
 
     all_rows = dynamodb.query_index(
@@ -100,30 +110,22 @@ def schedule_embed(event_id: str, server_id) -> dict:
 
     party_fields = _get_party_fields(event_name, event_id)
 
+    signup_fields = []
+    for state in AvailabilityEmoji:
+        signup_fields.append(
+            {
+                "name": f"{state} {state.name}",
+                "value": f"{statuses[state.name] if statuses[state.name] else BLANK}",
+                "inline": False,
+            }
+        )
+
     return {
         "type": "rich",
         "title": f"Scheduling for {event_name}",
-        "description": f"Would you come do {event_name} at {start_time_ctime} PST?",
+        "description": f"{event_name} at {start_time_ctime} PT",
         "color": 0xFFFF00 if event_status == EventStatus.TENTATIVE else 0x00FF00,
-        "fields": [
-            *party_fields,
-            {"name": "Sign ups", "value": BLANK, "inline": False},
-            {
-                "name": f"{AvailabilityEmoji.COMING}",
-                "value": f"{statuses[AvailabilityEmoji.COMING.name] if statuses[AvailabilityEmoji.COMING.name] else BLANK}",
-                "inline": False,
-            },
-            {
-                "name": f"{AvailabilityEmoji.NOT_COMING}",
-                "value": f"{statuses[AvailabilityEmoji.NOT_COMING.name] if statuses[AvailabilityEmoji.NOT_COMING.name] else BLANK}",
-                "inline": False,
-            },
-            {
-                "name": f"{AvailabilityEmoji.MAYBE}",
-                "value": f"{statuses[AvailabilityEmoji.MAYBE.name] if statuses[AvailabilityEmoji.MAYBE.name] else BLANK}",
-                "inline": False,
-            },
-        ],
+        "fields": [*party_fields, *signup_fields],
         "timestamp": start_time_iso,
         "footer": {
             "text": f"{event_status} ? created by {discord.get_user_nickname_by_id(server_id, creator)}"
@@ -147,24 +149,40 @@ def get_all_user_commitments(info):
         },
     )
 
-    user_events.sort(key=lambda item: item.get(TIME_COLUMN, "99999"), reverse=False)
-
-    if not user_events:
-        return "Not currently signed up for any events!"
-
-    output = ""
+    relevant_rows = []
     for row in user_events:
         if MESSAGE_COLUMN in row:
             message_link = f"https://discord.com/channels/{info['server_id']}/{info['channel_id']}/{row[MESSAGE_COLUMN]}"
         else:
             message_link = "lost 4ever"
 
-        start_time = row.get(TIME_COLUMN, "unknown")
-
+        time_string = row.get(TIME_COLUMN, "unknown")
         event_type = row.get(EVENT_TYPE_COLUMN)
 
+        try:
+            start_time = parser.parse(time_string).replace(tzinfo=PacificTime())
+            if start_time >= datetime.now():
+                relevant_rows.append(
+                    {
+                        EVENT_TYPE_COLUMN: event_type,
+                        TIME_COLUMN: start_time.ctime(),
+                        "message_link": message_link,
+                    }
+                )
+
+        except:
+            continue
+
+    if not relevant_rows:
+        return "Not currently signed up for any events!"
+
+    relevant_rows.sort(key=lambda item: item[TIME_COLUMN], reverse=False)
+    output = ""
+    for row in relevant_rows:
         output += IND_CALENDAR_TEMPLATE.format(
-            event_type=event_type, start_time=start_time, message_link=message_link
+            event_type=event_type,
+            start_time=start_time.ctime(),
+            message_link=message_link,
         )
 
     return output
@@ -197,10 +215,10 @@ def _tally_classes(event_id):
 
 
 def _get_party_fields(event_name, event_id):
-    if event_name.lower() in EIGHT_PPL_RAIDS:
+    if re.match(EIGHT_PPL_RAIDS, event_name, flags=re.IGNORECASE):
         n_dps = 6
         n_supp = 2
-    elif event_name.lower() in FOUR_PPL_RAIDS:
+    elif re.match(FOUR_PPL_RAIDS, event_name, flags=re.IGNORECASE):
         n_dps = 3
         n_supp = 1
     else:
@@ -212,33 +230,6 @@ def _get_party_fields(event_name, event_id):
         {"name": "DPS", "value": f"{dps}/{n_dps}", "inline": True},
         {"name": "Supports", "value": f"{supp}/{n_supp}", "inline": True},
     ]
-
-
-def _get_schedule(event_id, user):
-    all_rows = dynamodb.query_index(
-        SCHEDULE_TABLE,
-        EVENT_ID_INDEX,
-        {EVENT_ID_COLUMN: event_id},
-        filterExpression=f"attribute_exists({STATUS_COLUMN})",
-    )
-
-    statuses = {state.name: "" for state in AvailabilityEmoji}
-    for row in all_rows:
-        status = row[STATUS_COLUMN]
-        if status not in statuses.keys():
-            continue
-
-        user = row[USER_COLUMN]
-        user_class = row.get(CLASS_COLUMN)
-
-        if user_class:
-            class_emoji = f"<:{ClassEmoji[user_class].emoji_name}:{ClassEmoji[user_class].emoji_id}>"
-        else:
-            class_emoji = ""
-        statuses[status] += f"   {class_emoji} {_mention_user(user)}\n"
-
-    dps, supp = _tally_classes(event_id)
-    return SCHEDULE_TEMPLATE.format(*statuses.values(), dps, supp)
 
 
 def _update_schedule(event_type, user, event_id, **kwargs):
@@ -254,7 +245,7 @@ def _update_schedule(event_type, user, event_id, **kwargs):
     )
 
 
-def _create_event(event_type, event_id, start_time, user_id, message_id):
+def _create_event(event_type, event_id, start_time, user_id, message_id, thread_id):
     dynamodb.set_rows(
         SCHEDULE_TABLE,
         EVENT_INFO_PKEY.format(event_id),
@@ -265,6 +256,7 @@ def _create_event(event_type, event_id, start_time, user_id, message_id):
             STATUS_COLUMN: EventStatus.TENTATIVE.value,
             USER_COLUMN: user_id,
             MESSAGE_COLUMN: message_id,
+            THREAD_COLUMN: thread_id,
         },
     )
 
@@ -309,19 +301,22 @@ def display(info: dict) -> dict:
         event_id = info["interaction_id"]
 
         try:
-            start_time = parser.parse(time_string)
-        except ParseError:
-            raise ParseError(
-                f"Couldn't parse this start time- {time_string}. Try a different format? If in doubt, use '<YEAR>-<MONTH>-<DATE> <HOUR>:<MINUTE>"
+            start_time = parser.parse(time_string, ignoretz=True)
+        except parser.ParserError:
+            raise parser.ParserError(
+                f"Couldn't parse this start time: `{time_string}`. Try a different format? Some examples: `saturday 8 pm`, `2022 07 30 20:00:00`"
             )
 
         message_id = discord.get_interaction_message_id(
             info["application_id"], info["interaction_token"]
         )["id"]
 
-        _create_event(event_type, event_id, time_string, user_id, message_id)
-        discord.create_thread(channel_id, f"{event_type} {start_time}", message_id)
-        time.sleep(1)
+        thread_info = discord.create_thread(channel_id, f"{event_type}", message_id)
+        thread_id = thread_info["id"]
+
+        _create_event(event_type, event_id, time_string, user_id, message_id, thread_id)
+
+        time.sleep(2)
 
         return {
             "embeds": [schedule_embed(event_id, server_id)],
@@ -343,26 +338,33 @@ def handle_button(info):
     event_id = info["base_interaction_id"]
     message_id = info["base_msg_id"]
     server_id = info["server_id"]
+    user_id = info["user_id"]
+    button = info["data"]["id"]
+
     event_info = dynamodb.get_rows(
         SCHEDULE_TABLE, pkey_value=EVENT_INFO_PKEY.format(event_id)
     )[0]
 
     event_type = event_info[EVENT_TYPE_COLUMN]
     start_time = event_info[TIME_COLUMN]
+    thread_id = event_info[THREAD_COLUMN]
 
     # use the base message id as a unique event identifier
     _update_schedule(
         event_type,
-        info["user_id"],
+        user_id,
         event_id,
         **{
-            STATUS_COLUMN: info["data"]["id"],
+            STATUS_COLUMN: button,
             TIME_COLUMN: start_time,
             MESSAGE_COLUMN: message_id,
         },
     )
 
-    # new_msg = f"{_generate_header(event_type, start_time)}\n{_get_schedule(event_id, info['user_id'])}"
+    if button == AvailabilityEmoji.NOT_COMING.name:
+        print(discord.remove_thread_member(thread_id, user_id))
+    else:
+        print(discord.add_thread_member(thread_id, user_id))
 
     new_msg = {"embeds": [schedule_embed(event_id, server_id)]}
     return new_msg

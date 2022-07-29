@@ -1,3 +1,4 @@
+from email import header
 import boto3
 import re
 import requests
@@ -100,6 +101,16 @@ def create_thread(channel_id: str, thread_name: str, message_id=None) -> dict:
 def get_thread_members(channel_id):
     url = f"{BASE_URL}/channels/{channel_id}/thread-members"
     return requests.get(url, headers=HEADERS).json()
+
+
+def add_thread_member(thread_id, user_id):
+    url = f"{BASE_URL}/channels/{thread_id}/thread-members/{user_id}"
+    return requests.put(url, headers=HEADERS).text
+
+
+def remove_thread_member(thread_id, user_id):
+    url = f"{BASE_URL}/channels/{thread_id}/thread-members/{user_id}"
+    return requests.delete(url, headers=HEADERS).text
 
 
 # Role-related

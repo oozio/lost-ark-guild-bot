@@ -173,7 +173,7 @@
         "options": [
             {
                 "name": "start_time",
-                "description": "when this proposed raid will start",
+                "description": "when this proposed raid will start (in PST!)",
                 "type": 3,
                 "required": 1
             },

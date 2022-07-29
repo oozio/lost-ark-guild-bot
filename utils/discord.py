@@ -89,6 +89,14 @@ def get_channel_by_id(channel_id):
     return requests.get(url, headers=HEADERS).json()
 
 
+def create_thread(channel_id: str, thread_name: str, message_id=None) -> dict:
+    if not message_id:
+        url = f"{BASE_URL}/channels/{channel_id}/threads"
+    else:
+        url = f"{BASE_URL}/channels/{channel_id}/messages/{message_id}/threads"
+    return requests.post(url, json={"name": thread_name}, headers=HEADERS).json()
+
+
 def get_thread_members(channel_id):
     url = f"{BASE_URL}/channels/{channel_id}/thread-members"
     return requests.get(url, headers=HEADERS).json()
@@ -192,6 +200,11 @@ def get_messages(channel_id, limit, specified_message):
 def get_message_by_id(channel_id, message_id):
     url = f"{BASE_URL}/channels/{channel_id}/messages/{message_id}"
 
+    return requests.get(url, headers=HEADERS).json()
+
+
+def get_interaction_message_id(application_id: str, interaction_token: str) -> str:
+    url = f"{BASE_URL}/webhooks/{application_id}/{interaction_token}/messages/@original"
     return requests.get(url, headers=HEADERS).json()
 
 

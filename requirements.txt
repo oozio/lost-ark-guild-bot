@@ -6,3 +6,4 @@ discord-ui
 # other dependencies
 boto3
 dataclasses
+python-dateutil

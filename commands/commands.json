@@ -196,13 +196,13 @@
         "type": 1,
         "options": [
             {
-                "name": "victim",
+                "name": "who",
                 "description": "who u want to report",
                 "type": 6,
                 "required": 1
             },
             {
-                "name": "reason",
+                "name": "why",
                 "description": "what happened",
                 "type": 3,
                 "required": 0

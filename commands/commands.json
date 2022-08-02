@@ -189,5 +189,24 @@
         "name": "see_signups",
         "description": "<under construction> see events to which u rsvp'd",
         "type": 1
+    },
+    {
+        "name": "report",
+        "description": "air ur grievances",
+        "type": 1,
+        "options": [
+            {
+                "name": "victim",
+                "description": "who u want to report",
+                "type": 6,
+                "required": 1
+            },
+            {
+                "name": "reason",
+                "description": "what happened",
+                "type": 3,
+                "required": 0
+            }
+        ]
     }
 ]

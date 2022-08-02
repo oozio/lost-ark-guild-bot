@@ -97,7 +97,11 @@ def create_thread(
         url = f"{BASE_URL}/channels/{channel_id}/threads"
     else:
         url = f"{BASE_URL}/channels/{channel_id}/messages/{message_id}/threads"
-    return requests.post(url, json={"name": thread_name, "auto_archive_duration": duration}, headers=HEADERS).json()
+    return requests.post(
+        url,
+        json={"name": thread_name, "auto_archive_duration": duration},
+        headers=HEADERS,
+    ).json()
 
 
 def get_thread_members(channel_id):
@@ -183,6 +187,10 @@ def get_all_users(server_id):
     url = f"{BASE_URL}/guilds/{server_id}/members?limit=1000"
     response = requests.get(url, headers=HEADERS)
     return response.json()
+
+
+def mention_user(user_id):
+    return f"<@{user_id}>"
 
 
 def change_role(server_id, user_id, old_role_name, new_role_name):
@@ -298,6 +306,12 @@ def send_component_response(interaction_id, interaction_token, content=None):
         body["data"] = content
     url = f"{BASE_URL}/interactions/{interaction_id}/{interaction_token}/callback"
     requests.post(url, json=body, headers=HEADERS)
+
+
+# Event related
+def create_server_event(server_id: str, event_details: dict) -> None:
+    url = f"{BASE_URL}/guilds/{server_id}/scheduled-events"
+    return requests.post(url, json=event_details, headers=HEADERS)
 
 
 # Misc

@@ -3,7 +3,6 @@ import re
 import time
 from enum import Enum
 from datetime import datetime, tzinfo, timedelta
-from tracemalloc import start
 from dateutil import parser
 
 from views import scheduler_view
@@ -14,13 +13,6 @@ time.tzset()
 
 # TODO seems like a bad import
 from constants.emojis import AvailabilityEmoji, ClassEmoji, DPS_CLASSES, SUPPORT_CLASSES
-
-
-IND_CALENDAR_TEMPLATE = f"""
-Event: {{event_type}}: {{event_id}}
-Start time: {{start_time}}
-Jump to original message: {{message_link}}
-"""
 
 
 class EventStatus(str, Enum):
@@ -115,7 +107,7 @@ def schedule_embed(event_id: str, server_id) -> dict:
             class_emoji = f"<:{ClassEmoji[user_class].emoji_name}:{ClassEmoji[user_class].emoji_id}>"
         else:
             class_emoji = ""
-        statuses[status] += f"{class_emoji} {_mention_user(user)}\n"
+        statuses[status] += f"{class_emoji} {discord.mention_user(user)}\n"
 
     party_fields = _get_party_fields(event_name, event_id)
 
@@ -145,10 +137,6 @@ def schedule_embed(event_id: str, server_id) -> dict:
     }
 
 
-def _mention_user(user_id):
-    return f"<@{user_id}>"
-
-
 def get_all_user_commitments(info):
     user_id = info[USER_COLUMN]
     user_events = dynamodb.query_index(
@@ -166,7 +154,7 @@ def get_all_user_commitments(info):
         if MESSAGE_COLUMN in row and CHANNEL_COLUMN in row:
             message_link = f"https://discord.com/channels/{info['server_id']}/{row[CHANNEL_COLUMN]}/{row[MESSAGE_COLUMN]}"
         else:
-            message_link = "lost 4ever"
+            message_link = ""
 
         time_string = row.get(TIME_COLUMN, "unknown")
         event_type = row.get(EVENT_TYPE_COLUMN)
@@ -188,19 +176,30 @@ def get_all_user_commitments(info):
             continue
 
     if not relevant_rows:
-        return "Not currently signed up for any events!"
+        fields = ["Not currently signed up for any events!"]
+    else:
+        relevant_rows.sort(key=lambda item: item[TIME_COLUMN], reverse=False)
+        fields = []
+        for row in relevant_rows:
 
-    relevant_rows.sort(key=lambda item: item[TIME_COLUMN], reverse=False)
-    output = ""
-    for row in relevant_rows:
-        output += IND_CALENDAR_TEMPLATE.format(
-            event_type=row[EVENT_TYPE_COLUMN],
-            event_id=row[EVENT_ID_COLUMN],
-            start_time=row[TIME_COLUMN],
-            message_link=row["message_link"],
-        )
+            if row["message_link"]:
+                details_link = f"[Details]({row['message_link']})"
+            else:
+                details_link = f"Original message lost 4ever"
+            fields.append(
+                {
+                    "name": row[EVENT_TYPE_COLUMN],
+                    "value": f"{row[TIME_COLUMN]}\n{details_link}",
+                    "inline": False,
+                }
+            )
 
-    return output
+    return {
+        "type": "rich",
+        "title": f"My events",
+        "color": 0x6495ED,
+        "fields": [*fields],
+    }
 
 
 def _tally_classes(event_id):
@@ -289,20 +288,52 @@ def _clear_schedule(event_id, user):
         dynamodb.delete_item(SCHEDULE_TABLE, entry)
 
 
+def _add_event_to_calendar(event_id: str, server_id: str):
+    # create an `external` event
+    event_info = dynamodb.get_rows(
+        SCHEDULE_TABLE, pkey_value=EVENT_INFO_PKEY.format(event_id)
+    )[0]
+
+    event_name = event_info[EVENT_TYPE_COLUMN]
+    start_time = parser.parse(event_info[TIME_COLUMN]).replace(tzinfo=PacificTime())
+    event_status = event_info[STATUS_COLUMN]
+    creator = event_info[USER_COLUMN]
+
+    if MESSAGE_COLUMN in event_info and CHANNEL_COLUMN in event_info:
+        message_link = f"Details: https://discord.com/channels/{server_id}/{event_info[CHANNEL_COLUMN]}/{event_info[MESSAGE_COLUMN]}"
+    else:
+        message_link = ""
+
+    VC1_ID = "951040587266662405"
+
+    event_details = {
+        "channel_id": VC1_ID,
+        "name": event_name,
+        "description": f"Created by {discord.get_user_nickname_by_id(server_id, creator)}\n{message_link}",  # @mentions don't use server nicknames properly
+        "privacy_level": 2,  # https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-object-guild-scheduled-event-privacy-level
+        "scheduled_start_time": start_time.isoformat(),
+        "entity_type": 2,  # https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-object-guild-scheduled-event-entity-types; external requires end time, soooo
+    }
+
+    resp = discord.create_server_event(server_id, event_details)
+    if resp.ok:
+        dynamodb.set_rows(
+            SCHEDULE_TABLE,
+            EVENT_INFO_PKEY.format(event_id),
+            {
+                STATUS_COLUMN: EventStatus.CONFIRMED.value,
+            },
+        )
+
+    return resp.reason
+
+
 def _set_class(event_id, user, char_class):
     dynamodb.set_rows(
         SCHEDULE_TABLE,
         COMMITMENT_PKEY.format(event_id, user),
         {USER_COLUMN: user, CLASS_COLUMN: char_class},
     )
-
-
-def _generate_header(event_type: str, start_time: str = ""):
-    # TODO: generate a nicer msg title \
-    header = f"Scheduling for {event_type}: "
-    if start_time:
-        header += f"starting at {start_time}"
-    return header
 
 
 # public
@@ -356,7 +387,10 @@ def display(info: dict) -> dict:
 
 
 def is_schedule_button(component_id):
-    return component_id in [state.name for state in AvailabilityEmoji]
+    return (
+        component_id in AvailabilityEmoji._member_names_
+        or component_id in scheduler_view.ScheduleButtons.values()
+    )
 
 
 def is_schedule_selector(component_id):
@@ -371,34 +405,53 @@ def handle_button(info):
     user_id = info["user_id"]
     button = info["data"]["id"]
 
-    event_info = dynamodb.get_rows(
-        SCHEDULE_TABLE, pkey_value=EVENT_INFO_PKEY.format(event_id)
-    )[0]
+    if button in AvailabilityEmoji._member_names_:
+        event_info = dynamodb.get_rows(
+            SCHEDULE_TABLE, pkey_value=EVENT_INFO_PKEY.format(event_id)
+        )[0]
 
-    event_type = event_info[EVENT_TYPE_COLUMN]
-    start_time = event_info[TIME_COLUMN]
-    thread_id = event_info[THREAD_COLUMN]
+        event_type = event_info[EVENT_TYPE_COLUMN]
+        start_time = event_info[TIME_COLUMN]
+        thread_id = event_info[THREAD_COLUMN]
 
-    # use the base message id as a unique event identifier
-    _update_schedule(
-        event_type,
-        user_id,
-        event_id,
-        **{
-            STATUS_COLUMN: button,
-            TIME_COLUMN: start_time,
-            MESSAGE_COLUMN: message_id,
-            CHANNEL_COLUMN: base_channel_id,
-        },
-    )
+        # use the base message id as a unique event identifier
+        _update_schedule(
+            event_type,
+            user_id,
+            event_id,
+            **{
+                STATUS_COLUMN: button,
+                TIME_COLUMN: start_time,
+                MESSAGE_COLUMN: message_id,
+                CHANNEL_COLUMN: base_channel_id,
+            },
+        )
 
-    if button == AvailabilityEmoji.NOT_COMING.name:
-        discord.remove_thread_member(thread_id, user_id)
-    else:
-        discord.add_thread_member(thread_id, user_id)
+        if button == AvailabilityEmoji.NOT_COMING.name:
+            discord.remove_thread_member(thread_id, user_id)
+        else:
+            discord.add_thread_member(thread_id, user_id)
 
-    new_msg = {"embeds": [schedule_embed(event_id, server_id)]}
-    return new_msg
+    elif button == scheduler_view.ScheduleButtons.ADD_TO_CALENDAR:
+        resp = _add_event_to_calendar(event_id, server_id)
+        discord.send_followup(
+            info["application_id"],
+            info["interaction_token"],
+            f"Event creation request sent: {resp}",
+            ephemeral=True,
+        )
+
+        # refresh original message status
+        new_msg = {"embeds": [schedule_embed(event_id, server_id)]}
+        return new_msg
+    elif button == scheduler_view.ScheduleButtons.CHANGE_TIME:
+        pass
+    elif button == scheduler_view.ScheduleButtons.SEE_COMMITMENTS:
+        output = {"embeds": [get_all_user_commitments(info)]}
+
+        discord.send_followup(
+            info["application_id"], info["interaction_token"], output, ephemeral=True
+        )
 
 
 def handle_selector(info):

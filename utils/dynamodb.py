@@ -52,7 +52,7 @@ def get_rows(
             )
             return response["Items"]
         else:
-            response = table.get_item(Key={PKEY_NAME: str(pkey_value)})
+            response = table.get_item(Key={PKEY_NAME: pkey_value})
             if response and "Item" in response:
                 return [response["Item"]]
             else:
@@ -65,7 +65,7 @@ def set_rows(table_name: str, pkey_value: str, new_column: dict):
     table = dynamodb_client.Table(table_name)
     existing_rows = get_rows(table_name, pkey_value)
     if not existing_rows:
-        new_column[PKEY_NAME] = str(pkey_value)
+        new_column[PKEY_NAME] = pkey_value
         table.put_item(Item=new_column)
     else:
         for k, v in new_column.items():
@@ -76,5 +76,16 @@ def set_rows(table_name: str, pkey_value: str, new_column: dict):
                     ExpressionAttributeValues={":s": v},
                 )
 
-    # if table_name != GENERAL_TABLE:
-    #     set_rows(GENERAL_TABLE, pkey_value, new_column)
+
+def increment_counter(table_name: str, pkey_value: str, column_name: str):
+    table = dynamodb_client.Table(table_name)
+    existing_rows = get_rows(table_name, pkey_value)
+    if not existing_rows:
+        new_column = {PKEY_NAME: pkey_value, column_name: 1}
+        table.put_item(Item=new_column)
+    else:
+        table.update_item(
+            Key={PKEY_NAME: pkey_value},
+            UpdateExpression=f"ADD {column_name} :inc",
+            ExpressionAttributeValues={":inc": 1},
+        )

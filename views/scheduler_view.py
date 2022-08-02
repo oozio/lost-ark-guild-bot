@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import List
 
 from constants.emojis import AvailabilityEmoji, ClassEmoji, EmojiEnum
@@ -5,19 +6,29 @@ from views.button import Button
 
 CLASS_SELECTOR_ID = "class_selector"
 
+
+class ScheduleButtons(str, Enum):
+    ADD_TO_CALENDAR = "add_event_to_calendar"
+    CHANGE_TIME = "change_start_time"
+    SEE_COMMITMENTS = "see_signups"
+
+    @classmethod
+    def values(cls):
+        return list(map(lambda c: c.value, cls))
+
+
 # TODO: better typing
 def _add_to_calendar_button():
     return Button(
-        custom_id="add_event_to_calendar",
+        custom_id=ScheduleButtons.ADD_TO_CALENDAR,
         label="Add to Calendar",
         style=Button.Styles.grey.value,
-        disabled=True,
     )
 
 
 def _change_time_button():
     return Button(
-        custom_id="change_start_time",
+        custom_id=ScheduleButtons.CHANGE_TIME,
         label="Change Start Time",
         style=Button.Styles.grey.value,
         disabled=True,
@@ -26,10 +37,9 @@ def _change_time_button():
 
 def _see_commitments_button():
     return Button(
-        custom_id="see_signups",
-        label="My Existing Events",
+        custom_id=ScheduleButtons.SEE_COMMITMENTS,
+        label="My Events",
         style=Button.Styles.grey.value,
-        disabled=True,
     )
 
 

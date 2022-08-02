@@ -1,4 +1,12 @@
-from handlers import honing, market, render_display, role_selector, roles, scheduler
+from handlers import (
+    honing,
+    market,
+    report,
+    render_display,
+    role_selector,
+    roles,
+    scheduler,
+)
 from constants import interactions
 from utils import discord
 
@@ -12,6 +20,7 @@ HONING_COMMANDS = ["hone"]
 # slash commands that generate UIs
 BUTTON_COMMANDS = ["role_selector", "scheduler"]
 SELECTOR_COMMANDS = ["make_raid"]
+
 
 RENDER_VIEW_COMMANDS = set([*BUTTON_COMMANDS, *SELECTOR_COMMANDS])
 
@@ -41,7 +50,9 @@ def handle_command(info):
     elif command in RENDER_VIEW_COMMANDS:
         return render_display.display(command)(info)
     elif command == "see_signups":
-        return scheduler.get_all_user_commitments(info)
+        return {"embeds": [scheduler.get_all_user_commitments(info)]}
+    elif command == "report":
+        return report.report(command, options, user_id)
     raise ValueError(f"Unrecognized command {command}, sad")
 
 

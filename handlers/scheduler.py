@@ -3,6 +3,7 @@ import re
 import time
 from enum import Enum
 from datetime import datetime, tzinfo, timedelta
+from xmlrpc.client import Boolean
 from dateutil import parser
 
 from views import scheduler_view
@@ -74,7 +75,18 @@ EIGHT_PPL_RAIDS = "(?:{})".format(
 FOUR_PPL_RAIDS = "(?:{})".format("|".join([r".*oreha.*"]))
 
 
-def schedule_embed(event_id: str, server_id) -> dict:
+def _is_event_full(event_id: str, event_name: str) -> bool:
+    tally = sum(_tally_classes(event_id))
+    print(tally)
+    if re.match(EIGHT_PPL_RAIDS, event_name, flags=re.IGNORECASE):
+        return tally >= 8
+    elif re.match(FOUR_PPL_RAIDS, event_name, flags=re.IGNORECASE):
+        return tally >= 4
+    else:
+        return False
+
+
+def schedule_embed(event_id: str, server_id, is_full=False) -> dict:
     event_info = dynamodb.get_rows(
         SCHEDULE_TABLE, pkey_value=EVENT_INFO_PKEY.format(event_id)
     )[0]
@@ -85,7 +97,7 @@ def schedule_embed(event_id: str, server_id) -> dict:
     creator = event_info[USER_COLUMN]
 
     start_time_iso = start_time.isoformat()
-    start_time_pretty = start_time.strftime("%A %B %d, %I:%M %p")
+    start_time_pretty = start_time.strftime("%A %B %d, %-I:%M %p")
 
     all_rows = dynamodb.query_index(
         SCHEDULE_TABLE,
@@ -121,11 +133,18 @@ def schedule_embed(event_id: str, server_id) -> dict:
             }
         )
 
+    if is_full:
+        # red
+        color = 0xAA4A44
+    else:
+        # base on event status
+        color = 0xFFFF00 if event_status == EventStatus.TENTATIVE else 0x00FF00
+
     return {
         "type": "rich",
-        "title": f"Scheduling for {event_name}",
+        "title": f"Scheduling for {event_name}{'- full ' if is_full else ''}",
         "description": f"{start_time_pretty} PT",
-        "color": 0xFFFF00 if event_status == EventStatus.TENTATIVE else 0x00FF00,
+        "color": color,
         "fields": [
             *party_fields,
             *signup_fields,
@@ -181,7 +200,6 @@ def get_all_user_commitments(info):
         relevant_rows.sort(key=lambda item: item[TIME_COLUMN], reverse=False)
         fields = []
         for row in relevant_rows:
-
             if row["message_link"]:
                 details_link = f"[Details]({row['message_link']})"
             else:
@@ -207,7 +225,7 @@ def _tally_classes(event_id):
         SCHEDULE_TABLE,
         EVENT_ID_INDEX,
         {EVENT_ID_COLUMN: event_id},
-        filterExpression=f"attribute_exists({CLASS_COLUMN}) AND {STATUS_COLUMN} = :{STATUS_COLUMN}",
+        filterExpression=f"{STATUS_COLUMN} = :{STATUS_COLUMN}",
         expressionAttributeValues={
             f":{STATUS_COLUMN}": AvailabilityEmoji.COMING.name,
         },
@@ -215,17 +233,20 @@ def _tally_classes(event_id):
 
     dps = 0
     supp = 0
+    flex = 0
 
     for row in all_rows:
-        user_class = row[CLASS_COLUMN]
-        if ClassEmoji[user_class] in DPS_CLASSES:
+        user_class = row.get(CLASS_COLUMN)
+        if not user_class:
+            flex += 1
+        elif ClassEmoji[user_class] in DPS_CLASSES:
             dps += 1
         elif ClassEmoji[user_class] in SUPPORT_CLASSES:
             supp += 1
         else:
             raise ValueError(f"? Unrecognized class {user_class}")
 
-    return dps, supp
+    return dps, supp, flex
 
 
 def _get_party_fields(event_name, event_id):
@@ -238,12 +259,17 @@ def _get_party_fields(event_name, event_id):
     else:
         return []
 
-    dps, supp = _tally_classes(event_id)
+    dps, supp, flex = _tally_classes(event_id)
 
+    flex_row = (
+        {"name": "Flex", "value": f"{flex}/?", "inline": True}
+        if flex
+        else {"name": BLANK, "value": BLANK, "inline": True}
+    )
     return [
         {"name": "DPS", "value": f"{dps}/{n_dps}", "inline": True},
         {"name": "Supports", "value": f"{supp}/{n_supp}", "inline": True},
-        {"name": BLANK, "value": BLANK, "inline": True},
+        flex_row,
     ]
 
 
@@ -352,6 +378,7 @@ def display(info: dict) -> dict:
 
         try:
             start_time = parser.parse(time_string, ignoretz=True)
+            pretty_time = start_time.strftime("%A %B %d, %-I.%M %p")
         except parser.ParserError:
             raise parser.ParserError(
                 f"Couldn't parse this start time: `{time_string}`. Try a different format? Some examples: `saturday 8 pm`, `2022 07 30 20:00:00`"
@@ -362,7 +389,10 @@ def display(info: dict) -> dict:
         )["id"]
 
         thread_info = discord.create_thread(
-            channel_id, f"{event_type}", message_id, duration=3 * 24 * 60
+            channel_id,
+            f"{event_type} | {pretty_time} PT",
+            message_id,
+            duration=3 * 24 * 60,
         )
         thread_id = thread_info["id"]
 
@@ -380,7 +410,7 @@ def display(info: dict) -> dict:
 
         return {
             "embeds": [schedule_embed(event_id, server_id)],
-            "components": scheduler_view.SchedulerView.COMPONENTS,
+            "components": scheduler_view.SchedulerView().components,
         }
     else:
         raise ValueError(f"Unrecognized command: {cmd}")
@@ -427,10 +457,18 @@ def handle_button(info):
             },
         )
 
+        is_full = _is_event_full(event_id, event_type)
+
+        new_msg = {
+            "embeds": [schedule_embed(event_id, server_id, is_full=is_full)],
+            "components": scheduler_view.SchedulerView(is_full=is_full).components,
+        }
+
         if button == AvailabilityEmoji.NOT_COMING.name:
             discord.remove_thread_member(thread_id, user_id)
         else:
             discord.add_thread_member(thread_id, user_id)
+        return new_msg
 
     elif button == scheduler_view.ScheduleButtons.ADD_TO_CALENDAR:
         resp = _add_event_to_calendar(event_id, server_id)
@@ -442,7 +480,8 @@ def handle_button(info):
         )
 
         # refresh original message status
-        new_msg = {"embeds": [schedule_embed(event_id, server_id)]}
+        is_full = _is_event_full(event_id, event_type)
+        new_msg = {"embeds": [schedule_embed(event_id, server_id, is_full=is_full)]}
         return new_msg
     elif button == scheduler_view.ScheduleButtons.CHANGE_TIME:
         pass
@@ -460,5 +499,13 @@ def handle_selector(info):
     server_id = info["server_id"]
 
     _set_class(event_id, info["user_id"], data["values"][0])
-    new_msg = {"embeds": [schedule_embed(event_id, server_id)]}
+
+    event_info = dynamodb.get_rows(
+        SCHEDULE_TABLE, pkey_value=EVENT_INFO_PKEY.format(event_id)
+    )[0]
+
+    event_type = event_info[EVENT_TYPE_COLUMN]
+
+    is_full = _is_event_full(event_id, event_type)
+    new_msg = {"embeds": [schedule_embed(event_id, server_id, is_full=is_full)]}
     return new_msg

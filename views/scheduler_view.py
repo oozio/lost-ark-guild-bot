@@ -75,26 +75,33 @@ def _generate_emoji_dropdown(choices: List[EmojiEnum]) -> dict:
 
 
 class SchedulerView:
-    COMPONENTS = [
-        {
-            "type": 1,
-            "components": [
-                vars(_generate_emoji_button(availability))
-                for availability in AvailabilityEmoji
-            ],
-        },
-        {
-            "type": 1,
-            "components": [
-                _generate_emoji_dropdown([char_class for char_class in ClassEmoji])
-            ],
-        },
-        {
-            "type": 1,
-            "components": [
-                vars(_add_to_calendar_button()),
-                vars(_change_time_button()),
-                vars(_see_commitments_button()),
-            ],
-        },
-    ]
+    def __init__(self, is_full=False):
+        availability_buttons = {
+            availability: vars(_generate_emoji_button(availability))
+            for availability in AvailabilityEmoji
+        }
+
+        if is_full:
+            availability_buttons[AvailabilityEmoji.COMING]["label"] = "FULL"
+            availability_buttons[AvailabilityEmoji.COMING]["disabled"] = True
+
+        self.components = [
+            {
+                "type": 1,
+                "components": list(availability_buttons.values()),
+            },
+            {
+                "type": 1,
+                "components": [
+                    _generate_emoji_dropdown([char_class for char_class in ClassEmoji])
+                ],
+            },
+            {
+                "type": 1,
+                "components": [
+                    vars(_add_to_calendar_button()),
+                    vars(_change_time_button()),
+                    vars(_see_commitments_button()),
+                ],
+            },
+        ]

@@ -24,6 +24,7 @@ class AvailabilityEmoji(EmojiEnum):
 
 
 class ClassEmoji(EmojiEnum):
+    CLEAR_SELECTION = "blank", "842642757368545300"
     ARCANIST = "arcanist", "999209761285361774"
     ARTILLERIST = "artillerist", "999209777504727071"
     ARTIST = "artist", "999209793958973551"
@@ -49,7 +50,11 @@ class ClassEmoji(EmojiEnum):
 
 
 SUPPORT_CLASSES = [ClassEmoji.ARTIST, ClassEmoji.BARD, ClassEmoji.PALADIN]
-DPS_CLASSES = [x for x in ClassEmoji if x not in SUPPORT_CLASSES]
+DPS_CLASSES = [
+    x
+    for x in ClassEmoji
+    if x not in SUPPORT_CLASSES and x != ClassEmoji.CLEAR_SELECTION
+]
 
 EMOJI_IDS = {
     "gold": "<:gold:991944972804829185>",

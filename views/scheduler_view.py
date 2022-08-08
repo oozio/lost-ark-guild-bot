@@ -60,7 +60,7 @@ def _generate_emoji_dropdown(choices: List[EmojiEnum]) -> dict:
 
         options.append(
             {
-                "label": f"{emojiEnum.name.title()}",
+                "label": f"{emojiEnum.name.title().replace('_', ' ')}",
                 "value": f"{emojiEnum.name}",
                 "emoji": emoji,
             }
@@ -84,6 +84,10 @@ class SchedulerView:
         if is_full:
             availability_buttons[AvailabilityEmoji.COMING]["label"] = "FULL"
             availability_buttons[AvailabilityEmoji.COMING]["disabled"] = True
+            availability_buttons[AvailabilityEmoji.COMING]["emoji"] = {
+                "id": "984283879324147732",
+                "name": "mokoko_vibrate",
+            }
 
         self.components = [
             {

@@ -97,7 +97,7 @@ def schedule_embed(event_id: str, server_id, is_full=False) -> dict:
     creator = event_info[USER_COLUMN]
 
     start_time_iso = start_time.isoformat()
-    start_time_pretty = start_time.strftime("%A %B %d, %-I:%M %p")
+    start_time_pretty = f"<t:{int(start_time.timestamp())}>"
 
     all_rows = dynamodb.query_index(
         SCHEDULE_TABLE,
@@ -143,7 +143,7 @@ def schedule_embed(event_id: str, server_id, is_full=False) -> dict:
     return {
         "type": "rich",
         "title": f"Scheduling for {event_name}{'- full ' if is_full else ''}",
-        "description": f"{start_time_pretty} PT",
+        "description": f"Timezone-adjusted: {start_time_pretty}",
         "color": color,
         "fields": [
             *party_fields,
@@ -237,7 +237,7 @@ def _tally_classes(event_id):
 
     for row in all_rows:
         user_class = row.get(CLASS_COLUMN)
-        if not user_class:
+        if not user_class or ClassEmoji[user_class] == ClassEmoji.CLEAR_SELECTION:
             flex += 1
         elif ClassEmoji[user_class] in DPS_CLASSES:
             dps += 1
@@ -478,6 +478,12 @@ def handle_button(info):
             f"Event creation request sent: {resp}",
             ephemeral=True,
         )
+
+        event_info = dynamodb.get_rows(
+            SCHEDULE_TABLE, pkey_value=EVENT_INFO_PKEY.format(event_id)
+        )[0]
+
+        event_type = event_info[EVENT_TYPE_COLUMN]
 
         # refresh original message status
         is_full = _is_event_full(event_id, event_type)

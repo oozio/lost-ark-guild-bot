@@ -10,8 +10,8 @@ the actual code/etc lives in aws, and the general flow is
 6. actual results are returned to user, through editing the original message/sending a new message/whatever
 
 (shameless self plug) details for how ^ works: 
-    - https://oozio.medium.com/serverless-discord-bot-55f95f26f743
-    - https://oozio.medium.com/serverless-discord-bot-github-based-cicd-e2a9e9a7bc4d
+- https://oozio.medium.com/serverless-discord-bot-55f95f26f743
+- https://oozio.medium.com/serverless-discord-bot-github-based-cicd-e2a9e9a7bc4d
 
 
 

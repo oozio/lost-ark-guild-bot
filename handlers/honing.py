@@ -11,7 +11,7 @@ def handle(command, cmd_input):
         ilevel = cmd_input['current_item_level']
         level_id = ilevel, equipment_type
         if level_id not in hd_const.HONES_DICT:
-            return ('No data found for level {ilevel} {equipment_type_str}. '
+            return (f'No data found for level {ilevel} {equipment_type_str}. '
                     'Contact Zethorix if you believe this is an error.')
         honing_level = hd_const.HONES_DICT[level_id]
         if 'base_rate' in cmd_input:

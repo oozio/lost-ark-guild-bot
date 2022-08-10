@@ -55,7 +55,7 @@ def handle_command(info):
         return {"embeds": [scheduler.get_all_user_commitments(info)]}
     elif command == "report":
         return report.report(command, options, user_id)
-    elif command == "watch_server_status":
+    elif command == "server_status":
         return server_status.handle(command, user_id, channel_id)
     raise ValueError(f"Unrecognized command {command}, sad")
 

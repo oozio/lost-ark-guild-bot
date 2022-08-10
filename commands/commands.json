@@ -210,8 +210,8 @@
         ]
     },
     {
-        "name": "watch_server_status",
-        "description": "Notifies you when server maintenance is over",
+        "name": "server_status",
+        "description": "Tells you if server is up",
         "type": 1
     }
 ]

@@ -5,10 +5,6 @@
         "type": 1
     },
     {
-        "name": "test",
-        "type": 3
-    },
-    {
         "name": "price",
         "description": "(trying this for fun, v incomplete) Check the current price of an item in NAW",
         "type": 1,
@@ -187,7 +183,7 @@
     },
     {
         "name": "see_signups",
-        "description": "<under construction> see events to which u rsvp'd",
+        "description": "see events to which u rsvp'd",
         "type": 1
     },
     {
@@ -218,5 +214,54 @@
         "name": "maintenance_watch",
         "description": "Watches for when server maintenance is over",
         "type": 1
+    },
+    {
+        "name": "nitro",
+        "description": "<under construction> freedom from emoji oppression",
+        "type": 1,
+        "options": [
+            {
+                "name": "react",
+                "description": "react to a message with any image",
+                "type": 1,
+                "options": [
+                    {
+                        "name": "image_url",
+                        "description": "the url of the image to use in the emote",
+                        "type": 11,
+                        "required": 1
+                    },
+                    {
+                        "name": "message_id",
+                        "description": "ID of the message to which to react",
+                        "type": 3,
+                        "required": 1
+                    },
+                    {
+                        "name": "emote_name",
+                        "description": "a human-readable name for the emote",
+                        "type": 3,
+                        "required": 0
+                    }
+                ]
+            },
+            {
+                "name": "message",
+                "description": "send a message, converting all image links within to emotes",
+                "type": 1,
+                "options": [
+                    {
+                        "name": "emote_names",
+                        "description": "space-separated human-readable emote names; order matters",
+                        "type": 3,
+                        "required": 0
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "test",
+        "type": 3
     }
 ]

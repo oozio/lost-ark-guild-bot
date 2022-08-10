@@ -202,7 +202,10 @@ def change_role(server_id, user_id, old_role_name, new_role_name):
 def get_user_nickname_by_id(server_id, user_id):
     url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}"
     user = requests.get(url, headers=HEADERS).json()
-    return user["nick"]
+    if user["nick"]:
+        return user["nick"]
+    else:
+        return user["user"]["username"]
 
 
 # Message related
@@ -322,12 +325,7 @@ def initial_response(response_type, content=None, ephemeral=False):
         else RESPONSE_TYPES["MESSAGE_WITH_SOURCE"],
     }
     if response_type != "PONG":  # and "ACK" not in response_type:
-        response["data"] = {
-            "content": content,
-            "embeds": [],
-            "allowed_mentions": [],
-            "flags": 64 if ephemeral else None,
-        }
+        response["data"] = format_response(content, ephemeral)
     return response
 
 

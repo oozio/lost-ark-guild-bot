@@ -8,7 +8,7 @@ SHOULD_HIDE_COMMAND_OUTPUT = {
     "role_selector": False,
     "make_raid": False,
     "see_signups": True,
-    "report": False,
+    "report": True,
     "server_status": True,
     "maintenance_watch": True,
 }

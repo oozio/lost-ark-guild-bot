@@ -87,7 +87,7 @@ def handle_event(event):
 
 def lambda_handler(event, context):
     # Handle timer-triggered special cases
-    if event["source"] == "aws.events":
+    if event.get("source") == "aws.events":
         handle_event(event)
         return
 

@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 from utils import aws_lambda, discord
 
 SERVER = 'Bergstrom'
+BOT_TESTING = '985659954532847646'
+MAIN = '951040587266662402'
 
 # Looks through all server statuses, looking for the SERVER keyword, then goes up
 # a level and looks for MAINTENANCE_CLASS, which is the class assigned to the
@@ -35,7 +37,9 @@ def is_maintenance():
         else:
             return False
     else:
-        return False
+        # This indicates the page didn't respond or did not fully load, which
+        # happens at certain points of the server maintenance, so we return True
+        return True
 
 # Just do an immediate response for now
 def handle(command, user_id, channel_id):
@@ -46,10 +50,18 @@ def handle(command, user_id, channel_id):
             return "Server is up!"
     elif command == "maintenance_watch":
         if is_maintenance():
-            aws_lambda.enable_rule('Timer')
+            try:
+                aws_lambda.enable_rule('Timer')
+            except Exception as error:
+                print(error)
+
             return "Watching until server is up..."
         else:
-            aws_lambda.disable_rule('Timer')
+            try:
+                aws_lambda.disable_rule('Timer')
+            except Exception as error:
+                print(error)
+
             return "Server is up!"
     else:
         return f"UNKNOWN COMMAND: {command}"
@@ -58,8 +70,15 @@ def handle(command, user_id, channel_id):
 # We got poked by the timer
 def handle_timer():
     if is_maintenance():
+        print("Still under maintenance!")
         return
     else:
-        aws_lambda.disable_rule('Timer')
+        print("Maintenance is over!")
+
+        try:
+            aws_lambda.disable_rule('Timer')
+        except Exception as error:
+            print(error)
+
         # Post in bot-testing for now
-        discord.post_message_in_channel('985659954532847646', 'Server maintenance is over!')
+        discord.post_message_in_channel(BOT_TESTING, 'Server maintenance is over!')

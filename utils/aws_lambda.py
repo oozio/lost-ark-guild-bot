@@ -10,3 +10,9 @@ def invoke_processor(body):
     response = LAMBDA.invoke(FunctionName=API_CALLER,
                              InvocationType='Event',
                              Payload=bytes(json.dumps(body), 'utf-8'))
+
+def enable_rule(name):
+    LAMBDA.enable_rule(Name=name)
+
+def disable_rule(name):
+    LAMBDA.disable_rule(Name=name)

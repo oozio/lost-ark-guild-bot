@@ -22,6 +22,7 @@ HONING_COMMANDS = ["hone"]
 BUTTON_COMMANDS = ["role_selector", "scheduler"]
 SELECTOR_COMMANDS = ["make_raid"]
 
+SERVER_STATUS_COMMANDS = ["server_status", "maintenance_watch"]
 
 RENDER_VIEW_COMMANDS = set([*BUTTON_COMMANDS, *SELECTOR_COMMANDS])
 
@@ -55,7 +56,7 @@ def handle_command(info):
         return {"embeds": [scheduler.get_all_user_commitments(info)]}
     elif command == "report":
         return report.report(command, options, user_id)
-    elif command == "server_status":
+    elif command in SERVER_STATUS_COMMANDS:
         return server_status.handle(command, user_id, channel_id)
     raise ValueError(f"Unrecognized command {command}, sad")
 
@@ -76,8 +77,20 @@ def handle_component_interaction(info):
         f"Unrecognized component `{component_id}` from `/{base_interaction}`"
     )
 
+def handle_event(event):
+    resources = event["resources"]
+    if "arn:aws:events:us-east-2:391107963258:rule/Timer" in resources:
+        server_status.handle_timer()
+    else:
+        print(f"Unknown event(s): {resources}")
+
 
 def lambda_handler(event, context):
+    # Handle timer-triggered special cases
+    if event["source"] == "aws.events":
+        handle_event(event)
+        return
+
     # get interaction metadata
     body = event["body-json"]
     application_id = body["application_id"]

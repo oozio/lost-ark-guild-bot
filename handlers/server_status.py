@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from utils import aws_lambda, discord
 
 SERVER = 'Bergstrom'
 
@@ -38,7 +39,27 @@ def is_maintenance():
 
 # Just do an immediate response for now
 def handle(command, user_id, channel_id):
-    if is_maintenance():
-        return "Server is under maintenance!"
+    if command == "server_status":
+        if is_maintenance():
+            return "Server is under maintenance!"
+        else:
+            return "Server is up!"
+    elif command == "maintenance_watch":
+        if is_maintenance():
+            aws_lambda.enable_rule('Timer')
+            return "Watching until server is up..."
+        else:
+            aws_lambda.disable_rule('Timer')
+            return "Server is up!"
     else:
-        return "Server is up!"
+        return f"UNKNOWN COMMAND: {command}"
+
+
+# We got poked by the timer
+def handle_timer():
+    if is_maintenance():
+        return
+    else:
+        aws_lambda.disable_rule('Timer')
+        # Post in bot-testing for now
+        discord.post_message_in_channel('985659954532847646', 'Server maintenance is over!')

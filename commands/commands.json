@@ -213,5 +213,10 @@
         "name": "server_status",
         "description": "Tells you if server is up",
         "type": 1
+    },
+    {
+        "name": "maintenance_watch",
+        "description": "Watches for when server maintenance is over",
+        "type": 1
     }
 ]

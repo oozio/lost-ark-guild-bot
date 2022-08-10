@@ -6,6 +6,7 @@ from handlers import (
     role_selector,
     roles,
     scheduler,
+    server_status
 )
 from constants import interactions
 from utils import discord
@@ -35,6 +36,7 @@ COMPONENT_HANDLERS = {
 def handle_command(info):
     server_id = info["server_id"]
     user_id = info["user_id"]
+    channel_id = info["channel_id"]
 
     command = info["command"]
     options = info["options"]
@@ -53,6 +55,8 @@ def handle_command(info):
         return {"embeds": [scheduler.get_all_user_commitments(info)]}
     elif command == "report":
         return report.report(command, options, user_id)
+    elif command == "watch_server_status":
+        return server_status.handle(command, user_id, channel_id)
     raise ValueError(f"Unrecognized command {command}, sad")
 
 

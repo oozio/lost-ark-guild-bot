@@ -7,4 +7,4 @@ discord-ui
 boto3
 dataclasses
 python-dateutil
-BeautifulSoup
+bs4

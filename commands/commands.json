@@ -208,5 +208,10 @@
                 "required": 0
             }
         ]
+    },
+    {
+        "name": "watch_server_status",
+        "description": "Notifies you when server maintenance is over",
+        "type": 1
     }
 ]

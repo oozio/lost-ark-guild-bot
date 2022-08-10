@@ -6,7 +6,7 @@ from handlers import (
     role_selector,
     roles,
     scheduler,
-    server_status
+    server_status,
 )
 from constants import interactions
 from utils import discord

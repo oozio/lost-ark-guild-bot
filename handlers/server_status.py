@@ -5,6 +5,7 @@ from utils import aws_lambda, discord
 SERVER = 'Bergstrom'
 BOT_TESTING = '985659954532847646'
 MAIN = '951040587266662402'
+SPAM = '951409442593865748'
 
 # Looks through all server statuses, looking for the SERVER keyword, then goes up
 # a level and looks for MAINTENANCE_CLASS, which is the class assigned to the
@@ -80,5 +81,6 @@ def handle_timer():
         except Exception as error:
             print(error)
 
-        # Post in bot-testing for now
-        discord.post_message_in_channel(BOT_TESTING, 'Server maintenance is over!')
+        # Post in other-spam for now
+        # TODO: Collect list of interested parties and ping them specifically
+        discord.post_message_in_channel(SPAM, '@here Server maintenance is over!', ephemeral=False)

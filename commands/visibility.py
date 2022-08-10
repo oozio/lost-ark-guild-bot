@@ -9,4 +9,6 @@ SHOULD_HIDE_COMMAND_OUTPUT = {
     "make_raid": False,
     "see_signups": True,
     "report": False,
+    "server_status": True,
+    "maintenance_watch": True,
 }

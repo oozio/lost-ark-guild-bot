@@ -228,7 +228,7 @@
                     {
                         "name": "image_url",
                         "description": "the url of the image to use in the emote",
-                        "type": 11,
+                        "type": 3,
                         "required": 1
                     },
                     {

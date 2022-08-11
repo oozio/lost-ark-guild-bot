@@ -1,5 +1,6 @@
 from handlers import (
     honing,
+    images,
     market,
     report,
     render_display,
@@ -17,14 +18,14 @@ from utils import discord
 ROLE_COMMANDS = ["add_roles", "remove_roles"]
 MARKET_COMMANDS = ["price", "mari"]
 HONING_COMMANDS = ["hone"]
+SERVER_STATUS_COMMANDS = ["server_status", "maintenance_watch"]
+IMAGE_COMMANDS = ["nitro_react", "nitro_message"]
 
 # slash commands that generate UIs
 BUTTON_COMMANDS = ["role_selector", "scheduler"]
 SELECTOR_COMMANDS = ["make_raid"]
-
-SERVER_STATUS_COMMANDS = ["server_status", "maintenance_watch"]
-
 RENDER_VIEW_COMMANDS = set([*BUTTON_COMMANDS, *SELECTOR_COMMANDS])
+
 
 # component interactions
 COMPONENT_HANDLERS = {
@@ -58,6 +59,8 @@ def handle_command(info):
         return report.report(command, options, user_id)
     elif command in SERVER_STATUS_COMMANDS:
         return server_status.handle(command, user_id, channel_id)
+    elif command in IMAGE_COMMANDS:
+        return images.handle(command, options, channel_id)
     raise ValueError(f"Unrecognized command {command}, sad")
 
 
@@ -76,6 +79,7 @@ def handle_component_interaction(info):
     raise ValueError(
         f"Unrecognized component `{component_id}` from `/{base_interaction}`"
     )
+
 
 def handle_event(event):
     resources = event["resources"]

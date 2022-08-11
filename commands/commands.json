@@ -217,7 +217,7 @@
     },
     {
         "name": "nitro",
-        "description": "<under construction> freedom from emoji oppression",
+        "description": "<under construction> liberation from emoji oppression",
         "type": 1,
         "options": [
             {
@@ -250,6 +250,12 @@
                 "description": "send a message, converting all image links within to emotes",
                 "type": 1,
                 "options": [
+                    {
+                        "name": "message",
+                        "description": "a message containing image links, eg 'hi https:pic.gif bye https:pic.webp",
+                        "type": 3,
+                        "required": 1
+                    },
                     {
                         "name": "emote_names",
                         "description": "space-separated human-readable emote names; order matters",

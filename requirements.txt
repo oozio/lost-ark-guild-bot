@@ -8,3 +8,4 @@ boto3
 dataclasses
 python-dateutil
 bs4
+Pillow

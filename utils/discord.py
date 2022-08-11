@@ -1,4 +1,3 @@
-from email import header
 import boto3
 import re
 import requests
@@ -317,6 +316,28 @@ def create_server_event(server_id: str, event_details: dict) -> None:
     return requests.post(url, json=event_details, headers=HEADERS)
 
 
+# Emote related
+def create_emoji(server_id, emoji_name, image_url):
+    from PIL import Image
+    img = Image.open(requests.get(image_url).raw)
+    emoji = {
+        "emoji_name": emoji_name,
+        "emoji_image": f"data:image/{img.format};base64,{img}",
+        "roles": []
+    }
+     
+    url = f"{BASE_URL}/guilds/{server_id}/emojis"
+    return requests.post(url, json=emoji, )
+
+def react_to_message(channel_id, message_id, emoji):
+    url = f"{BASE_URL}/channels/{channel_id}/messages/{message_id}/reactions/{emoji}/@me"
+    return requests.put(url)
+
+def delete_self_react(channel_id, message_id, emoji)
+    url = f"{BASE_URL}/channels/{channel_id}/messages/{message_id}/reactions/{emoji}/@me"
+    
+    return requests.delete(url)
+
 # Misc
 def initial_response(response_type, content=None, ephemeral=False):
     response = {
@@ -325,7 +346,12 @@ def initial_response(response_type, content=None, ephemeral=False):
         else RESPONSE_TYPES["MESSAGE_WITH_SOURCE"],
     }
     if response_type != "PONG":  # and "ACK" not in response_type:
-        response["data"] = format_response(content, ephemeral)
+        response["data"] = {
+            "content": content,
+            "embeds": [],
+            "allowed_mentions": [],
+            "flags": 64 if ephemeral else None,
+        }
     return response
 
 

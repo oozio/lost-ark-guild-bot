@@ -28,6 +28,10 @@ class ComponentType(int, Enum):
     TEXT_INPUT = 4
 
 
+class OptionType(int, Enum):
+    SUBCOMMAND = 1
+
+
 def parse_basic_input(body):
     return {
         "channel_id": body["channel_id"],
@@ -91,11 +95,18 @@ def parse_slash_command_input(body):
     info["command"] = data["name"].lower()
 
     info["options"] = {}
-    if "options" in data:
-        for option in data.get("options"):
-            option_key = option["name"]
-            option_value = option["value"]
-            info["options"][option_key] = option_value
+    for option in data.get("options", []):
+        # subcommands have nested options
+        if option["type"] == OptionType.SUBCOMMAND:
+            info["command"] += f"_{option['name']}"
+            for subopt in option["options"]:
+                key = subopt["name"]
+                value = subopt["value"]
+                info["options"][key] = value
+        else:
+            key = option["name"]
+            value = option["value"]
+            info["options"][key] = value
 
     return info
 

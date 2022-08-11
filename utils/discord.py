@@ -317,26 +317,32 @@ def create_server_event(server_id: str, event_details: dict) -> None:
 
 
 # Emote related
-def create_emoji(server_id, emoji_name, image_url):
-    from PIL import Image
-    img = Image.open(requests.get(image_url).raw)
+def create_emoji(server_id, emoji_name, image_format, image_data):
     emoji = {
-        "emoji_name": emoji_name,
-        "emoji_image": f"data:image/{img.format};base64,{img}",
-        "roles": []
+        "name": emoji_name,
+        "image": f"data:image/{image_format};base64,{image_data}",
+        "roles": [],
     }
-     
+
+    print(emoji)
     url = f"{BASE_URL}/guilds/{server_id}/emojis"
-    return requests.post(url, json=emoji, )
+    return requests.post(url, json=emoji, headers=HEADERS)
+
 
 def react_to_message(channel_id, message_id, emoji):
-    url = f"{BASE_URL}/channels/{channel_id}/messages/{message_id}/reactions/{emoji}/@me"
-    return requests.put(url)
+    url = (
+        f"{BASE_URL}/channels/{channel_id}/messages/{message_id}/reactions/{emoji}/@me"
+    )
+    return requests.put(url, headers=HEADERS)
 
-def delete_self_react(channel_id, message_id, emoji)
-    url = f"{BASE_URL}/channels/{channel_id}/messages/{message_id}/reactions/{emoji}/@me"
-    
-    return requests.delete(url)
+
+def delete_self_react(channel_id, message_id, emoji):
+    url = (
+        f"{BASE_URL}/channels/{channel_id}/messages/{message_id}/reactions/{emoji}/@me"
+    )
+
+    return requests.delete(url, headers=HEADERS)
+
 
 # Misc
 def initial_response(response_type, content=None, ephemeral=False):

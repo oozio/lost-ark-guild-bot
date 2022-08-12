@@ -269,5 +269,24 @@
     {
         "name": "test",
         "type": 3
+    },
+    {
+        "name": "vote",
+        "description": "start a vote",
+        "type": 1,
+        "options": [
+            {
+                "name": "question",
+                "description": "what do u want ppl to vote on",
+                "type": 3,
+                "required": 1
+            },
+            {
+                "name": "choices",
+                "description": "pipe(|)-separated options",
+                "type": 3,
+                "required": 1
+            }
+        ]
     }
 ]

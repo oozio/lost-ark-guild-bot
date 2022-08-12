@@ -1,8 +1,12 @@
-from . import role_selector, scheduler
+from . import role_selector, scheduler, vote
 
 # TODO: bad that commands are defined in multiple places
 
-CMD_DISPLAYS = {"role_selector": role_selector.display, "make_raid": scheduler.display}
+CMD_DISPLAYS = {
+    "role_selector": role_selector.display,
+    "make_raid": scheduler.display,
+    "vote": vote.display,
+}
 
 
 def display(command):

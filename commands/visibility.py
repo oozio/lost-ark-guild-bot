@@ -11,4 +11,5 @@ SHOULD_HIDE_COMMAND_OUTPUT = {
     "report": True,
     "server_status": True,
     "maintenance_watch": True,
+    "vote": False,
 }

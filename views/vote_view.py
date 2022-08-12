@@ -41,5 +41,5 @@ class VoteView:
     def get_buttons(self):
         buttons = []
         for choice in self.choices:
-            buttons.append(Button(custom_id=f"vote_{choice}", label=choice))
+            buttons.append(vars(Button(custom_id=f"vote_{choice}", label=choice)))
         return self._wrap_in_action_rows(buttons)

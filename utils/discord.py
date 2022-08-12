@@ -324,7 +324,6 @@ def create_emoji(server_id, emoji_name, image_format, image_data):
         "roles": [],
     }
 
-    print(emoji)
     url = f"{BASE_URL}/guilds/{server_id}/emojis"
     return requests.post(url, json=emoji, headers=HEADERS)
 

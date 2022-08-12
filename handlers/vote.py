@@ -36,20 +36,20 @@ def _update_votes(interaction_id, choice):
 
 
 def _get_votes(interaction_id):
-    return dynamodb.get_rows(VOTES_TABLE, PKEY.format(interaction_id))
+    return dynamodb.get_rows(VOTES_TABLE, PKEY.format(interaction_id))[0]
 
 
 def _get_vote_embed(interaction_id, info):
     vote_info = _get_votes(interaction_id)
 
     question = vote_info.pop(Q_COLUMN, "? ur code is buggy")
-    vote_fields = {}
-    for key, value in vote_info:
+    vote_fields = []
+    for key, value in vote_info.items():
         if _is_vote_column(key):
             vote_fields.append(
                 {
                     "name": _drop_vote_prefix(key),
-                    "value": value,
+                    "value": int(value),
                     "inline": True,
                 }
             )
@@ -74,12 +74,15 @@ def display(info: dict) -> dict:
         choices = cmd_input["choices"].split("|")
 
         _create_vote(
-            interaction_id, user_id, question, {choice: 0 for choice in choices}
+            interaction_id,
+            user_id,
+            question,
+            {f"{VOTE_PREFIX}{choice}": 0 for choice in choices},
         )
 
         return {
             "embeds": [_get_vote_embed(interaction_id, info)],
-            "components": vote_view.VoteView(choices).components,
+            "components": vote_view.VoteView(choices).get_buttons(),
         }
     else:
         raise ValueError(f"Unrecognized command: {cmd}")

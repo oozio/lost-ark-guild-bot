@@ -77,7 +77,6 @@ FOUR_PPL_RAIDS = "(?:{})".format("|".join([r".*oreha.*"]))
 
 def _is_event_full(event_id: str, event_name: str) -> bool:
     tally = sum(_tally_classes(event_id))
-    print(tally)
     if re.match(EIGHT_PPL_RAIDS, event_name, flags=re.IGNORECASE):
         return tally >= 8
     elif re.match(FOUR_PPL_RAIDS, event_name, flags=re.IGNORECASE):

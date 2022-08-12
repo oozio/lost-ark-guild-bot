@@ -283,7 +283,7 @@
             },
             {
                 "name": "choices",
-                "description": "pipe(|)-separated options",
+                "description": "pipe(|)-separated options, alphanumeric only",
                 "type": 3,
                 "required": 1
             }

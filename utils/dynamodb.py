@@ -89,3 +89,23 @@ def increment_counter(table_name: str, pkey_value: str, column_name: str):
             UpdateExpression=f"ADD {column_name} :inc",
             ExpressionAttributeValues={":inc": 1},
         )
+
+
+def decrement_counter(
+    table_name: str,
+    pkey_value: str,
+    column_name: str,
+    default_start: int = 0,
+    decrement: int = 1,
+):
+    table = dynamodb_client.Table(table_name)
+    existing_rows = get_rows(table_name, pkey_value)
+    if not existing_rows:
+        new_column = {PKEY_NAME: pkey_value, column_name: default_start}
+        table.put_item(Item=new_column)
+    else:
+        table.update_item(
+            Key={PKEY_NAME: pkey_value},
+            UpdateExpression=f"ADD {column_name} :inc",
+            ExpressionAttributeValues={":inc": -1 * decrement},
+        )

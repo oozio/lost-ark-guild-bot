@@ -219,6 +219,19 @@
         ]
     },
     {
+        "name": "add_punch_message",
+        "description": "describe how A punches B",
+        "type": 1,
+        "options": [
+            {
+                "name": "description",
+                "description": "3rd person, eg 'punches', 'gently pats'",
+                "type": 3,
+                "required": 1
+            }
+        ]
+    },
+    {
         "name": "server_status",
         "description": "Tells you if server is up",
         "type": 1
@@ -296,7 +309,7 @@
             },
             {
                 "name": "choices",
-                "description": "pipe(|)-separated options, eg 'yes|no', 'a a|b b!!|Ccc'",
+                "description": "pipe(|)-separated options, eg 'yes|no'",
                 "type": 3,
                 "required": 1
             }

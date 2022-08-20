@@ -1,8 +1,8 @@
 from handlers import (
+    bully,
     honing,
     images,
     market,
-    report,
     render_display,
     role_selector,
     roles,
@@ -21,6 +21,7 @@ MARKET_COMMANDS = ["price", "mari"]
 HONING_COMMANDS = ["hone"]
 SERVER_STATUS_COMMANDS = ["server_status", "maintenance_watch"]
 IMAGE_COMMANDS = ["nitro_react", "nitro_message"]
+RUDE_COMMANDS = ["report", "punch"]
 
 # slash commands that generate UIs
 BUTTON_COMMANDS = ["role_selector", "scheduler", "vote"]
@@ -55,10 +56,10 @@ def handle_command(info):
         return honing.handle(command, options)
     elif command in RENDER_VIEW_COMMANDS:
         return render_display.display(command)(info)
+    elif command in RUDE_COMMANDS:
+        return bully.handle(command, info)
     elif command == "see_signups":
         return {"embeds": [scheduler.get_all_user_commitments(info)]}
-    elif command == "report":
-        return report.report(command, options, user_id)
     elif command in SERVER_STATUS_COMMANDS:
         return server_status.handle(command, user_id, channel_id)
     elif command in IMAGE_COMMANDS:

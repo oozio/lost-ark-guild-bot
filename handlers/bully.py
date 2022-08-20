@@ -11,6 +11,7 @@ REPORTER_PKEY = "reporter:{}"
 TALLY_COLUMN = "tally"
 
 EMOTE_REGEX = r"(.*)\\(<.*:\d*>)(.*)"
+PUNCH_EMOTE = "<a:PUNCH:1010342592338202767>"
 
 
 def _update_table(reporter, victim):
@@ -37,9 +38,16 @@ def _format_emotes(text: str) -> str:
     return text
 
 
-def report(command, cmd_input, user_id):
+def punch(cmd_input, channel_id):
     victim = cmd_input["who"]
-    reason = cmd_input.get("why", "")
+    message = f"{discord.mention_user(victim)} {PUNCH_EMOTE}"
+
+    discord.post_message_in_channel(channel_id, message)
+
+
+def report(cmd_input, user_id):
+    victim = cmd_input["who"]
+    reason = cmd_input["why"]
     reason_str = f" for: {_format_emotes(reason)}" if reason else ""
 
     _update_table(user_id, victim)
@@ -48,3 +56,14 @@ def report(command, cmd_input, user_id):
     message = f"{discord.mention_user(user_id)} reported {discord.mention_user(victim)}{'.' if not reason_str else ''}{reason_str}\n{discord.mention_user(victim)} has been reported {victim_count} {'time' if victim_count == 1 else 'times'}."
 
     discord.post_message_in_channel(SPAM_CHANNEL, message)
+
+
+def handle(command, info):
+    options = info.get("options", {})
+
+    if command == "report":
+        report(options, info["user_id"])
+    elif command == "punch":
+        punch(options, info["channel_id"])
+    else:
+        return f"UNKNOWN COMMAND: {command}"

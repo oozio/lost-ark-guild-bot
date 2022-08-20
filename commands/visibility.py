@@ -7,6 +7,7 @@ SHOULD_HIDE_COMMAND_OUTPUT = {
     "mari": False,
     "role_selector": False,
     "make_raid": False,
+    "punch": False,
     "see_signups": True,
     "report": False,
     "server_status": True,

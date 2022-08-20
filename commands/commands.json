@@ -201,7 +201,20 @@
                 "name": "why",
                 "description": "what happened",
                 "type": 3,
-                "required": 0
+                "required": 1
+            }
+        ]
+    },
+    {
+        "name": "punch",
+        "description": "violence ever defeats its own ends",
+        "type": 1,
+        "options": [
+            {
+                "name": "who",
+                "description": "who u want to senselessly attack",
+                "type": 6,
+                "required": 1
             }
         ]
     },
@@ -283,7 +296,7 @@
             },
             {
                 "name": "choices",
-                "description": "pipe(|)-separated options",
+                "description": "pipe(|)-separated options, eg 'yes|no', 'a a|b b!!|Ccc'",
                 "type": 3,
                 "required": 1
             }

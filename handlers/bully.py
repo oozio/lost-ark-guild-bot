@@ -42,7 +42,7 @@ def punch(cmd_input, channel_id):
     victim = cmd_input["who"]
     message = f"{discord.mention_user(victim)} {PUNCH_EMOTE}"
 
-    discord.post_message_in_channel(channel_id, message)
+    return message
 
 
 def report(cmd_input, user_id):
@@ -64,6 +64,6 @@ def handle(command, info):
     if command == "report":
         report(options, info["user_id"])
     elif command == "punch":
-        punch(options, info["channel_id"])
+        return punch(options, info["channel_id"])
     else:
         return f"UNKNOWN COMMAND: {command}"

@@ -163,7 +163,7 @@ class PunchHandler(CommandHandler):
         hp = self._get_victim_health()
         death_msg = ""
 
-        if "IMP0STER" in puncher_mention:
+        if "knguyen" in puncher_mention:
             self._update_hp(10)
             hp = self._get_victim_health()
             dmg = 10000

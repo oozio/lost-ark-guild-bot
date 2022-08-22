@@ -162,6 +162,13 @@ class PunchHandler(CommandHandler):
 
         hp = self._get_victim_health()
         death_msg = ""
+
+        if puncher_mention == "@REAL TWISTYFLOOF, GREEN=IMP0STER":
+            dmg = 10000
+            hp = 0
+            phrase = "teaches what a real joke is to"
+            puncher_mention = "@REAL TWISTYFLOOF, GREEN=IMPOSTER"
+
         if hp <= 0:
             self._update_kda()
 

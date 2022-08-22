@@ -72,7 +72,7 @@ class ReportHandler(CommandHandler):
         reason_str = f" for: {self._format_emotes(self.reason)}" if self.reason else ""
 
         self._update_table()
-        victim_count = self._get_victim_count(self.victim)
+        victim_count = self._get_victim_count()
 
         message = f"{discord.mention_user(self.reporter)} reported {discord.mention_user(self.victim)}{'.' if not reason_str else ''}{reason_str}\n{discord.mention_user(self.victim)} has been reported {victim_count} {'time' if victim_count == 1 else 'times'}."
 

@@ -39,7 +39,7 @@ class CommandHandler:
         for name_to_keep, name_to_look_for in self.FIELDS.items():
             self.__dict__[name_to_keep] = kwargs.get(name_to_look_for, "??")
 
-    def _format_emotes(text: str) -> str:
+    def _format_emotes(self, text: str) -> str:
         while re.match(EMOTE_REGEX, text, flags=re.IGNORECASE):
             text = re.sub(EMOTE_REGEX, r"\1\2\3", text)
         return text
@@ -199,7 +199,7 @@ class PunchHandler(CommandHandler):
 
 
 class PhraseHandler(CommandHandler):
-    FIELDS = {"phrase": "phrase"}
+    FIELDS = {"phrase": "description"}
 
     def handle(self):
         phrase_hash = hashlib.md5(self.phrase.encode()).hexdigest()
@@ -212,7 +212,7 @@ class PhraseHandler(CommandHandler):
 handler_map = {
     "report": ReportHandler,
     "punch": PunchHandler,
-    "register_phrase": PhraseHandler,
+    "add_punch_message": PhraseHandler,
 }
 
 

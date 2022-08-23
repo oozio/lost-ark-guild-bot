@@ -20,7 +20,7 @@ the actual code/etc lives in aws, and the general flow is
 1. request to be a repo collaborator/msg #bot-testing for aws permissions; alternatively, fork and make a pull request
 2. make changes
 3. push new code to git 
-4. on-push git actions (check Actions tab for progress, https://github.com/oozio/lost-ark-guild-bot/actions):
+4. wait for on-push git actions to finish (check Actions tab for progress, https://github.com/oozio/lost-ark-guild-bot/actions):
     - publishes new code to aws 
     - refreshes all discord commands (delete and recreate)
 5. try it out; look at cloudwatch for logs

@@ -3,7 +3,6 @@ import re
 import time
 from enum import Enum
 from datetime import datetime, tzinfo, timedelta
-from xmlrpc.client import Boolean
 from dateutil import parser
 
 from views import scheduler_view
@@ -14,26 +13,6 @@ time.tzset()
 
 # TODO seems like a bad import
 from constants.emojis import AvailabilityEmoji, ClassEmoji, DPS_CLASSES, SUPPORT_CLASSES
-
-
-class EventStatus(str, Enum):
-    TENTATIVE = "tentative"
-    CONFIRMED = "confirmed"
-
-
-class PacificTime(tzinfo):
-    def tzname(self, **kwargs):
-        return "PT"
-
-    def utcoffset(self, dt):
-        return timedelta(hours=-8) + self.dst(dt)
-
-    def dst(self, dt):
-        tt = time.localtime()
-
-        if tt.tm_isdst:
-            return timedelta(hours=1)
-        return timedelta(hours=0)
 
 
 BLANK = "\u200b"
@@ -62,17 +41,70 @@ USER_INDEX = "user_id-index"
 # class table schema = "lost_ark_sc
 CLASS_PKEY = "user_class"
 
-EIGHT_PPL_RAIDS = "(?:{})".format(
-    "|".join(
-        [
-            r".*argos.*",
-            r".*valtan.*",
-            r".*vykas.*",
-        ]
-    )
-)
+# todo: these should be classes
+FOUR_RAIDS = [
+    "Oreha",
+    "Kakul Saydon",
+]
 
-FOUR_PPL_RAIDS = "(?:{})".format("|".join([r".*oreha.*"]))
+EIGHT_RAIDS = [
+    "Argos",
+    "Valtan",
+    "Vykas",
+    "Brelshaza",
+    "Akkan",
+]
+
+ALL_RAIDS = FOUR_RAIDS + EIGHT_RAIDS
+
+EIGHT_PPL_RAIDS = "(?:{})".format("|".join([rf".*{raid}.*" for raid in EIGHT_RAIDS]))
+
+FOUR_PPL_RAIDS = "(?:{})".format("|".join([rf".*{raid}.*" for raid in FOUR_RAIDS]))
+
+
+class EventStatus(str, Enum):
+    TENTATIVE = "tentative"
+    CONFIRMED = "confirmed"
+
+
+class PacificTime(tzinfo):
+    def tzname(self, **kwargs):
+        return "PT"
+
+    def utcoffset(self, dt):
+        return timedelta(hours=-8) + self.dst(dt)
+
+    def dst(self, dt):
+        tt = time.localtime()
+
+        if tt.tm_isdst:
+            return timedelta(hours=1)
+        return timedelta(hours=0)
+
+
+class Event:
+    def __init__(self, event_id, **kwargs) -> None:
+        # mandatory fields
+        self.event_id = event_id
+
+        # fields with defaults
+        self.event_name = kwargs.pop("event_name")
+        self.event_type = "Unknown"
+        if self.event_name:
+            for raid in ALL_RAIDS:
+                if re.match(rf".*{raid}.*", self.event_name, flags=re.IGNORECASE):
+                    self.event_type = raid
+                    break
+
+        # add other fields if specified
+        for k, v in kwargs.items():
+            self.__dict__[k] = v
+
+    def __eq__(self, other):
+        return self.event_id == other.event_id
+
+    def pretty_print(self):
+        return f"[{'(FULL)' if self.is_full else ''}{self.event_name} | {self.start_time}](https://discord.com/channels/{self.server_id}/{self.channel_id}/{self.message_id})\n"
 
 
 def _is_event_full(event_id: str, event_name: str) -> bool:
@@ -83,6 +115,56 @@ def _is_event_full(event_id: str, event_name: str) -> bool:
         return tally >= 4
     else:
         return False
+
+
+def calendar_embed(server_id: str) -> dict:
+    all_rows = dynamodb.get_rows(
+        SCHEDULE_TABLE,
+        filterExpression=f"contains ({PKEY}, :info)",
+        expressionAttributeValues={":info", "info"},
+    )
+
+    events = []
+    seen = []
+
+    for row in row:
+        event_id = row[EVENT_ID_COLUMN]
+        if event_id in seen:
+            continue
+        else:
+            event_name = row[EVENT_TYPE_COLUMN]
+            event = Event(
+                event_id=event_id,
+                event_name=event_name,
+                channel_id=row[CHANNEL_COLUMN],
+                server_id=server_id,
+                message_id=row[MESSAGE_COLUMN],
+                thread_id=row[THREAD_COLUMN],
+                start_time=row[TIME_COLUMN],
+                creator=row[USER_COLUMN],
+                is_full=_is_event_full(event_id, event_name),
+            )
+            events.append(event)
+
+    fields = []
+    for raid in ALL_RAIDS:
+        fields.append(
+            {
+                "name": f"=={raid}==",
+                "value": [
+                    f"{event.pretty_print()}"
+                    for event in events
+                    if event.event_type == raid
+                ],
+                "inline": True,
+            }
+        )
+
+    return {
+        "type": "rich",
+        "title": f"Scheduled Raids",
+        "fields": fields,
+    }
 
 
 def schedule_embed(event_id: str, server_id, is_full=False) -> dict:
@@ -141,17 +223,13 @@ def schedule_embed(event_id: str, server_id, is_full=False) -> dict:
 
     return {
         "type": "rich",
-        "title": f"Scheduling for {event_name}{'- full ' if is_full else ''}",
+        "title": f"Scheduling for {event_name}{'- full' if is_full else ''}",
         "description": f"Timezone-adjusted: {start_time_pretty}",
         "color": color,
         "fields": [
             *party_fields,
             *signup_fields,
         ],
-        "timestamp": start_time_iso,
-        "footer": {
-            "text": f"{event_status} | created by {discord.get_user_nickname_by_id(server_id, creator)}"
-        },
     }
 
 
@@ -286,7 +364,7 @@ def _update_schedule(event_type, user, event_id, **kwargs):
 
 
 def _create_event(
-    event_type, event_id, start_time, user_id, message_id, channeL_id, thread_id
+    event_type, event_id, start_time, user_id, message_id, channel_id, thread_id
 ):
     dynamodb.set_rows(
         SCHEDULE_TABLE,
@@ -298,7 +376,7 @@ def _create_event(
             STATUS_COLUMN: EventStatus.TENTATIVE.value,
             USER_COLUMN: user_id,
             MESSAGE_COLUMN: message_id,
-            CHANNEL_COLUMN: channeL_id,
+            CHANNEL_COLUMN: channel_id,
             THREAD_COLUMN: thread_id,
         },
     )
@@ -410,6 +488,11 @@ def display(info: dict) -> dict:
         return {
             "embeds": [schedule_embed(event_id, server_id)],
             "components": scheduler_view.SchedulerView().components,
+        }
+    elif cmd == "calendar":
+        return {
+            "embeds": [calendar_embed()],
+            "components": scheduler_view.CalendarView().components,
         }
     else:
         raise ValueError(f"Unrecognized command: {cmd}")

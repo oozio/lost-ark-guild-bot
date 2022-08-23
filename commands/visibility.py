@@ -1,11 +1,12 @@
 SHOULD_HIDE_COMMAND_OUTPUT = {
     "add_punch_message": True,
     "add_role": True,
-    "remove_role": True,
+    "calendar": False,
     "git": False,
     "price": False,
     "hone": True,
     "mari": False,
+    "remove_role": True,
     "role_selector": False,
     "make_raid": False,
     "punch": False,

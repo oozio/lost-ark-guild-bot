@@ -24,7 +24,7 @@ IMAGE_COMMANDS = ["nitro_react", "nitro_message"]
 RUDE_COMMANDS = ["report", "punch", "add_punch_message"]
 
 # slash commands that generate UIs
-BUTTON_COMMANDS = ["role_selector", "scheduler", "vote"]
+BUTTON_COMMANDS = ["role_selector", "scheduler", "vote", "calendar"]
 SELECTOR_COMMANDS = ["make_raid"]
 RENDER_VIEW_COMMANDS = set([*BUTTON_COMMANDS, *SELECTOR_COMMANDS])
 

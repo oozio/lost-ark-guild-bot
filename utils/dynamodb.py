@@ -58,6 +58,14 @@ def get_rows(
             else:
                 return []
 
+    # otherwise, scan
+    if filterExpression:
+        response = table.scan(
+            FilterExpression=filterExpression,
+            ExpressionAttributeValues=expressionAttributeValues,
+        )
+        return response["Items"]
+
     return table.scan()["Items"]
 
 

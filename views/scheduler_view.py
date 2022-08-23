@@ -109,3 +109,15 @@ class SchedulerView:
                 ],
             },
         ]
+
+
+class CalendarView:
+    def __init__(self):
+        self.components = [
+            {
+                "type": 1,
+                "components": [
+                    vars(_see_commitments_button()),
+                ],
+            },
+        ]

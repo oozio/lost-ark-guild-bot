@@ -146,6 +146,8 @@ def calendar_embed(server_id: str) -> dict:
             )
             events.append(event)
 
+    events.sort(key=lambda event: event.start_time, reverse=False)
+
     fields = []
     for raid in ALL_RAIDS:
         fields.append(

@@ -190,7 +190,7 @@
         "name": "calendar",
         "description": "show all scheduled events",
         "type": 1
-    }
+    },
     {
         "name": "report",
         "description": "air ur grievances",

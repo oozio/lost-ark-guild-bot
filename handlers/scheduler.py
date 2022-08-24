@@ -14,7 +14,6 @@ time.tzset()
 # TODO seems like a bad import
 from constants.emojis import AvailabilityEmoji, ClassEmoji, DPS_CLASSES, SUPPORT_CLASSES
 
-
 BLANK = "\u200b"
 DOT = "\u2022"
 
@@ -32,34 +31,93 @@ STATUS_COLUMN = "status_str"
 CLASS_COLUMN = "char_class"
 TIME_COLUMN = "start_time"
 CHANNEL_COLUMN = "channel_id"
+CHANNEL_NAME_COLUMN = "channel_name"
 MESSAGE_COLUMN = "message_id"
 THREAD_COLUMN = "thread_id"
 
 EVENT_ID_INDEX = "event_id-index"
 USER_INDEX = "user_id-index"
 
+# track calendar posts
+CALENDAR_PKEY = "calendar:{}"
+
 # class table schema = "lost_ark_sc
 CLASS_PKEY = "user_class"
 
-# todo: these should be classes
-FOUR_RAIDS = [
-    "Oreha",
-    "Kakul Saydon",
+STANDARD_PER_PARTY_SUPP = 1
+STANDARD_PER_PARTY_DPS = 3
+
+ADMIN_ROLE_ID = "951412916912013332"
+EVENT_EXPIRATION_GRACE_PERIOD = 15  # min
+
+
+class Raid:
+    def __init__(self, name, n_supports=999, n_dps=999, aliases=[]):
+        self.name = name
+        self.n_supports = n_supports
+        self.n_dps = n_dps
+        self.aliases = aliases
+
+        self.regex = "(?:{})".format(
+            "|".join([rf".*{option}.*" for option in [self.name, *self.aliases]])
+        )
+        self.max_size = self.n_supports + self.n_dps
+
+    def matches(self, event_name):
+        return re.match(self.regex, event_name, flags=re.IGNORECASE)
+
+    def pretty_name(self):
+        return f"=={self.name}=="
+
+
+ALL_RAIDS = [
+    # Raid("test", n_supports=1, n_dps=0),
+    Raid(
+        "Abyssals",
+        n_supports=STANDARD_PER_PARTY_SUPP,
+        n_dps=STANDARD_PER_PARTY_DPS,
+        aliases=["Oreha"],
+    ),
+    Raid(
+        "Argos",
+        n_supports=STANDARD_PER_PARTY_SUPP * 2,
+        n_dps=STANDARD_PER_PARTY_DPS * 2,
+    ),
+    Raid(
+        "Valtan",
+        n_supports=STANDARD_PER_PARTY_SUPP * 2,
+        n_dps=STANDARD_PER_PARTY_DPS * 2,
+    ),
+    Raid(
+        "Vykas",
+        n_supports=STANDARD_PER_PARTY_SUPP * 2,
+        n_dps=STANDARD_PER_PARTY_DPS * 2,
+    ),
+    Raid(
+        "Kakul Saydon",
+        n_supports=STANDARD_PER_PARTY_SUPP,
+        n_dps=STANDARD_PER_PARTY_DPS,
+        aliases=["kuku"],
+    ),
+    Raid(
+        "GvG/GvE",
+        aliases=["gvg", "gve"],
+    ),
+    Raid(
+        "Secret Maps",
+        n_supports=STANDARD_PER_PARTY_SUPP,
+        n_dps=STANDARD_PER_PARTY_DPS,
+        aliases=["secret-maps"],
+    ),
+    Raid(
+        "Achievement Hunters",
+        aliases=["achievement-hunters"],
+    ),
+    Raid(
+        "Other Spam",
+        aliases=["spam"],
+    ),
 ]
-
-EIGHT_RAIDS = [
-    "Argos",
-    "Valtan",
-    "Vykas",
-    "Brelshaza",
-    "Akkan",
-]
-
-ALL_RAIDS = FOUR_RAIDS + EIGHT_RAIDS
-
-EIGHT_PPL_RAIDS = "(?:{})".format("|".join([rf".*{raid}.*" for raid in EIGHT_RAIDS]))
-
-FOUR_PPL_RAIDS = "(?:{})".format("|".join([rf".*{raid}.*" for raid in FOUR_RAIDS]))
 
 
 class EventStatus(str, Enum):
@@ -89,12 +147,33 @@ class Event:
 
         # fields with defaults
         self.event_name = kwargs.pop("event_name")
+        self.channel_id = kwargs.pop("channel_id")
+
+        self.start_time = kwargs.pop("start_time")
+        self.is_done = True
+        self.parsed_time = None
+        if self.start_time:
+            self.parsed_time = parser.parse(self.start_time).replace(
+                tzinfo=PacificTime()
+            )
+
+            expiration_time = datetime.now().replace(tzinfo=PacificTime()) - timedelta(
+                minutes=EVENT_EXPIRATION_GRACE_PERIOD
+            )
+            if self.parsed_time > expiration_time:
+                self.is_done = False
+            # return early since past events aren't useful
+            else:
+                return
+
         self.event_type = "Unknown"
-        if self.event_name:
-            for raid in ALL_RAIDS:
-                if re.match(rf".*{raid}.*", self.event_name, flags=re.IGNORECASE):
-                    self.event_type = raid
-                    break
+        self.channel_name = kwargs.pop("channel_name")
+        if not self.channel_name:
+            self.channel_name = discord.get_channel_by_id(self.channel_id)["name"]
+        for raid in ALL_RAIDS:
+            if raid.matches(self.channel_name):
+                self.event_type = raid.name
+                break
 
         # add other fields if specified
         for k, v in kwargs.items():
@@ -104,30 +183,50 @@ class Event:
         return self.event_id == other.event_id
 
     def pretty_print(self):
-        return f"[{'(FULL)' if self.is_full else ''}{self.event_name} | {self.start_time}](https://discord.com/channels/{self.server_id}/{self.channel_id}/{self.message_id})\n"
+        start_time_pretty = f"<t:{int(self.parsed_time.timestamp())}:F>"
+
+        return f"[{'(FULL) ' if self.is_full else ''} {start_time_pretty} | {self.event_name}](https://discord.com/channels/{self.server_id}/{self.channel_id}/{self.message_id})\n"
 
 
 def _is_event_full(event_id: str, event_name: str) -> bool:
     tally = sum(_tally_classes(event_id))
-    if re.match(EIGHT_PPL_RAIDS, event_name, flags=re.IGNORECASE):
-        return tally >= 8
-    elif re.match(FOUR_PPL_RAIDS, event_name, flags=re.IGNORECASE):
-        return tally >= 4
-    else:
-        return False
+    for raid in ALL_RAIDS:
+        if raid.matches(event_name):
+            return tally >= raid.max_size
+
+    return False
+
+
+def _get_calendar_posts():
+    return dynamodb.get_rows(
+        SCHEDULE_TABLE,
+        filterExpression=f"contains ({PKEY}, :calendar)",
+        expressionAttributeValues={":calendar": "calendar"},
+    )
+
+
+def _update_calendars(server_id):
+    # update all calendar posts
+    new_calendar = {
+        "embeds": [calendar_embed(server_id)],
+        "components": scheduler_view.CalendarView().components,
+    }
+    calendar_posts = _get_calendar_posts()
+    for post in calendar_posts:
+        discord.edit_message(post[CHANNEL_COLUMN], post[MESSAGE_COLUMN], new_calendar)
 
 
 def calendar_embed(server_id: str) -> dict:
     all_rows = dynamodb.get_rows(
         SCHEDULE_TABLE,
         filterExpression=f"contains ({PKEY}, :info)",
-        expressionAttributeValues={":info", "info"},
+        expressionAttributeValues={":info": "info"},
     )
 
     events = []
     seen = []
 
-    for row in row:
+    for row in all_rows:
         event_id = row[EVENT_ID_COLUMN]
         if event_id in seen:
             continue
@@ -136,7 +235,8 @@ def calendar_embed(server_id: str) -> dict:
             event = Event(
                 event_id=event_id,
                 event_name=event_name,
-                channel_id=row[CHANNEL_COLUMN],
+                channel_id=row.get(CHANNEL_COLUMN),
+                channel_name=row.get(CHANNEL_NAME_COLUMN),
                 server_id=server_id,
                 message_id=row[MESSAGE_COLUMN],
                 thread_id=row[THREAD_COLUMN],
@@ -144,27 +244,34 @@ def calendar_embed(server_id: str) -> dict:
                 creator=row[USER_COLUMN],
                 is_full=_is_event_full(event_id, event_name),
             )
-            events.append(event)
+            if not event.is_done:
+                events.append(event)
 
     events.sort(key=lambda event: event.start_time, reverse=False)
 
     fields = []
     for raid in ALL_RAIDS:
-        fields.append(
-            {
-                "name": f"=={raid}==",
-                "value": [
-                    f"{event.pretty_print()}"
-                    for event in events
-                    if event.event_type == raid
-                ],
-                "inline": True,
-            }
+        relevant_events = "".join(
+            [
+                f"{event.pretty_print()}"
+                for event in events
+                if event.event_type == raid.name
+            ]
         )
+
+        if relevant_events:
+            fields.append(
+                {
+                    "name": raid.pretty_name(),
+                    "value": relevant_events,
+                    "inline": False,
+                }
+            )
 
     return {
         "type": "rich",
-        "title": f"Scheduled Raids",
+        "title": f"Upcoming Raids",
+        "description": f"[Google Calendar](https://calendar.google.com/calendar/u/3?cid=MDRnNmpycnFsYXJyczExc21hNjY1N2RsdHNAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ)\n\nAll times are timezone-adjusted; click the link to go to original message.\nTo make a new raid, type `/make_raid <start time> <raid name>` in the correct channel!\nThis message will be automatically updated as events are created.\n",
         "fields": fields,
     }
 
@@ -180,7 +287,7 @@ def schedule_embed(event_id: str, server_id, is_full=False) -> dict:
     creator = event_info[USER_COLUMN]
 
     start_time_iso = start_time.isoformat()
-    start_time_pretty = f"<t:{int(start_time.timestamp())}>"
+    start_time_pretty = f"<t:{int(start_time.timestamp())}:F>"
 
     all_rows = dynamodb.query_index(
         SCHEDULE_TABLE,
@@ -329,12 +436,11 @@ def _tally_classes(event_id):
 
 
 def _get_party_fields(event_name, event_id):
-    if re.match(EIGHT_PPL_RAIDS, event_name, flags=re.IGNORECASE):
-        n_dps = 6
-        n_supp = 2
-    elif re.match(FOUR_PPL_RAIDS, event_name, flags=re.IGNORECASE):
-        n_dps = 3
-        n_supp = 1
+    for raid in ALL_RAIDS:
+        if raid.matches(event_name):
+            n_dps = raid.n_dps
+            n_supp = raid.n_supports
+            break
     else:
         return []
 
@@ -379,18 +485,39 @@ def _create_event(
             USER_COLUMN: user_id,
             MESSAGE_COLUMN: message_id,
             CHANNEL_COLUMN: channel_id,
+            CHANNEL_NAME_COLUMN: discord.get_channel_by_id(channel_id)["name"],
             THREAD_COLUMN: thread_id,
         },
     )
 
 
-def _clear_schedule(event_id, user):
-    for entry in dynamodb.get_rows(
+def _log_calendar_post(interaction_id, channel_id, message_id):
+    dynamodb.set_rows(
         SCHEDULE_TABLE,
-        pkey_value=COMMITMENT_PKEY.format(event_id, user),
-        filterExpression=f"{EVENT_TYPE_COLUMN} = {event_id}",
+        CALENDAR_PKEY.format(interaction_id),
+        {
+            MESSAGE_COLUMN: message_id,
+            CHANNEL_COLUMN: channel_id,
+        },
+    )
+
+
+def _delete_event(event_id, user_id, server_id):
+    event_info = dynamodb.get_rows(
+        SCHEDULE_TABLE, pkey_value=EVENT_INFO_PKEY.format(event_id)
+    )[0]
+    creator = event_info[USER_COLUMN]
+
+    if user_id == creator or discord.is_admin(
+        server_id, user_id, admin_role_id=ADMIN_ROLE_ID
     ):
-        dynamodb.delete_item(SCHEDULE_TABLE, entry)
+        dynamodb.delete_item(
+            SCHEDULE_TABLE, pkey_value=EVENT_INFO_PKEY.format(event_id)
+        )
+    else:
+        raise PermissionError(
+            f"Only the creator of this event can delete it; message {discord.mention_user(creator)} or an admin (<@&{ADMIN_ROLE_ID}>)"
+        )
 
 
 def _add_event_to_calendar(event_id: str, server_id: str):
@@ -485,15 +612,25 @@ def display(info: dict) -> dict:
             thread_id,
         )
 
-        time.sleep(2)
+        _update_calendars(server_id)
+
+        # render message
+        time.sleep(1)
 
         return {
             "embeds": [schedule_embed(event_id, server_id)],
             "components": scheduler_view.SchedulerView().components,
         }
     elif cmd == "calendar":
+        interaction_id = info["interaction_id"]
+
+        message_id = discord.get_interaction_message_id(
+            info["application_id"], info["interaction_token"]
+        )["id"]
+
+        _log_calendar_post(interaction_id, channel_id, message_id)
         return {
-            "embeds": [calendar_embed()],
+            "embeds": [calendar_embed(server_id)],
             "components": scheduler_view.CalendarView().components,
         }
     else:
@@ -504,6 +641,7 @@ def is_schedule_button(component_id):
     return (
         component_id in AvailabilityEmoji._member_names_
         or component_id in scheduler_view.ScheduleButtons.values()
+        or component_id in scheduler_view.CalendarButtons.values()
     )
 
 
@@ -552,6 +690,8 @@ def handle_button(info):
             discord.remove_thread_member(thread_id, user_id)
         else:
             discord.add_thread_member(thread_id, user_id)
+
+        _update_calendars(server_id)
         return new_msg
 
     elif button == scheduler_view.ScheduleButtons.ADD_TO_CALENDAR:
@@ -571,16 +711,37 @@ def handle_button(info):
 
         # refresh original message status
         is_full = _is_event_full(event_id, event_type)
-        new_msg = {"embeds": [schedule_embed(event_id, server_id, is_full=is_full)]}
+        new_msg = {
+            "embeds": [schedule_embed(event_id, server_id, is_full=is_full)],
+            "components": scheduler_view.SchedulerView(is_full=is_full).components,
+        }
         return new_msg
     elif button == scheduler_view.ScheduleButtons.CHANGE_TIME:
         pass
+    elif button == scheduler_view.ScheduleButtons.DELETE:
+        try:
+            _delete_event(event_id, user_id, server_id)
+            _update_calendars(server_id)
+            discord.delete_message(base_channel_id, message_id)
+        except PermissionError as e:
+            discord.send_followup(
+                info["application_id"],
+                info["interaction_token"],
+                str(e),
+                ephemeral=True,
+            )
     elif button == scheduler_view.ScheduleButtons.SEE_COMMITMENTS:
         output = {"embeds": [get_all_user_commitments(info)]}
 
         discord.send_followup(
             info["application_id"], info["interaction_token"], output, ephemeral=True
         )
+    elif button == scheduler_view.CalendarButtons.REFRESH:
+        new_msg = {
+            "embeds": [calendar_embed(server_id)],
+            "components": scheduler_view.CalendarView().components,
+        }
+        return new_msg
 
 
 def handle_selector(info):
@@ -597,5 +758,8 @@ def handle_selector(info):
     event_type = event_info[EVENT_TYPE_COLUMN]
 
     is_full = _is_event_full(event_id, event_type)
-    new_msg = {"embeds": [schedule_embed(event_id, server_id, is_full=is_full)]}
+    new_msg = {
+        "embeds": [schedule_embed(event_id, server_id, is_full=is_full)],
+        "components": scheduler_view.SchedulerView(is_full=is_full).components,
+    }
     return new_msg

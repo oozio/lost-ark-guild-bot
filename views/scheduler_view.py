@@ -11,6 +11,16 @@ class ScheduleButtons(str, Enum):
     ADD_TO_CALENDAR = "add_event_to_calendar"
     CHANGE_TIME = "change_start_time"
     SEE_COMMITMENTS = "see_signups"
+    DELETE = "delete"
+
+    @classmethod
+    def values(cls):
+        return list(map(lambda c: c.value, cls))
+
+
+class CalendarButtons(str, Enum):
+    SEE_COMMITMENTS = "see_signups"
+    REFRESH = "refresh"
 
     @classmethod
     def values(cls):
@@ -21,7 +31,7 @@ class ScheduleButtons(str, Enum):
 def _add_to_calendar_button():
     return Button(
         custom_id=ScheduleButtons.ADD_TO_CALENDAR,
-        label="Add to Calendar",
+        label="Add to Server Events",
         style=Button.Styles.grey.value,
     )
 
@@ -35,10 +45,26 @@ def _change_time_button():
     )
 
 
+def _delete_button():
+    return Button(
+        custom_id=ScheduleButtons.DELETE,
+        label="Delete Event",
+        style=Button.Styles.red.value,
+    )
+
+
 def _see_commitments_button():
     return Button(
         custom_id=ScheduleButtons.SEE_COMMITMENTS,
         label="My Events",
+        style=Button.Styles.grey.value,
+    )
+
+
+def _refresh_calendar_button():
+    return Button(
+        custom_id=CalendarButtons.REFRESH,
+        label="Refresh",
         style=Button.Styles.grey.value,
     )
 
@@ -106,6 +132,7 @@ class SchedulerView:
                     vars(_add_to_calendar_button()),
                     vars(_change_time_button()),
                     vars(_see_commitments_button()),
+                    vars(_delete_button()),
                 ],
             },
         ]
@@ -118,6 +145,7 @@ class CalendarView:
                 "type": 1,
                 "components": [
                     vars(_see_commitments_button()),
+                    vars(_refresh_calendar_button()),
                 ],
             },
         ]

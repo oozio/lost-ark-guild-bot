@@ -76,8 +76,12 @@ def parse_component_input(body):
     message = body["message"]
     info["base_msg_id"] = message["id"]
     info["base_channel_id"] = message["channel_id"]
-    info["base_interaction_msg"] = message["interaction"]["name"]
-    info["base_interaction_id"] = message["interaction"]["id"]
+    if "interaction" in message:
+        info["base_interaction_msg"] = message["interaction"]["name"]
+        info["base_interaction_id"] = message["interaction"]["id"]
+    else:
+        info["base_interaction_msg"] = ""
+        info["base_interaction_id"] = ""
     # info["base_interaction_options"] = message["interaction"]["options"]
 
     action_rows = message["components"]

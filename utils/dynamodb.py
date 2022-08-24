@@ -117,3 +117,8 @@ def decrement_counter(
             UpdateExpression=f"ADD {column_name} :inc",
             ExpressionAttributeValues={":inc": -1 * decrement},
         )
+
+
+def delete_item(table_name: str, pkey_value: str):
+    table = dynamodb_client.Table(table_name)
+    table.delete_item(Key={PKEY_NAME: pkey_value})

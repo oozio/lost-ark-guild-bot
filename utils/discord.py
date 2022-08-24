@@ -2,6 +2,7 @@ import boto3
 import re
 import requests
 
+from functools import lru_cache
 from nacl.signing import VerifyKey
 from nacl.exceptions import BadSignatureError
 
@@ -79,6 +80,7 @@ def get_input(data, target):
 
 
 # Channel-related
+@lru_cache(maxsize=128)
 def get_channel_by_id(channel_id):
     """Returns a channel object.
 
@@ -161,12 +163,12 @@ def _get_role_names_by_id(server_id, role_ids):
 
 def remove_role(user_id, role_id, server_id):
     url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}/roles/{role_id}"
-    requests.delete(url, headers=HEADERS)
+    return requests.delete(url, headers=HEADERS)
 
 
 def add_role(user_id, role_id, server_id):
     url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}/roles/{role_id}"
-    requests.put(url, headers=HEADERS)
+    return requests.put(url, headers=HEADERS)
 
 
 def get_user_role_ids(server_id, user_id):
@@ -207,11 +209,22 @@ def get_user_nickname_by_id(server_id, user_id):
         return user["user"]["username"]
 
 
+def is_admin(server_id, user_id, admin_role_id):
+    url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}"
+    user = requests.get(url, headers=HEADERS).json()
+    return admin_role_id in user["roles"]
+
+
 # Message related
 def post_message_in_channel(channel_id, message, ephemeral=True):
     url = f"{BASE_URL}/channels/{channel_id}/messages"
     body = format_response(message, ephemeral)
-    requests.post(url, json=body, headers=HEADERS)
+    r = requests.post(url, json=body, headers=HEADERS)
+
+
+def delete_message(channel_id, message_id):
+    url = f"{BASE_URL}/channels/{channel_id}/messages/{message_id}"
+    requests.delete(url, headers=HEADERS)
 
 
 def get_messages(channel_id, limit, specified_message):

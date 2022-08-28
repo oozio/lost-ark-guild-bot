@@ -7,6 +7,7 @@ from nacl.signing import VerifyKey
 from nacl.exceptions import BadSignatureError
 
 from constants.interactions import InteractionsCallbackType
+from typing import Union
 
 PING_PONG = {"type": 1}
 
@@ -103,6 +104,11 @@ def create_thread(
         json={"name": thread_name, "auto_archive_duration": duration},
         headers=HEADERS,
     ).json()
+
+
+def archive_thread(thread_id: str) -> dict:
+    url = f"{BASE_URL}/channels/{thread_id}"
+    return requests.patch(url, json={"archived": True}, headers=HEADERS).json()
 
 
 def get_thread_members(channel_id):
@@ -371,6 +377,10 @@ def initial_response(response_type, content=None, ephemeral=False):
             "flags": 64 if ephemeral else None,
         }
     return response
+
+
+def format_time(timestamp: Union[int, str], format: str = "F") -> str:
+    return f"<t:{int(timestamp)}:{format}>"
 
 
 def _form_permission():

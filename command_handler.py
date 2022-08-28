@@ -1,3 +1,5 @@
+import os
+
 from handlers import (
     bully,
     honing,
@@ -89,7 +91,7 @@ def handle_event(event):
     if "arn:aws:events:us-east-2:391107963258:rule/Timer" in resources:
         server_status.handle_timer()
     elif "arn:aws:events:us-east-2:391107963258:rule/refresh_calendar" in resources:
-        scheduler._update_calendars("951040587266662400")
+        scheduler._update_calendars(os.environ["SERVER_ID"])
     else:
         print(f"Unknown event(s): {resources}")
 

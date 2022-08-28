@@ -16,6 +16,7 @@ from constants.emojis import AvailabilityEmoji, ClassEmoji, DPS_CLASSES, SUPPORT
 
 BLANK = "\u200b"
 DOT = "\u2022"
+NEWLINE = chr(10)
 
 SCHEDULE_TABLE = "lost_ark_schedule"
 PKEY = "pk"
@@ -34,6 +35,7 @@ CHANNEL_COLUMN = "channel_id"
 CHANNEL_NAME_COLUMN = "channel_name"
 MESSAGE_COLUMN = "message_id"
 THREAD_COLUMN = "thread_id"
+DESCRIPTION_COLUMN = "description"
 
 EVENT_ID_INDEX = "event_id-index"
 USER_INDEX = "user_id-index"
@@ -46,25 +48,40 @@ CLASS_PKEY = "user_class"
 
 STANDARD_PER_PARTY_SUPP = 1
 STANDARD_PER_PARTY_DPS = 3
+NO_SIZE_LIMIT = 999
 
 ADMIN_ROLE_ID = "951412916912013332"
 EVENT_EXPIRATION_GRACE_PERIOD = 15  # min
 
 
 class Raid:
-    def __init__(self, name, n_supports=999, n_dps=999, aliases=[]):
+    def __init__(
+        self,
+        name,
+        n_supports=NO_SIZE_LIMIT,
+        n_dps=NO_SIZE_LIMIT,
+        aliases=[],
+        excludes=[],
+    ):
         self.name = name
         self.n_supports = n_supports
         self.n_dps = n_dps
         self.aliases = aliases
+        self.excludes = excludes
 
         self.regex = "(?:{})".format(
             "|".join([rf".*{option}.*" for option in [self.name, *self.aliases]])
         )
-        self.max_size = self.n_supports + self.n_dps
 
-    def matches(self, event_name):
-        return re.match(self.regex, event_name, flags=re.IGNORECASE)
+        self.max_size = self.n_supports + self.n_dps
+        self.has_size_limit = (
+            self.n_dps != NO_SIZE_LIMIT and self.n_supports != NO_SIZE_LIMIT
+        )
+
+    def matches(self, raid_indicator, custom_name=""):
+        return re.match(self.regex, raid_indicator, flags=re.IGNORECASE) and not any(
+            exclude in custom_name for exclude in self.excludes
+        )
 
     def pretty_name(self):
         return f"=={self.name}=="
@@ -72,6 +89,10 @@ class Raid:
 
 ALL_RAIDS = [
     # Raid("test", n_supports=1, n_dps=0),
+    Raid(
+        "GvG/GvE",
+        aliases=["gvg", "gve"],
+    ),
     Raid(
         "Abyssals",
         n_supports=STANDARD_PER_PARTY_SUPP,
@@ -82,6 +103,7 @@ ALL_RAIDS = [
         "Argos",
         n_supports=STANDARD_PER_PARTY_SUPP * 2,
         n_dps=STANDARD_PER_PARTY_DPS * 2,
+        excludes=["bus"],
     ),
     Raid(
         "Valtan",
@@ -100,10 +122,6 @@ ALL_RAIDS = [
         aliases=["kuku"],
     ),
     Raid(
-        "GvG/GvE",
-        aliases=["gvg", "gve"],
-    ),
-    Raid(
         "Secret Maps",
         n_supports=STANDARD_PER_PARTY_SUPP,
         n_dps=STANDARD_PER_PARTY_DPS,
@@ -115,7 +133,7 @@ ALL_RAIDS = [
     ),
     Raid(
         "Other Spam",
-        aliases=["spam"],
+        aliases=["spam", "main", "pics"],
     ),
 ]
 
@@ -173,7 +191,10 @@ class Event:
         for raid in ALL_RAIDS:
             if raid.matches(self.channel_name):
                 self.event_type = raid.name
+                self.raid = raid
                 break
+
+        self.tally = sum(_tally_classes(self.event_id))
 
         # add other fields if specified
         for k, v in kwargs.items():
@@ -183,9 +204,19 @@ class Event:
         return self.event_id == other.event_id
 
     def pretty_print(self):
-        start_time_pretty = f"<t:{int(self.parsed_time.timestamp())}:F>"
+        ts = self.parsed_time.timestamp()
+        start_time_long = discord.format_time(ts)
+        start_time_relative = discord.format_time(ts, format="R")
 
-        return f"[{'(FULL) ' if self.is_full else ''} {start_time_pretty} | {self.event_name}](https://discord.com/channels/{self.server_id}/{self.channel_id}/{self.message_id})\n"
+        if self.raid.has_size_limit:
+            if self.tally == self.raid.max_size:
+                size = "(FULL) "
+            else:
+                size = f"({self.tally}/{self.raid.max_size}) "
+        else:
+            size = ""
+
+        return f"[{size}{start_time_long} ({start_time_relative}) | {self.event_name}](https://discord.com/channels/{self.server_id}/{self.channel_id}/{self.message_id})\n"
 
 
 def _is_event_full(event_id: str, event_name: str) -> bool:
@@ -242,7 +273,6 @@ def calendar_embed(server_id: str) -> dict:
                 thread_id=row[THREAD_COLUMN],
                 start_time=row[TIME_COLUMN],
                 creator=row[USER_COLUMN],
-                is_full=_is_event_full(event_id, event_name),
             )
             if not event.is_done:
                 events.append(event)
@@ -271,7 +301,7 @@ def calendar_embed(server_id: str) -> dict:
     return {
         "type": "rich",
         "title": f"Upcoming Raids",
-        "description": f"[Google Calendar](https://calendar.google.com/calendar/u/3?cid=MDRnNmpycnFsYXJyczExc21hNjY1N2RsdHNAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ)\n\nAll times are timezone-adjusted; click the link to go to original message.\nTo make a new raid, type `/make_raid <start time> <raid name>` in the correct channel!\nThis message will be automatically updated as events are created.\n",
+        "description": f"[Google Calendar](https://calendar.google.com/calendar/u/3?cid=MDRnNmpycnFsYXJyczExc21hNjY1N2RsdHNAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ)\n\nAll times are timezone-adjusted; click the link to go to the original message.\nTo make a new raid, type `/make_raid <start time> <raid name>` in the correct channel!\nThis message will be automatically updated as events are created.\n",
         "fields": fields,
     }
 
@@ -285,9 +315,12 @@ def schedule_embed(event_id: str, server_id, is_full=False) -> dict:
     start_time = parser.parse(event_info[TIME_COLUMN]).replace(tzinfo=PacificTime())
     event_status = event_info[STATUS_COLUMN]
     creator = event_info[USER_COLUMN]
+    channel_name = event_info.get(CHANNEL_NAME_COLUMN, event_name)
+    description = event_info.get(DESCRIPTION_COLUMN, "")
 
-    start_time_iso = start_time.isoformat()
-    start_time_pretty = f"<t:{int(start_time.timestamp())}:F>"
+    ts = start_time.timestamp()
+    start_time_long = discord.format_time(ts)
+    start_time_relative = discord.format_time(ts, format="R")
 
     all_rows = dynamodb.query_index(
         SCHEDULE_TABLE,
@@ -311,7 +344,7 @@ def schedule_embed(event_id: str, server_id, is_full=False) -> dict:
             class_emoji = ""
         statuses[status] += f"{class_emoji} {discord.mention_user(user)}\n"
 
-    party_fields = _get_party_fields(event_name, event_id)
+    party_fields = _get_party_fields(channel_name, event_name, event_id)
 
     signup_fields = []
     for state in AvailabilityEmoji:
@@ -333,7 +366,7 @@ def schedule_embed(event_id: str, server_id, is_full=False) -> dict:
     return {
         "type": "rich",
         "title": f"Scheduling for {event_name}{'- full' if is_full else ''}",
-        "description": f"Timezone-adjusted: {start_time_pretty}",
+        "description": f"Timezone-adjusted: {start_time_long} ({start_time_relative}){NEWLINE*2 if description else ''}{description}",
         "color": color,
         "fields": [
             *party_fields,
@@ -344,7 +377,8 @@ def schedule_embed(event_id: str, server_id, is_full=False) -> dict:
 
 def get_all_user_commitments(info):
     user_id = info[USER_COLUMN]
-    user_events = dynamodb.query_index(
+    user_events = {}
+    user_events[AvailabilityEmoji.COMING.name] = dynamodb.query_index(
         SCHEDULE_TABLE,
         USER_INDEX,
         {USER_COLUMN: user_id},
@@ -354,55 +388,73 @@ def get_all_user_commitments(info):
         },
     )
 
-    relevant_rows = []
-    for row in user_events:
-        if MESSAGE_COLUMN in row and CHANNEL_COLUMN in row:
-            message_link = f"https://discord.com/channels/{info['server_id']}/{row[CHANNEL_COLUMN]}/{row[MESSAGE_COLUMN]}"
-        else:
-            message_link = ""
+    user_events[AvailabilityEmoji.MAYBE.name] = dynamodb.query_index(
+        SCHEDULE_TABLE,
+        USER_INDEX,
+        {USER_COLUMN: user_id},
+        filterExpression=f"{STATUS_COLUMN} = :{STATUS_COLUMN}",
+        expressionAttributeValues={
+            f":{STATUS_COLUMN}": AvailabilityEmoji.MAYBE.name,
+        },
+    )
 
-        time_string = row.get(TIME_COLUMN, "unknown")
-        event_type = row.get(EVENT_TYPE_COLUMN)
-        event_id = row.get(EVENT_ID_COLUMN)
-
-        try:
-            start_time = parser.parse(time_string).replace(tzinfo=PacificTime())
-            if start_time >= datetime.now().replace(tzinfo=PacificTime()):
-                relevant_rows.append(
-                    {
-                        EVENT_TYPE_COLUMN: event_type,
-                        TIME_COLUMN: start_time.ctime(),
-                        "message_link": message_link,
-                        EVENT_ID_COLUMN: event_id,
-                    }
-                )
-
-        except:
-            continue
-
-    if not relevant_rows:
-        fields = ["Not currently signed up for any events!"]
-    else:
-        relevant_rows.sort(key=lambda item: item[TIME_COLUMN], reverse=False)
-        fields = []
-        for row in relevant_rows:
-            if row["message_link"]:
-                details_link = f"[Details]({row['message_link']})"
+    fields = []
+    for response, events in user_events.items():
+        relevant_rows = []
+        for row in events:
+            if MESSAGE_COLUMN in row and CHANNEL_COLUMN in row:
+                message_link = f"https://discord.com/channels/{info['server_id']}/{row[CHANNEL_COLUMN]}/{row[MESSAGE_COLUMN]}"
             else:
-                details_link = f"Original message lost 4ever"
-            fields.append(
-                {
-                    "name": row[EVENT_TYPE_COLUMN],
-                    "value": f"{row[TIME_COLUMN]}\n{details_link}",
-                    "inline": False,
-                }
-            )
+                message_link = ""
+
+            time_string = row.get(TIME_COLUMN, "unknown")
+            event_type = row.get(EVENT_TYPE_COLUMN)
+            event_id = row.get(EVENT_ID_COLUMN)
+
+            try:
+                start_time = parser.parse(time_string).replace(tzinfo=PacificTime())
+                if start_time >= datetime.now().replace(tzinfo=PacificTime()):
+                    relevant_rows.append(
+                        {
+                            EVENT_TYPE_COLUMN: event_type,
+                            TIME_COLUMN: start_time.timestamp(),
+                            "message_link": message_link,
+                            EVENT_ID_COLUMN: event_id,
+                        }
+                    )
+
+            except:
+                continue
+
+        field_value = ""
+        if relevant_rows:
+            relevant_rows.sort(key=lambda item: item[TIME_COLUMN], reverse=False)
+            for row in relevant_rows:
+                if row["message_link"]:
+                    details_link = f"[Details]({row['message_link']})"
+                else:
+                    details_link = f"Original message lost 4ever"
+
+                ts = row[TIME_COLUMN]
+                start_time_long = discord.format_time(ts)
+                start_time_relative = discord.format_time(ts, format="R")
+                field_value += f"**{row[EVENT_TYPE_COLUMN]}**: {start_time_long} ({start_time_relative})- {details_link}\n"
+        else:
+            field_value = "Not currently signed up for any events!"
+
+        fields.append(
+            {
+                "name": response.capitalize(),
+                "value": field_value,
+                "inline": False,
+            }
+        )
 
     return {
         "type": "rich",
         "title": f"My events",
         "color": 0x6495ED,
-        "fields": [*fields],
+        "fields": fields,
     }
 
 
@@ -435,9 +487,11 @@ def _tally_classes(event_id):
     return dps, supp, flex
 
 
-def _get_party_fields(event_name, event_id):
+def _get_party_fields(channel_name, event_name, event_id):
     for raid in ALL_RAIDS:
-        if raid.matches(event_name):
+        if raid.matches(channel_name, custom_name=event_name):
+            if not raid.has_size_limit:
+                return []
             n_dps = raid.n_dps
             n_supp = raid.n_supports
             break
@@ -472,7 +526,14 @@ def _update_schedule(event_type, user, event_id, **kwargs):
 
 
 def _create_event(
-    event_type, event_id, start_time, user_id, message_id, channel_id, thread_id
+    event_type,
+    event_id,
+    start_time,
+    user_id,
+    message_id,
+    channel_id,
+    thread_id,
+    description,
 ):
     dynamodb.set_rows(
         SCHEDULE_TABLE,
@@ -487,6 +548,7 @@ def _create_event(
             CHANNEL_COLUMN: channel_id,
             CHANNEL_NAME_COLUMN: discord.get_channel_by_id(channel_id)["name"],
             THREAD_COLUMN: thread_id,
+            DESCRIPTION_COLUMN: description,
         },
     )
 
@@ -507,6 +569,7 @@ def _delete_event(event_id, user_id, server_id):
         SCHEDULE_TABLE, pkey_value=EVENT_INFO_PKEY.format(event_id)
     )[0]
     creator = event_info[USER_COLUMN]
+    thread_id = event_info[THREAD_COLUMN]
 
     if user_id == creator or discord.is_admin(
         server_id, user_id, admin_role_id=ADMIN_ROLE_ID
@@ -514,6 +577,7 @@ def _delete_event(event_id, user_id, server_id):
         dynamodb.delete_item(
             SCHEDULE_TABLE, pkey_value=EVENT_INFO_PKEY.format(event_id)
         )
+        discord.archive_thread(thread_id)
     else:
         raise PermissionError(
             f"Only the creator of this event can delete it; message {discord.mention_user(creator)} or an admin (<@&{ADMIN_ROLE_ID}>)"
@@ -577,6 +641,7 @@ def display(info: dict) -> dict:
     if cmd == "make_raid":
         time_string = cmd_input["start_time"]
         event_type = cmd_input.get("raid_name")
+        description = cmd_input.get("description", BLANK)
         user_id = info["user_id"]
         if not event_type:
             event_type = discord.get_channel_by_id(info["channel_id"])["name"].title()
@@ -610,6 +675,7 @@ def display(info: dict) -> dict:
             message_id,
             channel_id,
             thread_id,
+            description,
         )
 
         _update_calendars(server_id)

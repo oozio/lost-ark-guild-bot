@@ -12,7 +12,7 @@ from typing import Union
 PING_PONG = {"type": 1}
 
 MAX_RESPONSE_LENGTH = 2000
-
+MAX_EMBED_DESCRIPTION_LENGTH = 4096
 RESPONSE_TYPES = {
     "PONG": 1,
     "ACK_NO_SOURCE": 2,

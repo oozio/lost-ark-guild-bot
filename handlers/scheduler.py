@@ -745,7 +745,7 @@ def handle_button(info):
             },
         )
 
-        is_full = _is_event_full(event_id, event_type)
+        is_full = _is_event_full(event_id, event_info[CHANNEL_NAME_COLUMN])
 
         new_msg = {
             "embeds": [schedule_embed(event_id, server_id, is_full=is_full)],
@@ -776,7 +776,7 @@ def handle_button(info):
         event_type = event_info[EVENT_TYPE_COLUMN]
 
         # refresh original message status
-        is_full = _is_event_full(event_id, event_type)
+        is_full = _is_event_full(event_id, event_info[CHANNEL_NAME_COLUMN])
         new_msg = {
             "embeds": [schedule_embed(event_id, server_id, is_full=is_full)],
             "components": scheduler_view.SchedulerView(is_full=is_full).components,
@@ -823,7 +823,7 @@ def handle_selector(info):
 
     event_type = event_info[EVENT_TYPE_COLUMN]
 
-    is_full = _is_event_full(event_id, event_type)
+    is_full = _is_event_full(event_id, event_info[CHANNEL_NAME_COLUMN])
     new_msg = {
         "embeds": [schedule_embed(event_id, server_id, is_full=is_full)],
         "components": scheduler_view.SchedulerView(is_full=is_full).components,

@@ -7,7 +7,7 @@ CMD_DISPLAYS = {
     "make_raid": scheduler.display,
     "calendar": scheduler.display,
     "vote": vote.display,
-    "punch": bully.handle,
+    "punch": bully.display,
 }
 
 

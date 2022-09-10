@@ -202,7 +202,8 @@ class PunchHandler(CommandHandler):
 
         if "323706789701091331" in puncher_mention and dmg % GET_FUCKED_FREQUENCY:
             self._update_hp(0)
-            message = f"""{puncher_mention} has a big head.\n{puncher_mention} has died ¡Þ times."""
+            infinity = "\u221e"
+            message = f"""{puncher_mention} has a big head.\n{puncher_mention} has died {infinity} times."""
         else:
             hp = self._get_victim_health()
             death_msg = ""
@@ -241,9 +242,10 @@ class PunchHandler(CommandHandler):
 
         self._record_punch(message)
 
-        dots = f"*there's been too much violence to fit into a single embed*\n..."
+        dots = ""
         # there's a max length; remove previous messages
         while len(message) > discord.MAX_EMBED_DESCRIPTION_LENGTH - (len(dots)):
+            dots = f"*there's been too much violence to fit into a single embed*\n..."
             message = message.split(self.MESSAGE_DIVIDER, 1)[1]
         else:
             message = dots + message

@@ -231,6 +231,9 @@ class PunchHandler(CommandHandler):
                 {victim_mention} has {hp if hp > 0 else 0} HP left. 
                 {death_msg}"""
 
+            if puncher_mention == victim_mention:
+                message += f"y r u hitting urself"
+
         if self.command == punch_view.PunchView.JOIN_ID:
             prev_msg = self._get_message().strip()
             if prev_msg:

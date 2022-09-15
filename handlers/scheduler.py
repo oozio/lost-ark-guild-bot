@@ -659,13 +659,18 @@ def display(info: dict) -> dict:
             info["application_id"], info["interaction_token"]
         )["id"]
 
-        thread_info = discord.create_thread(
-            channel_id,
-            f"{event_type} | {pretty_time} PT",
-            message_id,
-            duration=3 * 24 * 60,
-        )
-        thread_id = thread_info["id"]
+        # create thread
+        channel_info = discord.get_channel_by_id(channel_id)
+        if "thread_metadata" in channel_info:
+            thread_id = "-1"
+        else:
+            thread_info = discord.create_thread(
+                channel_id,
+                f"{event_type} | {pretty_time} PT",
+                message_id,
+                duration=3 * 24 * 60,
+            )
+            thread_id = thread_info["id"]
 
         _create_event(
             event_type,

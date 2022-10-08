@@ -512,11 +512,16 @@ def _get_party_fields(channel_name, event_name, event_id):
     ]
 
 
-def change_time_prompt(event_id, event_type, done=False):
+def change_time_prompt(event_id, event_type, new_time=None):
+    if new_time:
+        msg = f"""Time for `{event_type}` changed to `{new_time}`!"""
+    else:
+        msg = f"""Send this command in any channel to quietly change the time for `{event_type}`:\n\n`/change_time {event_id} <new time>`"""
+
     return {
         "type": "rich",
         "title": f"Change Time",
-        "description": f"""Send this command in any channel to quietly change the time for "{event_type}":\n\n`/change_time {event_id} <new time>`{"\nDone!" if done else ""}"""
+        "description": msg
     }
 
 
@@ -744,7 +749,7 @@ def change_time(info, options):
         SCHEDULE_TABLE,
         EVENT_INFO_PKEY.format(event_id), 
         {
-            TIME_COLUMN: new_time
+            TIME_COLUMN: new_time.isoformat()
         },
     )
     # refresh original message status
@@ -755,11 +760,11 @@ def change_time(info, options):
     }
     _update_calendars(server_id)
     response = discord.edit_message(
-                info["channel_id"], info["base_msg_id"], new_msg
+                event_info[CHANNEL_COLUMN], event_info[MESSAGE_COLUMN], new_msg
             )
 
     if response.ok:
-        return {"embeds": [change_time_prompt(event_id, event_type)]}
+        return {"embeds": [change_time_prompt(event_id, event_type, new_time=new_time.isoformat())]}
 
 def handle_button(info):
     event_id = info["base_interaction_id"]

@@ -516,8 +516,7 @@ def change_time_prompt(event_id, event_type, new_time=None):
     if new_time:
         msg = f"""Time for `{event_type}` changed to `{new_time}`!"""
     else:
-        msg = f"""Send this command in any channel to quietly change the time for `{event_type}`:\n\n`/change_time {event_id} <new time>`"""
-
+        msg = f"""Send this command in any channel to quietly change the time for `{event_type}`:\n\n`/change_time event_id:{event_id} start_time:<new time>`"""
     return {
         "type": "rich",
         "title": f"Change Time",
@@ -737,11 +736,38 @@ def change_time(info, options):
     server_id = info["server_id"]
     event_id = options[EVENT_ID_COLUMN]
     new_time = options[TIME_COLUMN]
-    new_time = parser.parse(new_time).replace(tzinfo=PacificTime())
+    try:
+        new_time = parser.parse(new_time).replace(tzinfo=PacificTime())
+    except:
+         return {"embeds": [{
+            "type": "rich",
+            "title": "Error",
+            "description": f"Couldn't parse this start time: `{new_time}`. Try a different format? Some examples: `saturday 8 pm`, `2022 07 30 20:00:00`"
+        }]}
 
-    event_info = dynamodb.get_rows(
-        SCHEDULE_TABLE, pkey_value=EVENT_INFO_PKEY.format(event_id)
-    )[0]
+
+    try:
+        event_info = dynamodb.get_rows(
+            SCHEDULE_TABLE, pkey_value=EVENT_INFO_PKEY.format(event_id)
+        )[0]
+    except:
+        print(f"event_id {event_id}")
+        return {"embeds": [{
+            "type": "rich",
+            "title": "Error",
+            "description": f"Couldn't find matching event for event_id {event_id}. Double check against the prompt?"
+        }]}
+
+    user_id = info[USER_COLUMN]
+    creator = event_info[USER_COLUMN]
+
+    if user_id != creator and not discord.is_admin(
+        server_id, user_id, admin_role_id=ADMIN_ROLE_ID
+    ):
+        raise PermissionError(
+            f"Only the creator of this event can change its time; message {discord.mention_user(creator)} or an admin (<@&{ADMIN_ROLE_ID}>)"
+        )
+
 
     event_type = event_info[EVENT_TYPE_COLUMN]
 
@@ -765,6 +791,9 @@ def change_time(info, options):
 
     if response.ok:
         return {"embeds": [change_time_prompt(event_id, event_type, new_time=new_time.isoformat())]}
+    else:
+        return f"[Error] Couldn't update message: {response.text}"
+       
 
 def handle_button(info):
     event_id = info["base_interaction_id"]

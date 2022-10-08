@@ -63,6 +63,8 @@ def handle_command(info):
         return bully.handle(command, info)
     elif command == "see_signups":
         return {"embeds": [scheduler.get_all_user_commitments(info)]}
+    elif command == "change_time": 
+        return scheduler.change_time(info, options)
     elif command in SERVER_STATUS_COMMANDS:
         return server_status.handle(command, user_id, channel_id)
     elif command in IMAGE_COMMANDS:

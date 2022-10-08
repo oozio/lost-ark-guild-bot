@@ -3,6 +3,7 @@ from typing import List
 
 from constants.emojis import AvailabilityEmoji, ClassEmoji, EmojiEnum
 from views.button import Button
+from views.modal import Modal
 
 CLASS_SELECTOR_ID = "class_selector"
 
@@ -36,12 +37,19 @@ def _add_to_calendar_button():
     )
 
 
+def _change_time_modal():
+    return Modal(
+        custom_id=ScheduleButtons.CHANGE_TIME,
+        label="Change Start Time"
+    )
+
+
 def _change_time_button():
     return Button(
         custom_id=ScheduleButtons.CHANGE_TIME,
         label="Change Start Time",
         style=Button.Styles.grey.value,
-        disabled=True,
+        disabled=False,
     )
 
 

@@ -119,7 +119,7 @@ ALL_RAIDS = [
         "Kakul Saydon",
         n_supports=STANDARD_PER_PARTY_SUPP,
         n_dps=STANDARD_PER_PARTY_DPS,
-        aliases=["kuku"],
+        aliases=["kuku", "clown"],
     ),
     Raid(
         "Secret Maps",
@@ -512,6 +512,14 @@ def _get_party_fields(channel_name, event_name, event_id):
     ]
 
 
+def change_time_prompt(event_id, event_type, done=False):
+    return {
+        "type": "rich",
+        "title": f"Change Time",
+        "description": f"""Send this command in any channel to quietly change the time for "{event_type}":\n\n`/change_time {event_id} <new time>`{"\nDone!" if done else ""}"""
+    }
+
+
 def _update_schedule(event_type, user, event_id, **kwargs):
     cols = {EVENT_TYPE_COLUMN: event_type, EVENT_ID_COLUMN: event_id, USER_COLUMN: user}
 
@@ -720,6 +728,39 @@ def is_schedule_selector(component_id):
     return component_id == scheduler_view.CLASS_SELECTOR_ID
 
 
+def change_time(info, options):
+    server_id = info["server_id"]
+    event_id = options[EVENT_ID_COLUMN]
+    new_time = options[TIME_COLUMN]
+    new_time = parser.parse(new_time).replace(tzinfo=PacificTime())
+
+    event_info = dynamodb.get_rows(
+        SCHEDULE_TABLE, pkey_value=EVENT_INFO_PKEY.format(event_id)
+    )[0]
+
+    event_type = event_info[EVENT_TYPE_COLUMN]
+
+    dynamodb.set_rows(
+        SCHEDULE_TABLE,
+        EVENT_INFO_PKEY.format(event_id), 
+        {
+            TIME_COLUMN: new_time
+        },
+    )
+    # refresh original message status
+    is_full = _is_event_full(event_id, event_info[CHANNEL_NAME_COLUMN])
+    new_msg = {
+        "embeds": [schedule_embed(event_id, server_id, is_full=is_full)],
+        "components": scheduler_view.SchedulerView(is_full=is_full).components,
+    }
+    _update_calendars(server_id)
+    response = discord.edit_message(
+                info["channel_id"], info["base_msg_id"], new_msg
+            )
+
+    if response.ok:
+        return {"embeds": [change_time_prompt(event_id, event_type)]}
+
 def handle_button(info):
     event_id = info["base_interaction_id"]
     base_channel_id = info["base_channel_id"]
@@ -788,7 +829,16 @@ def handle_button(info):
         }
         return new_msg
     elif button == scheduler_view.ScheduleButtons.CHANGE_TIME:
-        pass
+        event_info = dynamodb.get_rows(
+            SCHEDULE_TABLE, pkey_value=EVENT_INFO_PKEY.format(event_id)
+        )[0]
+
+        event_type = event_info[EVENT_TYPE_COLUMN]
+        output = {"embeds": [change_time_prompt(event_id, event_type)]}
+
+        discord.send_followup(
+            info["application_id"], info["interaction_token"], output, ephemeral=True
+        )
     elif button == scheduler_view.ScheduleButtons.DELETE:
         try:
             _delete_event(event_id, user_id, server_id)

@@ -2,6 +2,7 @@ import os
 
 from handlers import (
     bully,
+    compliments,
     honing,
     images,
     market,
@@ -24,9 +25,10 @@ HONING_COMMANDS = ["hone"]
 SERVER_STATUS_COMMANDS = ["server_status", "maintenance_watch"]
 IMAGE_COMMANDS = ["nitro_react", "nitro_message"]
 RUDE_COMMANDS = ["report", "punch", "add_punch_message"]
+NICE_COMMANDS = ["compliment", "add_compliment_word"]
 
 # slash commands that generate UIs
-BUTTON_COMMANDS = ["role_selector", "scheduler", "vote", "calendar", "punch"]
+BUTTON_COMMANDS = ["role_selector", "scheduler", "vote", "calendar", "punch", "compliment"]
 SELECTOR_COMMANDS = ["make_raid"]
 RENDER_VIEW_COMMANDS = set([*BUTTON_COMMANDS, *SELECTOR_COMMANDS])
 
@@ -61,6 +63,8 @@ def handle_command(info):
         return render_display.display(command)(info)
     elif command in RUDE_COMMANDS:
         return bully.handle(command, info)
+    elif command in NICE_COMMANDS:
+        return compliments.handle(command, info)
     elif command == "see_signups":
         return {"embeds": [scheduler.get_all_user_commitments(info)]}
     elif command == "change_time": 

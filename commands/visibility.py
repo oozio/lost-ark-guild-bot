@@ -3,6 +3,7 @@ SHOULD_HIDE_COMMAND_OUTPUT = {
     "add_role": True,
     "calendar": False,
     "change_time": True,
+    "compliment": False,
     "git": True,
     "price": False,
     "hone": True,

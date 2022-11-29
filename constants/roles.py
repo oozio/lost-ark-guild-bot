@@ -21,7 +21,8 @@ ROLES_BY_TYPE = {
         "Argos",
         "Valtan",
         "Vykas",
-        "Kakul Saydon"
+        "Kakul Saydon",
+        "Brelshaza"
     ],
     RoleTypes.COLOR: ["Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Gray"],
     RoleTypes.MISC: ["GVG/GVE", "Secret Maps", "Achievement Hunter", "Bot Dev"],

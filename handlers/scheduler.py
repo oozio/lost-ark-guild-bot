@@ -121,6 +121,12 @@ ALL_RAIDS = [
         n_dps=STANDARD_PER_PARTY_DPS,
         aliases=["kuku", "clown"],
     ),
+        Raid(
+        "Brelshaza",
+        n_supports=STANDARD_PER_PARTY_SUPP * 2,
+        n_dps=STANDARD_PER_PARTY_DPS * 2,
+        aliases=["brel"],
+    ),
     Raid(
         "Secret Maps",
         n_supports=STANDARD_PER_PARTY_SUPP,
@@ -134,6 +140,10 @@ ALL_RAIDS = [
     Raid(
         "Other Spam",
         aliases=["spam", "main", "pics"],
+    ),
+    Raid(
+        "Misc",
+        aliases=["misc"],
     ),
 ]
 

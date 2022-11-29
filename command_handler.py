@@ -40,6 +40,7 @@ COMPONENT_HANDLERS = {
     scheduler.is_schedule_selector: scheduler.handle_selector,
     vote.is_vote_button: vote.handle_button,
     bully.is_button: bully.handle_button,
+    compliments.is_button: compliments.handle_button,
 }
 
 

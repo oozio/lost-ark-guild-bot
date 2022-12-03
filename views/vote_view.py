@@ -42,4 +42,6 @@ class VoteView:
         buttons = []
         for choice in self.choices:
             buttons.append(vars(Button(custom_id=f"vote_{choice}", label=choice)))
-        return self._wrap_in_action_rows(buttons)
+
+        sorted_buttons = sorted(buttons, key=lambda item: item["label"])
+        return self._wrap_in_action_rows(sorted_buttons)

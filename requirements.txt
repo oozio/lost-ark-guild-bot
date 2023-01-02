@@ -4,7 +4,7 @@ pynacl
 discord-ui
 
 # other dependencies
-boto3
+boto3==1.26.7 # for eventbridge scheduler
 python-dateutil
 bs4
 Pillow

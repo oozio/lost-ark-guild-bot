@@ -1,20 +1,23 @@
 import boto3
 import datetime
 import json
-from constants.common import SELF_ARN
+from constants.common import SELF_ARN, SCHEDULE_GROUP
 
-EVENTBRIDGE_ROLE = "arn:aws:iam::391107963258:role/aws-service-role/apidestinations.events.amazonaws.com/AWSServiceRoleForAmazonEventBridgeApiDestinations"
-SCHEDULE_GROUP = "lost_ark_thread_reminders"
-
+EVENTBRIDGE_ROLE = "arn:aws:iam::391107963258:role/eventbridge_reminders_role"
+TIMEZONE = "America/Los_Angeles"
 eventbridge_client = boto3.client('scheduler')
 
+INFO_TEMPLATE = {
+    "source": "aws.events",
+    "resources": SCHEDULE_GROUP
+}
+
 def _timestamp_to_schedule_expression(timestamp: datetime.date):
-    return f"at({timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')})"
+    return f"at({timestamp.strftime('%Y-%m-%dT%H:%M:%S')})"
 
 def create_reminder(id: str, timestamp: datetime.date):
-    info = {
-        "thread_id": id
-    }
+    info = INFO_TEMPLATE.copy()
+    info["thread_id"] = id
 
     eventbridge_client.create_schedule(
         FlexibleTimeWindow={
@@ -23,18 +26,18 @@ def create_reminder(id: str, timestamp: datetime.date):
         GroupName=SCHEDULE_GROUP,
         Name=id,
         ScheduleExpression=_timestamp_to_schedule_expression(timestamp),
+        ScheduleExpressionTimezone=TIMEZONE,
         Target={
-            "ARN": SELF_ARN
+            "Arn": SELF_ARN,
+            "Input": json.dumps(info),
+            "RoleArn": EVENTBRIDGE_ROLE
         },
-        Input=json.dumps(info),
-        RoleARN=EVENTBRIDGE_ROLE,
     )
 
 def change_reminder(id: str, new_time: datetime.date):
-    info = {
-        "thread_id": id
-    }
-    
+    info = INFO_TEMPLATE.copy()
+    info["thread_id"] = id
+
     eventbridge_client.create_schedule(
         FlexibleTimeWindow={
             "Mode": "OFF"
@@ -42,9 +45,10 @@ def change_reminder(id: str, new_time: datetime.date):
         GroupName=SCHEDULE_GROUP,
         Name=id,
         ScheduleExpression=_timestamp_to_schedule_expression(new_time),
+        ScheduleExpressionTimezone=TIMEZONE,
         Target={
-            "ARN": SELF_ARN
+            "Arn": SELF_ARN,
+            "Input": json.dumps(info),
+            "RoleArn": EVENTBRIDGE_ROLE
         },
-        Input=json.dumps(info),
-        RoleARN=EVENTBRIDGE_ROLE,
     )

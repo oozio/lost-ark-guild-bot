@@ -15,7 +15,7 @@ from handlers import (
 )
 from constants import interactions
 from utils import discord
-
+from constants.common import SCHEDULE_GROUP
 
 # TODO: move this entire section to /constants'
 # text-only slash commands
@@ -100,11 +100,16 @@ def handle_event(event):
         server_status.handle_timer()
     elif "arn:aws:events:us-east-2:391107963258:rule/refresh_calendar" in resources:
         scheduler._update_calendars(os.environ["SERVER_ID"])
+    elif SCHEDULE_GROUP in resources:
+        thread_id = event["thread_id"]
+        message = "@everyone starting in 15 min!"
+        discord.post_message_in_channel(thread_id, message, ephemeral=False)
     else:
         print(f"Unknown event(s): {resources}")
 
 
 def lambda_handler(event, context):
+    print(event)
     # Handle timer-triggered special cases
     if event.get("source") == "aws.events":
         handle_event(event)

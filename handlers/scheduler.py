@@ -53,6 +53,8 @@ NO_SIZE_LIMIT = 999
 ADMIN_ROLE_ID = "951412916912013332"
 EVENT_EXPIRATION_GRACE_PERIOD = 15  # min
 
+REMINDER_TIME = 15 # min
+
 
 class Raid:
     def __init__(
@@ -705,7 +707,7 @@ def display(info: dict) -> dict:
             description,
         )
 
-        eventbridge.create_reminder(id=thread_id, timestamp=start_time)
+        eventbridge.create_reminder(id=thread_id, timestamp=start_time-timedelta(minutes=REMINDER_TIME))
 
         _update_calendars(server_id)
 
@@ -791,7 +793,7 @@ def change_time(info, options):
         },
     )
 
-    eventbridge.change_reminder(id=event_info[THREAD_COLUMN], timestamp=new_time)
+    eventbridge.change_reminder(id=event_info[THREAD_COLUMN], timestamp=new_time-timedelta(minutes=REMINDER_TIME))
 
     # refresh original message status
     is_full = _is_event_full(event_id, event_info[CHANNEL_NAME_COLUMN])

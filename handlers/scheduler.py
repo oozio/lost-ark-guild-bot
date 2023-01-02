@@ -6,7 +6,7 @@ from datetime import datetime, tzinfo, timedelta
 from dateutil import parser
 
 from views import scheduler_view
-from utils import discord, dynamodb
+from utils import discord, dynamodb, eventbridge
 
 os.putenv("TZ", "America/Los_Angeles")
 time.tzset()
@@ -125,7 +125,7 @@ ALL_RAIDS = [
         "Brelshaza",
         n_supports=STANDARD_PER_PARTY_SUPP * 2,
         n_dps=STANDARD_PER_PARTY_DPS * 2,
-        aliases=["brel"],
+        aliases=["brel", "relshaza"],
     ),
     Raid(
         "Secret Maps",
@@ -705,6 +705,8 @@ def display(info: dict) -> dict:
             description,
         )
 
+        eventbridge.create_reminder(id=thread_id, timestamp=start_time)
+
         _update_calendars(server_id)
 
         # render message
@@ -788,6 +790,9 @@ def change_time(info, options):
             TIME_COLUMN: new_time.isoformat()
         },
     )
+
+    eventbridge.change_reminder(id=event_info[THREAD_COLUMN], timestamp=new_time)
+
     # refresh original message status
     is_full = _is_event_full(event_id, event_info[CHANNEL_NAME_COLUMN])
     new_msg = {

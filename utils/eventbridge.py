@@ -34,7 +34,7 @@ def create_reminder(id: str, timestamp: datetime.date):
         },
     )
 
-def change_reminder(id: str, new_time: datetime.date):
+def change_reminder(id: str, timestamp: datetime.date):
     info = INFO_TEMPLATE.copy()
     info["thread_id"] = id
 
@@ -44,7 +44,7 @@ def change_reminder(id: str, new_time: datetime.date):
         },
         GroupName=SCHEDULE_GROUP,
         Name=id,
-        ScheduleExpression=_timestamp_to_schedule_expression(new_time),
+        ScheduleExpression=_timestamp_to_schedule_expression(timestamp),
         ScheduleExpressionTimezone=TIMEZONE,
         Target={
             "Arn": SELF_ARN,

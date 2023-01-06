@@ -25,7 +25,7 @@ ROLES_BY_TYPE = {
         "Brelshaza"
     ],
     RoleTypes.COLOR: ["Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Gray"],
-    RoleTypes.MISC: ["GVG/GVE", "Secret Maps", "Achievement Hunter", "Bot Dev"],
+    RoleTypes.MISC: ["GVG/GVE", "Secret Maps", "Achievement Hunter", "Bot Dev", "Hell"],
 }
 
 ROLETYPE_COLORS = {

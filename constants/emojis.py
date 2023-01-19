@@ -33,6 +33,7 @@ class ClassEmoji(EmojiEnum):
     DEADEYE = "deadeye", "999209841438498876"
     DEATHBLADE = "deathblade", "999209861348864020"
     DESTROYER = "destroyer", "999209878650376192"
+    DRIZZLER = "aeromancer", "1065703552460279938"
     GLAIVIER = "glaivier", "999209894731321434"
     GUNLANCER = "gunlancer", "999209910845845534"
     GUNSLINGER = "gunslinger", "999209929745371237"

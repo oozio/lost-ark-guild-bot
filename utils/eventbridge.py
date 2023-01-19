@@ -38,7 +38,7 @@ def change_reminder(id: str, timestamp: datetime.date):
     info = INFO_TEMPLATE.copy()
     info["thread_id"] = id
 
-    eventbridge_client.create_schedule(
+    eventbridge_client.update_schedule(
         FlexibleTimeWindow={
             "Mode": "OFF"
         },

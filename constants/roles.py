@@ -17,10 +17,7 @@ class RoleOperations(str, Enum):
 
 ROLES_BY_TYPE = {
     RoleTypes.RAID: [
-        "Abyssals",
-        "Argos",
-        "Valtan",
-        "Vykas",
+        "Valtan/Vykas",
         "Kakul Saydon",
         "Brelshaza"
     ],

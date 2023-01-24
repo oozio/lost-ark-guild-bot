@@ -31,6 +31,7 @@ USER_COLUMN = "user_id"
 STATUS_COLUMN = "status_str"
 CLASS_COLUMN = "char_class"
 TIME_COLUMN = "start_time"
+SERVER_COLUMN = "server_id"
 CHANNEL_COLUMN = "channel_id"
 CHANNEL_NAME_COLUMN = "channel_name"
 MESSAGE_COLUMN = "message_id"
@@ -108,14 +109,10 @@ ALL_RAIDS = [
         excludes=["bus"],
     ),
     Raid(
-        "Valtan",
+        "Valtan/Vykas",
         n_supports=STANDARD_PER_PARTY_SUPP * 2,
         n_dps=STANDARD_PER_PARTY_DPS * 2,
-    ),
-    Raid(
-        "Vykas",
-        n_supports=STANDARD_PER_PARTY_SUPP * 2,
-        n_dps=STANDARD_PER_PARTY_DPS * 2,
+        aliases=["Valtan", "Vykas"]
     ),
     Raid(
         "Kakul Saydon",
@@ -141,7 +138,7 @@ ALL_RAIDS = [
     ),
     Raid(
         "Other Spam",
-        aliases=["spam", "main", "pics"],
+        aliases=["other-spam", "main", "pics"],
     ),
     Raid(
         "Misc",
@@ -414,8 +411,9 @@ def get_all_user_commitments(info):
     for response, events in user_events.items():
         relevant_rows = []
         for row in events:
+            server_id = row.get(SERVER_COLUMN, info["server_id"])
             if MESSAGE_COLUMN in row and CHANNEL_COLUMN in row:
-                message_link = f"https://discord.com/channels/{info['server_id']}/{row[CHANNEL_COLUMN]}/{row[MESSAGE_COLUMN]}"
+                message_link = f"https://discord.com/channels/{server_id}/{row[CHANNEL_COLUMN]}/{row[MESSAGE_COLUMN]}"
             else:
                 message_link = ""
 
@@ -555,6 +553,7 @@ def _create_event(
     start_time,
     user_id,
     message_id,
+    server_id,
     channel_id,
     thread_id,
     description,
@@ -569,6 +568,7 @@ def _create_event(
             STATUS_COLUMN: EventStatus.TENTATIVE.value,
             USER_COLUMN: user_id,
             MESSAGE_COLUMN: message_id,
+            SERVER_COLUMN: server_id,
             CHANNEL_COLUMN: channel_id,
             CHANNEL_NAME_COLUMN: discord.get_channel_by_id(channel_id)["name"],
             THREAD_COLUMN: thread_id,
@@ -608,7 +608,7 @@ def _delete_event(event_id, user_id, server_id):
         )
 
 
-def _add_event_to_calendar(event_id: str, server_id: str):
+def _add_event_to_calendar(event_id: str, curr_server_id: str):
     # create an `external` event
     event_info = dynamodb.get_rows(
         SCHEDULE_TABLE, pkey_value=EVENT_INFO_PKEY.format(event_id)
@@ -619,15 +619,20 @@ def _add_event_to_calendar(event_id: str, server_id: str):
     event_status = event_info[STATUS_COLUMN]
     creator = event_info[USER_COLUMN]
 
+    server_id = event_info.get(SERVER_COLUMN, curr_server_id)
+
     if MESSAGE_COLUMN in event_info and CHANNEL_COLUMN in event_info:
         message_link = f"Details: https://discord.com/channels/{server_id}/{event_info[CHANNEL_COLUMN]}/{event_info[MESSAGE_COLUMN]}"
     else:
         message_link = ""
 
-    VC1_ID = "951040587266662405"
+    # VC1_ID = "951040587266662405"
+    # get voice channel id
+    channels = discord.get_server_channels(server_id)
+    vc1_id = next(channel["id"] for channel in channels if channel["type"] == discord.CHANNEL_TYPES["GUILD_VOICE"]) 
 
     event_details = {
-        "channel_id": VC1_ID,
+        "channel_id": vc1_id,
         "name": event_name,
         "description": f"Created by {discord.get_user_nickname_by_id(server_id, creator)}\n{message_link}",  # @mentions don't use server nicknames properly
         "privacy_level": 2,  # https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-object-guild-scheduled-event-privacy-level
@@ -644,6 +649,8 @@ def _add_event_to_calendar(event_id: str, server_id: str):
                 STATUS_COLUMN: EventStatus.CONFIRMED.value,
             },
         )
+
+    print(vars(resp))
 
     return resp.reason
 
@@ -702,6 +709,7 @@ def display(info: dict) -> dict:
             start_time.isoformat(),
             user_id,
             message_id,
+            server_id,
             channel_id,
             thread_id,
             description,

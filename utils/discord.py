@@ -23,6 +23,9 @@ RESPONSE_TYPES = {
     "MODAL": 9,
 }
 
+CHANNEL_TYPES = {
+    "GUILD_VOICE": 2
+}
 
 BASE_URL = "https://discord.com/api/v9"
 
@@ -89,6 +92,11 @@ def get_channel_by_id(channel_id):
     Params found at https://discord.com/developers/docs/resources/channel
     """
     url = f"{BASE_URL}/channels/{channel_id}"
+    return requests.get(url, headers=HEADERS).json()
+
+
+def get_server_channels(server_id): 
+    url = f"{BASE_URL}/guilds/{server_id}/channels"
     return requests.get(url, headers=HEADERS).json()
 
 

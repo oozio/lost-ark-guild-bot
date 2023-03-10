@@ -25,6 +25,9 @@ class AvailabilityEmoji(EmojiEnum):
 
 class ClassEmoji(EmojiEnum):
     CLEAR_SELECTION = "blank", "842642757368545300"
+    FLEX = "blank", "842642757368545300"
+    SUPPORT = "blank", "842642757368545300"
+    DPS = "blank", "842642757368545300"
     ARCANIST = "arcanist", "999209761285361774"
     ARTILLERIST = "artillerist", "999209777504727071"
     ARTIST = "artist", "999209793958973551"
@@ -50,11 +53,12 @@ class ClassEmoji(EmojiEnum):
     WARDANCER = "wardancer", "999210110389866546"
 
 
-SUPPORT_CLASSES = [ClassEmoji.ARTIST, ClassEmoji.BARD, ClassEmoji.PALADIN]
+SUPPORT_CLASSES = [ClassEmoji.ARTIST, ClassEmoji.BARD, ClassEmoji.PALADIN, ClassEmoji.SUPPORT]
+FLEX_CLASSES = [ClassEmoji.FLEX]
 DPS_CLASSES = [
     x
     for x in ClassEmoji
-    if x not in SUPPORT_CLASSES and x != ClassEmoji.CLEAR_SELECTION
+    if x not in [*SUPPORT_CLASSES, *FLEX_CLASSES] and x != ClassEmoji.CLEAR_SELECTION
 ]
 
 EMOJI_IDS = {

@@ -12,7 +12,7 @@ os.putenv("TZ", "America/Los_Angeles")
 time.tzset()
 
 # TODO seems like a bad import
-from constants.emojis import AvailabilityEmoji, ClassEmoji, DPS_CLASSES, SUPPORT_CLASSES
+from constants.emojis import AvailabilityEmoji, ClassEmoji, DPS_CLASSES, FLEX_CLASSES, SUPPORT_CLASSES
 
 BLANK = "\u200b"
 DOT = "\u2022"
@@ -497,10 +497,10 @@ def _tally_classes(event_id):
 
     for row in all_rows:
         user_class = row.get(CLASS_COLUMN)
-        if not user_class or ClassEmoji[user_class] == ClassEmoji.CLEAR_SELECTION:
-            flex += 1
-        elif ClassEmoji[user_class] in DPS_CLASSES:
+        if not user_class or ClassEmoji[user_class] == ClassEmoji.CLEAR_SELECTION or ClassEmoji[user_class] in DPS_CLASSES:
             dps += 1
+        elif ClassEmoji[user_class] in FLEX_CLASSES:
+            flex += 1
         elif ClassEmoji[user_class] in SUPPORT_CLASSES:
             supp += 1
         else:

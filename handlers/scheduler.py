@@ -120,11 +120,23 @@ ALL_RAIDS = [
         n_dps=STANDARD_PER_PARTY_DPS,
         aliases=["kuku", "clown"],
     ),
-        Raid(
+    Raid(
         "Brelshaza",
         n_supports=STANDARD_PER_PARTY_SUPP * 2,
         n_dps=STANDARD_PER_PARTY_DPS * 2,
         aliases=["brel", "relshaza"],
+    ),
+    Raid(
+        "Learners",
+        n_supports=STANDARD_PER_PARTY_SUPP * 2,
+        n_dps=STANDARD_PER_PARTY_DPS * 2,
+        aliases=["help"],
+    ),
+    Raid(
+        "Hell",
+        n_supports=STANDARD_PER_PARTY_SUPP * 2,
+        n_dps=STANDARD_PER_PARTY_DPS * 2,
+        aliases=["hell"],
     ),
     Raid(
         "Secret Maps",
@@ -142,7 +154,7 @@ ALL_RAIDS = [
     ),
     Raid(
         "Misc",
-        aliases=["misc"],
+        aliases=["misc", "general"],
     ),
 ]
 
@@ -558,6 +570,8 @@ def _create_event(
     thread_id,
     description,
 ):
+    
+    print(discord.get_channel_by_id(channel_id))
     dynamodb.set_rows(
         SCHEDULE_TABLE,
         EVENT_INFO_PKEY.format(event_id),
